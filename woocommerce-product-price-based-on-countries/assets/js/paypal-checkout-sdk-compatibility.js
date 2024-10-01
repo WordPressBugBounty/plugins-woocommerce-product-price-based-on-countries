@@ -7,11 +7,18 @@
 		 * @param {string} currency
 		 */
 		replace_pp_sdk_currency: function( currency ) {
+
+			if ( 'undefined' !== typeof PayPalCommerceGateway ) {
+				PayPalCommerceGateway.currency = currency;
+			}
+
 			['script[data-namespace="paypal_sdk"]', 'script[data-partner-attribution-id="Woo_PPCP"]'].forEach( function(selector){
 				if ( $(selector).length > 0 ) {
 					var pp_script = $(selector);
 					var src_url   = ppec_compatibility.get_pp_sdk_src( pp_script.attr('src'), currency );
+
 					if ( src_url !== pp_script.attr('src') ) {
+
 						['#ppc-button-ppcp-gateway', '#woo_pp_ec_button_checkout', '#ppc-button'].forEach(function(selector){
 							$(selector).empty();
 						});

@@ -25,7 +25,19 @@ if ( ! class_exists( 'WCPBC_PayPal_Payments' ) ) :
 		public static function init() {
 			add_action( 'wp_enqueue_scripts', array( __CLASS__, 'paypal_payments_scripts' ), 50 );
 			add_filter( 'woocommerce_update_order_review_fragments', array( __CLASS__, 'update_order_review_fragments' ) );
-			add_filter( 'woocommerce_paypal_payments_modules', array( __CLASS__, 'paypal_payments_modules' ) );
+
+			$ppcp_version = self::get_ppcp_version();
+			if ( ! $ppcp_version ) {
+				return;
+			}
+
+			if ( version_compare( $ppcp_version, '2.9.0', '>=' ) ) {
+
+				include dirname( __FILE__ ) . '/paypal-payments/2.9/class-wcpbc-paypalcommerce.php';
+
+			} elseif ( version_compare( $ppcp_version, '1.7.0', '<' ) ) {
+				add_filter( 'woocommerce_paypal_payments_modules', array( __CLASS__, 'paypal_payments_modules' ) );
+			}
 		}
 
 		/**
@@ -48,19 +60,19 @@ if ( ! class_exists( 'WCPBC_PayPal_Payments' ) ) :
 		 * @param array $modules Array of modules.
 		 */
 		public static function paypal_payments_modules( $modules ) {
-			$ppcp_version = self::get_ppcp_version();
 
-			if ( $ppcp_version && version_compare( $ppcp_version, '1.7.0', '<' ) ) {
-
-				if ( ! class_exists( 'WCPBC_PayPal_Api_Client_Module' ) ) {
-					include dirname( __FILE__ ) . '/paypal-payments/class-wcpbc-paypal-api-client-module.php';
+			foreach ( $modules as $index => $module ) {
+				if ( ! is_a( $module, 'WooCommerce\PayPalCommerce\ApiClient\ApiModule' ) ) {
+					continue;
 				}
 
-				foreach ( $modules as $index => $module ) {
-					if ( is_a( $module, 'WooCommerce\PayPalCommerce\ApiClient\ApiModule' ) ) {
-						$modules[ $index ] = new WCPBC_PayPal_Api_Client_Module();
-					}
+				$classname = 'WCPBC_PayPal_Api_Client_Module';
+
+				if ( ! class_exists( $classname ) ) {
+					include dirname( __FILE__ ) . '/paypal-payments/1.7/class-wcpbc-paypal-api-client-module.php';
 				}
+
+				$modules[ $index ] = new $classname();
 			}
 
 			return $modules;
@@ -72,13 +84,35 @@ if ( ! class_exists( 'WCPBC_PayPal_Payments' ) ) :
 		 * @return string
 		 */
 		private static function get_ppcp_version() {
+			static $version = null;
+			if ( ! is_null( $version ) ) {
+				return $version;
+			}
 			if ( ! function_exists( 'get_plugin_data' ) ) {
 				require_once ABSPATH . 'wp-admin/includes/plugin.php';
 			}
 			$file        = str_replace( 'woocommerce-product-price-based-on-countries', 'woocommerce-paypal-payments', dirname( WCPBC_PLUGIN_FILE ) ) . '/woocommerce-paypal-payments.php';
 			$plugin_data = get_plugin_data( $file );
+			$version     = isset( $plugin_data['Version'] ) ? $plugin_data['Version'] : false;
+			return $version;
+		}
 
-			return isset( $plugin_data['Version'] ) ? $plugin_data['Version'] : false;
+		/**
+		 * Returns an array with the services and extensions files.
+		 *
+		 * @return array
+		 */
+		public static function get_service_provider_files() {
+			$files = false;
+			$dir   = dirname( WCPBC_PLUGIN_FILE ) . '/../woocommerce-paypal-payments/modules/ppcp-api-client/';
+			$files = array(
+				'services'   => $dir . 'services.php',
+				'extensions' => $dir . 'extensions.php',
+			);
+
+			$files = file_exists( $files['services'] ) && file_exists( $files['extensions'] ) ? $files : false;
+
+			return $files;
 		}
 
 		/**
@@ -95,6 +129,8 @@ if ( ! class_exists( 'WCPBC_PayPal_Payments' ) ) :
 
 			return $fragments;
 		}
+
+
 	}
 
 	WCPBC_PayPal_Payments::init();
