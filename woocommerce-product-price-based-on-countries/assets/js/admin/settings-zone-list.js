@@ -49,6 +49,22 @@
 		$(target).trigger('change');
 	});
 
+	// editPrompt
+	function editPrompt () {
+		let changed = false;
+		$('input[name="enabled[]').on('change', function(){
+			if ( ! changed ) {
+				window.onbeforeunload = function () {
+					return woocommerce_settings_params.i18n_nav_warning;
+				};
+				changed = true;
+				$( '.woocommerce-save-button' ).removeAttr( 'disabled' );
+			}
+		});
+
+	};
+	editPrompt();
+
 	// Add a help-tip to the reorder header.
 	 $('<span class="woocommerce-help-tip" data-tip="' + wcpbc_settings_zone_list_params.i18n.reorder_helptip + '"></span>')
 	 	.appendTo( $('table.pricingzones thead td#cb') );

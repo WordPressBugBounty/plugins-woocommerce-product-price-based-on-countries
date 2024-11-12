@@ -59,17 +59,18 @@ class WCPBC_CartFlows {
 			return;
 		}
 
-		add_filter( 'cartflows_filter_display_price', [ __CLASS__, 'filter_display_price' ], 10, 2 );
+		add_filter( 'cartflows_filter_display_price', [ __CLASS__, 'filter_display_price' ], 10, 3 );
 	}
 
 	/**
 	 * Returns the product price.
 	 *
-	 * @param float $price price.
-	 * @param int   $product_id current product ID.
+	 * @param float  $price price.
+	 * @param int    $product_id current product ID.
+	 * @param string $context context of action.
 	 */
-	public static function filter_display_price( $price, $product_id ) {
-		if ( $product_id && wcpbc_the_zone() ) {
+	public static function filter_display_price( $price, $product_id, $context = 'convert' ) {
+		if ( 'original' !== $context && $product_id && wcpbc_the_zone() ) {
 			return wcpbc_the_zone()->get_post_price( $product_id, '_price' );
 		}
 		return $price;
