@@ -306,7 +306,6 @@ class WCPBC_Output_Settings {
 				'type'              => 'text',
 				'id'                => '',
 				'name'              => false,
-				'value'             => false,
 				'default'           => '',
 				'class'             => '',
 				'container_class'   => '',
@@ -316,7 +315,7 @@ class WCPBC_Output_Settings {
 		);
 
 		$field['name']  = empty( $field['name'] ) ? $field['id'] : $field['name'];
-		$field['value'] = empty( $field['value'] ) ? WC_Admin_Settings::get_option( $field['name'], $field['default'] ) : $field['value'];
+		$field['value'] = isset( $field['value'] ) ? $field['value'] : WC_Admin_Settings::get_option( $field['name'], $field['default'] );
 		$field['class'] = $this->add_class( $field['class'], 'wcpbc-settings-input -input-' . $field['type'] . ' -' . $field['id'] );
 
 		$container_classes = array(

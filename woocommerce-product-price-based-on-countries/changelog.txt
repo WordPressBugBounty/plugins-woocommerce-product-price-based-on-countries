@@ -1,3 +1,8 @@
+= 3.4.12 (2024-12-19) =
+* Added: Tested up WooCommerce 9.5+.
+* Added: Tested up WordPress 6.7+.
+* Fixed: Setting fields display as empty when the option value is zero.
+
 = 3.4.11 (2024-11-12) =
 * Fixed: Double conversion issue since CartFlows 2.0.7.
 * Fixed The save button is not enabled after turning off/on a pricing zone from the pricing zones table.
