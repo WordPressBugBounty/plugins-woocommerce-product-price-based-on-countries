@@ -1,3 +1,6 @@
+= 3.4.13 (2025-01-16) =
+* Tweak: Function refactoring.
+
 = 3.4.12 (2024-12-19) =
 * Added: Tested up WooCommerce 9.5+.
 * Added: Tested up WordPress 6.7+.

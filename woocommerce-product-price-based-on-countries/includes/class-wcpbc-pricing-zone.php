@@ -442,7 +442,7 @@ class WCPBC_Pricing_Zone {
 		if ( empty( $price ) ) {
 			$value = $price;
 		} else {
-			$value = $this->by_exchange_rate( $price );
+			$value = $this->by_exchange_rate( $price, $context );
 			if ( $round ) {
 				$value = $this->round( $value, '', $context, $data );
 			} else {
@@ -457,11 +457,11 @@ class WCPBC_Pricing_Zone {
 	/**
 	 * Apply the exchange rate to an amount
 	 *
-	 * @since 1.7.9
-	 * @param float $amount Amount to apply the exchange rate.
+	 * @param float  $amount Amount to apply the exchange rate.
+	 * @param string $context What the value is for?. Default "generic".
 	 * @return float
 	 */
-	protected function by_exchange_rate( $amount ) {
+	protected function by_exchange_rate( $amount, $context = 'generic' ) {
 		return floatval( $amount ) * $this->get_exchange_rate();
 	}
 
