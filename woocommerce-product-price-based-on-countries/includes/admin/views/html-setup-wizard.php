@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 <div class="wcpbc-setup-wizard-wrap">
 	<div class="wcpbc-setup-wizard-sidebar">
 		<div class="wcpbc-logo">
-			<img src="https://i.ibb.co/TPvYSdD/logo-horizontal-260-white.png" alt="Price Based on Country for WooCommerce logo" />
+			<img src="<?php echo esc_url( WCPBC()->plugin_url() . 'assets/images/pricebasedcountry-logow.png' ); ?>" alt="Price Based on Country for WooCommerce logo" />
 		</div>
 		<h1>Price Based on Country for WooCommerce</h1>
 		<h2><?php esc_html_e( 'First-time configuration.', 'woocommerce-product-price-based-on-countries' ); ?></h2>

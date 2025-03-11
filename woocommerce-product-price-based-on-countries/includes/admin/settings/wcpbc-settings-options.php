@@ -28,9 +28,9 @@ return array(
 			array(
 
 				array(
+					'id'      => 'wc_price_based_country_based_on',
 					'label'   => __( 'Price based on', 'woocommerce-product-price-based-on-countries' ),
 					'desc'    => __( "This controls which address is used to determine the customer's pricing zone. Geolocation will be used when the customer's address is unknown.", 'woocommerce-product-price-based-on-countries' ),
-					'id'      => 'wc_price_based_country_based_on',
 					'default' => 'billing',
 					'type'    => 'select',
 					'class'   => 'wc-enhanced-select',
@@ -41,9 +41,9 @@ return array(
 				),
 
 				array(
+					'id'      => 'wc_price_based_country_exchange_rate_api',
 					'label'   => __( 'Exchange rates source', 'woocommerce-product-price-based-on-countries' ),
 					'desc'    => __( 'Select the service that will be used to update the exchange rates.', 'woocommerce-product-price-based-on-countries' ),
-					'id'      => 'wc_price_based_country_exchange_rate_api',
 					'type'    => 'select',
 					'class'   => 'wc-enhanced-select',
 					'options' => wcpbc_is_pro() && is_callable( [ 'WCPBC_Update_Exchange_Rates', 'get_providers' ] ) ? wc_list_pluck( WCPBC_Update_Exchange_Rates::get_providers(), 'get_name' ) : array(
@@ -107,7 +107,6 @@ return array(
 				'label'   => __( 'Test country', 'woocommerce-product-price-based-on-countries' ),
 				'id'      => 'wc_price_based_country_test_country',
 				'type'    => 'country-select',
-				'options' => WC()->countries->countries,
 				'show-if' => array(
 					array(
 						'field'    => 'wc_price_based_country_test_mode',
@@ -129,7 +128,7 @@ return array(
 			 * Collapse next options.
 			 */
 			array(
-				'id'                => 'show_advanced_options',
+				'id'                => 'show_advanced_options_btn',
 				'label'             => __( 'Advanced', 'woocommerce-product-price-based-on-countries' ),
 				'custom_attributes' => array(
 					'data-toggle'   => 'collapse',
@@ -138,7 +137,7 @@ return array(
 					'aria-expanded' => 'false',
 				),
 				'type'              => 'link',
-				'href'              => '#',
+				'href'              => '#advanced-section',
 			),
 		),
 	),
@@ -175,6 +174,7 @@ return array(
 					'class'             => 'button',
 					'href'              => admin_url( 'admin.php?page=wcpbc-setup' ),
 				),
+
 			),
 			( class_exists( 'WCPBC_Google_Listing_And_Ads' ) ? WCPBC_Google_Listing_And_Ads::get_setting_options() : array() )
 		),

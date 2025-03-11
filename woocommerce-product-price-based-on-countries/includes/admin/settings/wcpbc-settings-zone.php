@@ -54,11 +54,14 @@ return array(
 			 * Name
 			 */
 			array(
-				'id'    => 'name',
-				'label' => __( 'Zone name', 'woocommerce-product-price-based-on-countries' ),
-				'type'  => 'text',
-				'desc'  => __( 'This is the name of the zone for your reference.', 'woocommerce-product-price-based-on-countries' ),
-				'value' => $zone->get_name(),
+				'id'                => 'name',
+				'label'             => __( 'Zone name', 'woocommerce-product-price-based-on-countries' ),
+				'type'              => 'text',
+				'desc'              => __( 'This is the name of the zone for your reference.', 'woocommerce-product-price-based-on-countries' ),
+				'value'             => $zone->get_name(),
+				'custom_attributes' => array(
+					'autocomplete' => 'off',
+				),
 			),
 
 			/**
@@ -116,20 +119,23 @@ return array(
 			 * Exchange Rate
 			 */
 			array(
-				'id'      => 'exchange_rate',
-				'label'   => __( 'Exchange rate', 'woocommerce-product-price-based-on-countries' ),
-				'type'    => 'text',
-				'class'   => 'wc_input_decimal',
-				'value'   => wcpbc_float_to_string( $zone->get_exchange_rate(), true ),
-				'prepend' => sprintf( '1&nbsp;%s&nbsp;=', wcpbc_get_base_currency() ),
-				'append'  => $zone->get_currency(),
-				'desc'    => __( 'Enter the exchange rate manually.', 'woocommerce-product-price-based-on-countries' ),
-				'show-if' => array(
+				'id'                => 'exchange_rate',
+				'label'             => __( 'Exchange rate', 'woocommerce-product-price-based-on-countries' ),
+				'type'              => 'text',
+				'class'             => 'wc_input_decimal',
+				'value'             => wcpbc_float_to_string( $zone->get_exchange_rate(), true ),
+				'prepend'           => sprintf( '1&nbsp;%s&nbsp;=', wcpbc_get_base_currency() ),
+				'append'            => $zone->get_currency(),
+				'desc'              => __( 'Enter the exchange rate manually.', 'woocommerce-product-price-based-on-countries' ),
+				'show-if'           => array(
 					array(
 						'field'    => 'auto_exchange_rate',
 						'operator' => '=',
 						'value'    => 'no',
 					),
+				),
+				'custom_attributes' => array(
+					'autocomplete' => 'off',
 				),
 			),
 
@@ -144,7 +150,7 @@ return array(
 				'custom_attributes' => array(
 					'min'  => -100,
 					'max'  => 100,
-					'step' => apply_filters( 'wc_price_based_country_exchange_rate_fee_step', '1' ),
+					'step' => apply_filters( 'wc_price_based_country_exchange_rate_fee_step', '0.1' ),
 				),
 				'desc'              => __( 'Enter a fee (percentage) to increment the auto exchange rate.', 'woocommerce-product-price-based-on-countries' ),
 				'append'            => '%',

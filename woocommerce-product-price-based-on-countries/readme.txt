@@ -3,7 +3,7 @@ Contributors: oscargare
 Tags:  woocommerce, price based country, price by country, geoip, woocommerce-multi-currency
 Requires at least: 3.8
 Tested up to: 6.7
-Stable tag: 3.4.13
+Stable tag: 4.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -113,68 +113,26 @@ You should do the test in a private browsing window to prevent data stored in th
 
 == Changelog ==
 
-= 3.4.13 (2025-01-16) =
-* Tweak: Function refactoring.
+= 4.0.0 (2025-03-11) =
+* Added: Tested up WooCommerce 9.7+.
+* Added: Core performance improvements:
+    - Display prices on the page 10%-15% faster.
+	- The number of the post_meta rows needed to store the prices has been reduced.
+	- All queries have been optimized.
+	- The admin background process runs now on the Action Scheduler.
+* Added: Polylang support: Synchronizes data between languages.
+* Added WPML support: Data synchronization between languages now runs in the plugin core instead of being delegated to WMPL.
+* Added: Country Switcher as WordPress Block.
+* Added: Users can add all countries to pricing zones instead of only the ones included in the "Selling location(s)" option.
+* Added: Responsive design to settings pages.
+* Tweak: Prevent browsers from asking users if they want to resend the form on page refresh after switching countries using the widgets.
+* Fixed: The price filter classic widget (by WooCommerce) displays incorrect minimum and maximum values.
 
-= 3.4.12 (2024-12-19) =
-* Added: Tested up WooCommerce 9.5+.
-* Added: Tested up WordPress 6.7+.
-* Fixed: Setting fields display as empty when the option value is zero.
-
-= 3.4.11 (2024-11-12) =
-* Fixed: Double conversion issue since CartFlows 2.0.7.
-* Fixed The save button is not enabled after turning off/on a pricing zone from the pricing zones table.
-
-= 3.4.10 (2024-10-01) =
-* Added: Tested up WooCommerce 9.3+.
-* Fixed: WooCommerce PayPal Payments 2.9.1 CANNOT_MIX_CURRENCIES error.
-
-= 3.4.9 (2024-07-30) =
-* Added: Tested up WooCommerce 9.1+.
-* Added: Tested up WordPress 6.6+.
-
-= 3.4.8 (2024-07-14) =
-* Fixed: PHP Error with WooCommerce Stripe 8.5+.
-
-= 3.4.7 (2024-06-27) =
-* Added: Tested up WooCommerce 9.0+.
-* Added: Update compatibility with "Google Product Feed by Ademti Software".
-* Fixed: Compatibility issues with the UPE payment methods of "WooCommerce Stripe Payment Gateway By WooCommerce" plugin.
-
-= 3.4.6 (2024-06-04) =
-* Added: Tested up WooCommerce 8.9+.
-* Fixed: Compatibility issue with "Variation Swatches For WooCommerce PRO By Emran Ahmed".
-
-= 3.4.5 (2024-05-08) =
-* Added: Tested up WooCommerce 8.8+.
-* Added: Support for the Elementor Pro "Taxonomy Filter" widget.
-* Fixed: Minor bugs on the geolocation setup wizard.
-
-= 3.4.4 (2024-03-13) =
-* Update: Revert the geolocation AJAX call to POST to prevent issues with Sucuri.
-* Tweak: Check the "woocommerce_package_rates" filter parameter is an array to prevent PHP warnings.
-
-= 3.4.2 (2023-12-18) =
-* Added: Tested up WordPress 8.4+.
-* Fixed: Mini-cart total does not refresh after changing the country using the country/currency switcher.
-* Fixed: Frontend prices are loaded for the "Facebook for WooCommerce" background process.
-
-= 3.4.1 (2023-12-06) =
-* Update: Revert the price loading animation to "dots".
-
-= 3.4.0 (2023-11-30) =
-* Added: Tested up WordPress 8.3+.
-* Added: Compatible with Flexible Shipping by Octolize plugin.
-* Added: Replace the loading dots animation with a skeleton placeholder.
-* Added: Exclude the AJAX geolocation JavaScript files from the "WP Rocket Delay JavaScript" feature.
-* Added: Exclude the AJAX geolocation JavaScript files from the "Siteground Speed Optimizer Combine JavaScript" feature.
-* Added: Exclude the AJAX geolocation JavaScript files from the "Jetpack Boost" concat JavaScript feature.
-* Fixed: Elementor minicart issue: Cart is empty after adding items to the cart.
-* Fixed: Error on settings page when a deprecated PRO version is installed.
+[Introducing Price Based on Country for WooCommerce 4.0](https://www.pricebasedcountry.com/2025/03/10/introducing-price-based-on-country-for-woocommerce-4-0/)
 
 [See changelog for all versions](https://plugins.svn.wordpress.org/woocommerce-product-price-based-on-countries/trunk/changelog.txt).
 
 == Upgrade Notice ==
 
-= 3.2 =
-<strong>3.2 is a major update</strong>. If you use the Pro version, you must update it to the latest version.
+= 4.0 =
+<strong>4.0 is a major update</strong>. We recommend that you backup your website before updating it.

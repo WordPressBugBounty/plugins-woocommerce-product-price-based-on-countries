@@ -16,64 +16,100 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WCPBC_Frontend_Pricing {
 
 	/**
-	 * Init the frontend pricing
+	 * Init the frontend pricing.
 	 */
 	public static function init() {
-		if ( ! wcpbc_the_zone() ) {
+		if ( ! wcpbc_the_zone() || did_action( 'wc_price_based_country_frontend_princing_init' ) ) {
 			return;
 		}
-		self::init_hooks();
+
+		self::init_price_filters();
+		self::init_filters();
+
+		/**
+		 * Fires after frontend pricing init.
+		 *
+		 * @since 1.7.0
+		 */
 		do_action( 'wc_price_based_country_frontend_princing_init' );
 	}
 
 	/**
-	 * Hook actions and filters
-	 *
-	 * @since 1.7.0
+	 * Unset the frontend pricing.
 	 */
-	private static function init_hooks() {
-		self::add_product_price_filters();
+	public static function unset() {
+		if ( wcpbc_the_zone() || ! did_action( 'wc_price_based_country_frontend_princing_init' ) ) {
+			return;
+		}
 
-		add_filter( 'woocommerce_add_cart_item', array( __CLASS__, 'set_cart_item_price' ), -10 );
-		add_filter( 'woocommerce_get_cart_item_from_session', array( __CLASS__, 'set_cart_item_price' ), -10 );
-		add_filter( 'woocommerce_get_catalog_ordering_args', array( __CLASS__, 'get_catalog_ordering_args' ) );
-		add_filter( 'posts_clauses', array( __CLASS__, 'filter_price_post_clauses' ), 25, 2 );
-		add_filter( 'woocommerce_price_filter_sql', array( __CLASS__, 'price_filter_sql' ) );
-		add_filter( 'pre_transient_wc_products_onsale', array( __CLASS__, 'product_ids_on_sale' ), 10, 2 );
-		add_filter( 'woocommerce_shortcode_products_query', array( __CLASS__, 'get_variation_prices_hash' ) );
-		add_filter( 'woocommerce_package_rates', array( __CLASS__, 'package_rates' ), 10, 2 );
-		add_filter( 'woocommerce_shipping_zone_shipping_methods', array( __CLASS__, 'shipping_zone_shipping_methods' ), 10, 4 );
-		add_filter( 'woocommerce_adjust_non_base_location_prices', array( __CLASS__, 'adjust_non_base_location_prices' ) );
-		add_action( 'woocommerce_coupon_loaded', array( __CLASS__, 'coupon_loaded' ) );
-		add_filter( 'woocommerce_cart_hash', array( __CLASS__, 'cart_hash' ) );
+		self::init_price_filters( true );
+		self::init_filters( true );
+
+		/**
+		 * Fires after frontend pricing unset.
+		 *
+		 * @since 4.0.0
+		 */
+		do_action( 'wc_price_based_country_frontend_princing_unset' );
 	}
 
 	/**
-	 * Add/remove the product price filters.
+	 * Adds or removes the product price filters.
 	 *
-	 * @since 3.1.0
-	 * @param string $add_or_remove Add or remove the filters.
+	 * @param bool $remove Optional. True to remove the filter. Default false.
 	 */
-	private static function add_product_price_filters( $add_or_remove = 'add' ) {
-
-		$add_or_remove = 'add' === $add_or_remove ? 'add' : 'remove';
+	private static function init_price_filters( $remove = false ) {
 
 		foreach ( [ 'regular_price', 'sale_price', 'price' ] as $prop ) {
 
 			foreach ( [ 'product_get', 'product_variation_get', 'variation_prices' ] as $hook_prefix ) {
-				call_user_func( "{$add_or_remove}_filter", ...[ "woocommerce_{$hook_prefix}_{$prop}", [ __CLASS__, 'get_product_price_property' ], 5, 2 ] );
+				self::filter( [ "woocommerce_{$hook_prefix}_{$prop}", [ __CLASS__, 'get_product_price_property' ], 5, 2 ], $remove );
 			}
 		}
 
 		foreach ( [ 'date_on_sale_from', 'date_on_sale_to' ] as $prop ) {
 
 			foreach ( [ 'product_get', 'product_variation_get' ] as $hook_prefix ) {
-				call_user_func( "{$add_or_remove}_filter", ...[ "woocommerce_{$hook_prefix}_{$prop}", [ __CLASS__, 'get_product_date_property' ], 5, 2 ] );
+				self::filter( [ "woocommerce_{$hook_prefix}_{$prop}", [ __CLASS__, 'get_product_date_property' ], 5, 2 ], $remove );
 			}
 		}
+	}
 
-		call_user_func( "{$add_or_remove}_filter", ...[ 'woocommerce_currency', [ __CLASS__, 'get_currency' ], 100 ] );
-		call_user_func( "{$add_or_remove}_filter", ...[ 'woocommerce_get_variation_prices_hash', [ __CLASS__, 'get_variation_prices_hash' ] ] );
+	/**
+	 * Add or removes the frontend filters.
+	 *
+	 * @param bool $remove Optional. True to remove the filter. Default false.
+	 */
+	private static function init_filters( $remove = false ) {
+
+		self::filter( [ 'woocommerce_currency', [ __CLASS__, 'get_currency' ], 100 ], $remove );
+		self::filter( [ 'woocommerce_get_variation_prices_hash', [ __CLASS__, 'get_variation_prices_hash' ] ], $remove );
+		self::filter( [ 'woocommerce_add_cart_item', array( __CLASS__, 'set_cart_item_price' ), -10 ], $remove );
+		self::filter( [ 'woocommerce_get_cart_item_from_session', array( __CLASS__, 'set_cart_item_price' ), -10 ], $remove );
+		self::filter( [ 'woocommerce_get_catalog_ordering_args', array( __CLASS__, 'get_catalog_ordering_args' ) ], $remove );
+		self::filter( [ 'posts_clauses', array( __CLASS__, 'filter_price_post_clauses' ), 25, 2 ], $remove );
+		self::filter( [ 'woocommerce_price_filter_sql', array( __CLASS__, 'price_filter_sql' ) ], $remove );
+		self::filter( [ 'pre_transient_wc_products_onsale', array( __CLASS__, 'product_ids_on_sale' ), 10, 2 ], $remove );
+		self::filter( [ 'woocommerce_shortcode_products_query', array( __CLASS__, 'get_variation_prices_hash' ) ], $remove );
+		self::filter( [ 'woocommerce_package_rates', array( __CLASS__, 'package_rates' ), 10, 2 ], $remove );
+		self::filter( [ 'woocommerce_shipping_zone_shipping_methods', array( __CLASS__, 'shipping_zone_shipping_methods' ), 10, 4 ], $remove );
+		self::filter( [ 'woocommerce_adjust_non_base_location_prices', array( __CLASS__, 'adjust_non_base_location_prices' ) ], $remove );
+		self::filter( [ 'woocommerce_coupon_loaded', array( __CLASS__, 'coupon_loaded' ) ], $remove );
+		self::filter( [ 'woocommerce_cart_hash', array( __CLASS__, 'cart_hash' ) ], $remove );
+	}
+
+	/**
+	 * Adds or removes a filter.
+	 *
+	 * @param array $filter Array of filter parameters ($hook_name, $callback, $priority, $accepted_args).
+	 * @param bool  $remove Optional. True to remove the filter. Default false.
+	 */
+	private static function filter( $filter, $remove = false ) {
+		if ( $remove ) {
+			remove_filter( ...$filter );
+		} else {
+			add_filter( ...$filter );
+		}
 	}
 
 	/**
@@ -116,7 +152,7 @@ class WCPBC_Frontend_Pricing {
 	}
 
 	/**
-	 * Retrun a product price property.
+	 * Retruns a product price property.
 	 *
 	 * @since 1.9.0
 	 * @param mixed      $value Property value.
@@ -285,14 +321,8 @@ class WCPBC_Frontend_Pricing {
 		global $wpdb;
 
 		if ( ! strstr( $sql, ') wcpbc_price ON' ) ) {
-			$sql .= $wpdb->prepare(
-				" LEFT JOIN (
-					SELECT post_meta.post_id, min( post_meta.meta_value + 0) as min_price, max( post_meta.meta_value + 0) as max_price
-					FROM {$wpdb->postmeta} post_meta
-					INNER JOIN {$wpdb->wc_product_meta_lookup} product_meta_lookup ON post_meta.post_id = product_meta_lookup.product_id WHERE post_meta.meta_key = %s GROUP BY post_meta.post_id
-				) wcpbc_price ON {$wpdb->posts}.ID = wcpbc_price.post_id",
-				wcpbc_the_zone()->get_postmetakey( '_price' )
-			);
+			$query = new WCPBC_Product_Meta_Query( wcpbc_the_zone() );
+			$sql  .= ' LEFT JOIN ( ' . $query->get_min_max_price_query() . ") wcpbc_price ON {$wpdb->posts}.ID = wcpbc_price.product_id";
 		}
 
 		return $sql;
@@ -309,12 +339,9 @@ class WCPBC_Frontend_Pricing {
 
 		$where_pos = strpos( strtoupper( $sql ), 'WHERE ' );
 		if ( $where_pos ) {
-			$_sql = "
-				SELECT min( wcpbc_price.meta_value + 0 ) as min_price, max( wcpbc_price.meta_value + 0 ) as max_price
-				FROM {$wpdb->wc_product_meta_lookup} wc_product_meta_lookup
-				LEFT JOIN {$wpdb->postmeta} wcpbc_price ON wc_product_meta_lookup.product_id = wcpbc_price.post_id and wcpbc_price.meta_key = '" . wcpbc_the_zone()->get_postmetakey( '_price' ) . "'
-			";
-			$sql  = $_sql . substr( $sql, $where_pos );
+			$query = new WCPBC_Product_Meta_Query( wcpbc_the_zone() );
+			$_sql  = $query->get_min_max_price_query( 'min_max' );
+			$sql   = $_sql . substr( $sql, $where_pos );
 		}
 		return $sql;
 	}
@@ -327,44 +354,22 @@ class WCPBC_Frontend_Pricing {
 	 * @return array
 	 */
 	public static function product_ids_on_sale( $value, $transient = false ) {
-		global $wpdb;
 
-		// Load from cache.
+		$zone_id     = wcpbc_the_zone()->get_id();
 		$ids_on_sale = get_transient( 'wcpbc_products_onsale' );
 
-		// Valid cache found.
-		if ( false !== $ids_on_sale && is_array( $ids_on_sale ) && isset( $ids_on_sale[ wcpbc_the_zone()->get_id() ] ) ) {
-			return $ids_on_sale[ wcpbc_the_zone()->get_id() ];
+		if ( false !== $ids_on_sale && is_array( $ids_on_sale ) && isset( $ids_on_sale[ $zone_id ] ) ) {
+			return $ids_on_sale[ $zone_id ];
 		}
 
-		$ids_on_sale = is_array( $ids_on_sale ) ? $ids_on_sale : array();
-		$decimals    = absint( wc_get_price_decimals() );
+		$ids_on_sale = is_array( $ids_on_sale ) ? $ids_on_sale : [];
+		$query       = new WCPBC_Product_Meta_Query( wcpbc_the_zone() );
 
-		$on_sale_posts = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT post.ID, post.post_parent FROM `{$wpdb->posts}` AS post
-				LEFT JOIN `{$wpdb->postmeta}` AS meta ON post.ID = meta.post_id
-				LEFT JOIN `{$wpdb->postmeta}` AS meta2 ON post.ID = meta2.post_id
-				WHERE post.post_type IN ( 'product', 'product_variation' )
-					AND post.post_status = 'publish'
-					AND meta.meta_key = %s
-					AND meta2.meta_key = %s
-					AND CAST( meta.meta_value AS DECIMAL ) >= 0
-					AND CAST( meta.meta_value AS CHAR ) != ''
-					AND CAST( meta.meta_value AS DECIMAL( 10, %d ) ) = CAST( meta2.meta_value AS DECIMAL( 10, %d ) )
-				GROUP BY post.ID",
-				wcpbc_the_zone()->get_postmetakey( '_sale_price' ),
-				wcpbc_the_zone()->get_postmetakey( '_price' ),
-				$decimals,
-				$decimals
-			)
-		);
-
-		$ids_on_sale[ wcpbc_the_zone()->get_id() ] = array_unique( array_map( 'absint', array_merge( wp_list_pluck( $on_sale_posts, 'ID' ), array_diff( wp_list_pluck( $on_sale_posts, 'post_parent' ), array( 0 ) ) ) ) );
+		$ids_on_sale[ $zone_id ] = $query->get_on_sale_product_ids();
 
 		set_transient( 'wcpbc_products_onsale', $ids_on_sale, DAY_IN_SECONDS * 30 );
 
-		return $ids_on_sale[ wcpbc_the_zone()->get_id() ];
+		return $ids_on_sale[ $zone_id ];
 	}
 
 	/**

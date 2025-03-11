@@ -43,13 +43,36 @@
 			$(target).toggle(expanded);
 		};
 
+		// Add/Remove Location hash
+		function setLocationHash($btn) {
+			const noHashURL = window.location.href.replace(/#.*$/, ''),
+				expanded = 'true' === $btn.attr('aria-expanded');
+    		window.history.replaceState('', document.title, noHashURL);
+			if (expanded && $btn.attr('href').length>1) {
+				window.location.hash = $btn.attr('href');
+			}
+		}
+
+		// Init aria-expanded.
+		function initAriaExpanded($btn) {
+			if (! window.location.hash) {
+				return;
+			}
+			const expanded = ( window.location.hash === $btn.attr('href') );
+			if ( expanded ) {
+				$btn.attr('aria-expanded', 'true');
+			}
+		}
+
 		// Init.
 		this.each( function(){
+			initAriaExpanded($(this));
 			showHide($(this));
 			$(this).on('click', function(e){
 				e.preventDefault();
 				toggleExpanded($(this));
 				showHide($(this));
+				setLocationHash($(this));
 			});
 		});
 		return this;

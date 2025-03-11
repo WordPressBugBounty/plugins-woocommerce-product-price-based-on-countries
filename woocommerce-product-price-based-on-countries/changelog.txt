@@ -1,3 +1,18 @@
+= 4.0.0 (2025-03-11) =
+* Added: Tested up WooCommerce 9.7+.
+* Added: Core performance improvements:
+    - Display prices on the page 10%-15% faster.
+	- The number of the post_meta rows needed to store the prices has been reduced.
+	- All queries have been optimized.
+	- The admin background process runs now on the Action Scheduler.
+* Added: Polylang support: Synchronizes data between languages.
+* Added WPML support: Data synchronization between languages now runs in the plugin core instead of being delegated to WMPL.
+* Added: Country Switcher as WordPress Block.
+* Added: Users can add all countries to pricing zones instead of only the ones included in the "Selling location(s)" option.
+* Added: Responsive design to settings pages.
+* Tweak: Prevent browsers from asking users if they want to resend the form on page refresh after switching countries using the widgets.
+* Fixed: The price filter classic widget (by WooCommerce) displays incorrect minimum and maximum values.
+
 = 3.4.13 (2025-01-16) =
 * Tweak: Function refactoring.
 

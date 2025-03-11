@@ -25,7 +25,8 @@ class WCPBC_Integrations {
 		$integrations = array(
 			'woogle_get_container'                 => dirname( __FILE__ ) . '/integrations/class-wcpbc-google-listing-and-ads.php',
 			'wcpay_init'                           => dirname( __FILE__ ) . '/integrations/class-wcpbc-wc-payments.php',
-			'Sitepress'                            => dirname( __FILE__ ) . '/integrations/class-wcpbc-admin-translation-management.php',
+			'Sitepress'                            => dirname( __FILE__ ) . '/integrations/class-wcpbc-wpml.php',
+			'Polylang'                             => dirname( __FILE__ ) . '/integrations/class-wcpbc-polylang.php',
 			'AngellEYE_Gateway_Paypal'             => dirname( __FILE__ ) . '/integrations/class-wcpbc-paypal-express-angelleye.php',
 			'WC_Gateway_Twocheckout'               => dirname( __FILE__ ) . '/integrations/class-wcpbc-gateway-2checkout.php',
 			'WC_Product_Addons'                    => dirname( __FILE__ ) . '/integrations/class-wcpbc-product-addons-basic.php',

@@ -45,10 +45,18 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 
 			$this->backward_compatibility();
 
-			add_action( 'load-woocommerce_page_wc-settings', array( $this, 'handle_actions' ), 5 );
-			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+			add_action( 'load-woocommerce_page_wc-settings', array( $this, 'init' ), 5 );
 		}
 
+		/**
+		 * Init hooks.
+		 */
+		public function init() {
+			self::handle_actions();
+
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+			add_filter( 'admin_body_class', array( $this, 'admin_body_class' ), 9999 );
+		}
 
 		/**
 		 * Get sections
@@ -71,15 +79,25 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 		}
 
 		/**
+		 * Checks the current tabs is price-based-country
+		 *
+		 * @return bool
+		 */
+		protected function is_me() {
+			global $current_tab;
+			return 'price-based-country' === $current_tab;
+		}
+
+		/**
 		 * Checks the current section
 		 *
 		 * @param string $section String to check.
 		 * @return bool
 		 */
 		protected function is_section( $section ) {
-			global $current_tab, $current_section;
+			global $current_section;
 
-			if ( 'price-based-country' !== $current_tab ) {
+			if ( ! $this->is_me() ) {
 				return false;
 			}
 
@@ -130,7 +148,8 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 		/**
 		 * Handle action.
 		 */
-		public function handle_actions() {
+		protected function handle_actions() {
+
 			if ( $this->is_section( 'delete-zone' ) ) {
 				// Delete zone.
 				$this->delete_zone();
@@ -149,7 +168,7 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 		 * Enqueue admin scripts and styles.
 		 */
 		public function enqueue_scripts() {
-			if ( ! $this->is_section( array( 'edit-zone', 'options', 'zone-list', 'free-pro', 'license' ) ) ) {
+			if ( ! $this->is_me() ) {
 				return;
 			}
 
@@ -174,17 +193,23 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 					'wcpbc-settings-edit-zone',
 					'wcpbc_settings_edit_zone_params',
 					array(
-						'eur_countries' => wcpbc_get_currencies_countries( 'EUR' ),
+						'eur_countries'     => wcpbc_get_currencies_countries( 'EUR' ),
+						'allowed_countries' => 'all' !== get_option( 'woocommerce_allowed_countries', 'all' ) ? array_keys( WC()->countries->get_allowed_countries() ) : false,
+						'i18n'              => array(
+							'and' => __( 'and', 'woocommerce-product-price-based-on-countries' ),
+						),
 					)
 				);
 				wp_enqueue_script( 'wcpbc-settings-edit-zone' );
+
+				add_action( 'admin_footer', [ $this, 'print_script_templates' ] );
 
 			} elseif ( $this->is_section( 'zone-list' ) ) {
 
 				// Zones table.
 				wp_enqueue_style( 'wcpbc-tooltip-confirm-styles' );
 				wp_enqueue_style( 'wcpbc-settings-zone-list-styles', WCPBC()->plugin_url() . 'assets/css/admin/settings-zone-list' . $suffix . '.css', array(), WCPBC()->version );
-				wp_enqueue_script( 'wcpbc-settings-zone-list', WCPBC()->plugin_url() . 'assets/js/admin/settings-zone-list' . $suffix . '.js', array( 'jquery', 'jquery-ui-sortable', 'wcpbc-tooltip-confirm' ), WCPBC()->version, true );
+				wp_enqueue_script( 'wcpbc-settings-zone-list', WCPBC()->plugin_url() . 'assets/js/admin/settings-zone-list' . $suffix . '.js', array( 'jquery', 'jquery-ui-sortable', 'utils', 'wcpbc-tooltip-confirm' ), WCPBC()->version, true );
 				wp_localize_script(
 					'wcpbc-settings-zone-list',
 					'wcpbc_settings_zone_list_params',
@@ -212,6 +237,67 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 		}
 
 		/**
+		 * Print script templates.
+		 */
+		public function print_script_templates() {
+			if ( 'all' === get_option( 'woocommerce_allowed_countries', 'all' ) ) {
+				return;
+			}
+
+			$count = 0;
+			foreach ( [ 'singular', 'plural' ] as $class ) {
+				$count++;
+				?>
+				<script type="text/html" id="tmpl-allowed-countries-warning-<?php echo esc_attr( $class ); ?>">
+				<div class="notice notice-warning inline">
+					<p>
+						<?php
+						printf(
+							// translators: 1: List of countries. 2 Option name. 3 HTML tag.
+							esc_html( _n( '%1$s is not included in the %2$s option%3$s.', '%1$s are not included in the %2$s option%3$s.', $count, 'woocommerce-product-price-based-on-countries' ) ),
+							'{{data.countries}}',
+							sprintf(
+								'<strong>%s</strong>',
+								esc_html__( 'Selling location(s)', 'woocommerce-product-price-based-on-countries' )
+							),
+							wc_help_tip( esc_html__( 'WooCommerce > Settings > General', 'woocommerce-product-price-based-on-countries' ) )
+						);
+						echo '&nbsp;';
+						esc_html_e( 'The countries not included in this option are unavailable at checkout.', 'woocommerce-product-price-based-on-countries' );
+						?>
+					</p>
+				</div>
+				</script>
+				<?php
+			}
+		}
+
+		/**
+		 * Admin body classes
+		 *
+		 * @param string $admin_body_class Body classes string.
+		 */
+		public function admin_body_class( $admin_body_class ) {
+			if ( ! $this->is_me() ) {
+				return $admin_body_class;
+			}
+
+			$classes = explode( ' ', trim( $admin_body_class ) );
+
+			$classes[] = 'wc-price-based-country-settings-page';
+
+			foreach ( [ 'zone-list', 'edit-zone', 'free-pro', 'license' ] as $section ) {
+				if ( ! $this->is_section( $section ) ) {
+					continue;
+				}
+				$classes[] = "wc-price-based-country-settings-{$section}";
+			}
+
+			$admin_body_class = implode( ' ', array_unique( $classes ) );
+			return " $admin_body_class ";
+		}
+
+		/**
 		 * Delete a zone
 		 */
 		protected function delete_zone() {
@@ -227,6 +313,7 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 			WCPBC_Pricing_Zones::delete( $zone );
 
 			wp_safe_redirect( admin_url( 'admin.php?page=wc-settings&tab=price-based-country&deleted=1' ) );
+			exit;
 		}
 
 		/**
@@ -407,7 +494,7 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 			$license['key']          = WCPBC_License_Settings::instance()->get_license_key();
 			$license['expired']      = 'active' !== $license['status'];
 			$license['expiring']     = 'yes' === $license['renewal_period'];
-			$license['is_connected'] = false === $license['expired'] && WCPBC_License_Settings::instance()->is_license_active();
+			$license['is_connected'] = ! empty( $license['key'] ) && false === $license['expired'] && WCPBC_License_Settings::instance()->is_license_active();
 			$license['expires']      = empty( $license['expires'] ) ? '' : date_i18n( wc_date_format(), strtotime( $license['expires'] ) );
 			$license['actions']      = [];
 
@@ -417,7 +504,7 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 					'status'       => 'error',
 					'icon'         => 'info',
 					// Translators: 1,2: HTML tag.
-					'message'      => sprintf( __( '%1$sActivate%2$s your license to enable the plugin updates and get support. If you do not have a license yet, you you need to %1$spurchase%2$s one.', 'woocommerce-product-price-based-on-countries' ), '<strong>', '</strong>' ),
+					'message'      => sprintf( __( '%1$sActivate%2$s your license to enable the plugin updates and get support. If you do not have a license yet, you need to %1$spurchase%2$s one.', 'woocommerce-product-price-based-on-countries' ), '<strong>', '</strong>' ),
 					'button_label' => __( 'Purchase', 'woocommerce-product-price-based-on-countries' ),
 					'button_url'   => wcpbc_home_url( 'license-page-empty' ),
 				];
@@ -610,6 +697,7 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 				do_action( 'wc_price_based_country_settings_zone_saved', $zone->get_id() );
 
 				wp_safe_redirect( admin_url( 'admin.php?page=wc-settings&tab=price-based-country&zone_id=' . $zone->get_id() . '&updated=1' ) );
+				exit;
 			}
 		}
 

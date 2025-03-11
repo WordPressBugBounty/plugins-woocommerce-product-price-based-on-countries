@@ -18,6 +18,11 @@ textarea.wcpbc-settings-input {
 	border: 1px solid var(--wcpbc-settings-input-border-color);
 }
 
+input.wcpbc-settings-input[type="text"],
+input.wcpbc-settings-input[type="number"] {
+	padding: 0 8px;
+}
+
 div.woocommerce div.wcpbc-settings-panel div.wcpbc-settings-section-container {
 	display: flex;
 	flex-flow: row nowrap;
@@ -47,6 +52,7 @@ div.woocommerce div.wcpbc-settings-panel div.wcpbc-settings-section-container.-h
 
 div.woocommerce div.wcpbc-settings-panel div.wcpbc-settings-section-container .wcpbc-settings-section-card-wrapper {
 	flex: 1 1 auto;
+	width: 100%;
 }
 
 div.woocommerce div.wcpbc-settings-panel div.wcpbc-settings-section-container .wcpbc-settings-section-card-wrapper .wcpbc-settings-section-card {
@@ -190,7 +196,7 @@ div.woocommerce div.wcpbc-settings-panel div.wcpbc-settings-section-container.-s
 
 .wcpbc-settings-section-card .wcpbc-input-container .wcpbc-input-wrap.-has-prepend .wcpbc-settings-input,
 .wcpbc-settings-section-card .wcpbc-input-container .wcpbc-input-wrap.-has-append .wcpbc-settings-input {
-	width: unset;
+	width: calc(100% - 16px);
 	flex: 1 1 auto;
 }
 
@@ -339,6 +345,41 @@ div.woocommerce div.wcpbc-settings-panel div.wcpbc-settings-section-container a.
 	}
 }
 
+@media (max-width: 782px) {
+	div.woocommerce div.wcpbc-settings-panel {
+		padding: 0;
+	}
+
+	.wrap.woocommerce #message.inline {
+		margin-right: 0;
+	}
+
+	div.woocommerce div.wcpbc-settings-panel div.wcpbc-settings-section-container {
+		flex-wrap: wrap;
+	}
+
+	div.woocommerce div.wcpbc-settings-panel div.wcpbc-settings-section-container .wcpbc-settings-section-desc {
+		flex: none;
+		margin: 0 0 1em 0;
+	}
+
+	input.wcpbc-settings-input[type="text"],
+	input.wcpbc-settings-input[type="number"] {
+		padding: 3px 10px;
+	}
+
+	.wcpbc-settings-section-card .wcpbc-input-container .wcpbc-input-wrap.-has-prepend .wcpbc-settings-input,
+	.wcpbc-settings-section-card .wcpbc-input-container .wcpbc-input-wrap.-has-append .wcpbc-settings-input {
+		width: calc(100% - 20px);
+	}
+
+	.wcpbc-settings-section-card .wcpbc-input-container .wcpbc-input-wrap span.wcpbc-input-prepend,
+	.wcpbc-settings-section-card .wcpbc-input-container .wcpbc-input-wrap span.wcpbc-input-append {
+		padding: 3px 8px;
+	}
+
+}
+
 /**
  * RTL
  */
@@ -383,4 +424,11 @@ body.rtl .wcpbc-settings-section-card-submit {
 body.rtl .wcpbc-settings-section-card-submit .wcpbc-input-container {
 	margin-right: 0;
 	margin-left: 22px;
+}
+
+/**
+ * Inline WooCommerce Help tip
+ */
+.notice.inline .woocommerce-help-tip {
+	margin-bottom: .1em;
 }

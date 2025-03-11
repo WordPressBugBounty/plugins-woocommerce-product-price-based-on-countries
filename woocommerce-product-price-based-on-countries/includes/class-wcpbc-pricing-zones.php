@@ -318,22 +318,15 @@ class WCPBC_Pricing_Zones {
 	 * @return array
 	 */
 	public static function get_allowed_countries( $zone ) {
-		$allowed_countries = array();
-		$raw_countries     = array_keys( apply_filters( 'wc_price_based_country_allow_all_countries', false ) ? WC()->countries->get_countries() : WC()->countries->get_allowed_countries() );
-		$zone_countries    = array();
-
+		$not_allowed_countries = [];
+		$all_countries         = WC()->countries->get_countries();
 		foreach ( self::get_zones() as $_zone ) {
-			if ( $_zone->get_id() !== $zone->get_id() ) {
-				$zone_countries = array_merge( $zone_countries, $_zone->get_countries() );
+			foreach ( array_diff( $_zone->get_countries(), $zone->get_countries() ) as $country ) {
+				$not_allowed_countries[ $country ] = $all_countries[ $country ];
 			}
 		}
 
-		$raw_countries  = array_diff( $raw_countries, $zone_countries );
-		$not_in_allowed = array_diff( $zone->get_countries(), $raw_countries );
-		foreach ( array_merge( $raw_countries, $not_in_allowed ) as $country ) {
-			$allowed_countries[ $country ] = wc()->countries->countries[ $country ];
-		}
-		return $allowed_countries;
+		return array_diff_key( $all_countries, $not_allowed_countries );
 	}
 
 	/**

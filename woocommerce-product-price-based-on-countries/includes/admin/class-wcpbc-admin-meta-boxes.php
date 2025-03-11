@@ -23,10 +23,6 @@ class WCPBC_Admin_Meta_Boxes {
 		add_action( 'woocommerce_process_product_meta_simple', array( __CLASS__, 'process_product_meta' ) );
 		add_action( 'woocommerce_process_product_meta_external', array( __CLASS__, 'process_product_meta' ) );
 		add_action( 'woocommerce_save_product_variation', array( __CLASS__, 'process_product_meta' ), 10, 2 );
-		add_action( 'woocommerce_product_quick_edit_save', array( __CLASS__, 'product_quick_edit_save' ) );
-		add_action( 'woocommerce_product_bulk_edit_save', array( __CLASS__, 'product_quick_edit_save' ), 20 );
-		add_action( 'woocommerce_product_import_inserted_product_object', array( __CLASS__, 'import_inserted_product_object' ), 20, 2 );
-		add_action( 'woocommerce_bulk_edit_variations', array( __CLASS__, 'bulk_edit_variations' ), 20, 4 );
 		add_action( 'woocommerce_coupon_options', array( __CLASS__, 'coupon_options' ) );
 		add_action( 'woocommerce_coupon_options_save', array( __CLASS__, 'coupon_options_save' ) );
 	}
@@ -106,23 +102,29 @@ class WCPBC_Admin_Meta_Boxes {
 		$post_id = $variation->ID;
 		$field   = array(
 			'name'          => "_variable_price_method[$loop]",
+			'metakey'       => '_price_method',
 			'wrapper_class' => wcpbc_is_pro() ? '' : 'hide_if_variable-subscription hide_if_nyp-wcpbc',
 			'fields'        => array_merge(
 				array(
 					'_regular_price'         => array(
+						'metakey'       => '_regular_price',
 						'name'          => "_variable_regular_price[$loop]",
 						// Translators: currency symbol.
 						'label'         => __( 'Regular price (%s)', 'woocommerce-product-price-based-on-countries' ),
 						'wrapper_class' => 'form-row form-row-first _variable_regular_price_wcpbc_field',
+						'data_type'     => 'price',
 					),
 					'_sale_price'            => array(
+						'metakey'       => '_sale_price',
 						'name'          => "_variable_sale_price[$loop]",
 						// Translators: currency symbol.
 						'label'         => __( 'Sale price (%s)', 'woocommerce-product-price-based-on-countries' ),
 						'class'         => 'wcpbc_sale_price',
 						'wrapper_class' => 'form-row form-row-last _variable_sale_price_wcpbc_field',
+						'data_type'     => 'price',
 					),
 					'_sale_price_dates'      => array(
+						'metakey'       => '_sale_price_dates',
 						'name'          => "_variable_sale_price_dates[$loop]",
 						'type'          => 'radio',
 						'class'         => 'wcpbc_sale_price_dates',
@@ -135,6 +137,7 @@ class WCPBC_Admin_Meta_Boxes {
 						),
 					),
 					'_sale_price_dates_from' => array(
+						'metakey'       => '_sale_price_dates_from',
 						'name'          => "_variable_sale_price_dates_from[$loop]",
 						'label'         => __( 'Sale start date', 'woocommerce-product-price-based-on-countries' ),
 						'data_type'     => 'date',
@@ -143,6 +146,7 @@ class WCPBC_Admin_Meta_Boxes {
 						'placeholder'   => _x( 'From&hellip;', 'placeholder', 'woocommerce-product-price-based-on-countries' ) . ' YYYY-MM-DD',
 					),
 					'_sale_price_dates_to'   => array(
+						'metakey'       => '_sale_price_dates_to',
 						'name'          => "_variable_sale_price_dates_to[$loop]",
 						'label'         => __( 'Sale end date', 'woocommerce-product-price-based-on-countries' ),
 						'data_type'     => 'date',
@@ -157,14 +161,15 @@ class WCPBC_Admin_Meta_Boxes {
 
 		// Output the input control.
 		foreach ( WCPBC_Pricing_Zones::get_zones() as $zone ) {
-
-			$field['value'] = $zone->get_postmeta( $post_id, '_price_method' );
-
 			foreach ( $field['fields'] as $key => $field_data ) {
+				if ( ! empty( $field_data['metakey'] ) ) {
+					continue;
+				}
+
 				$field['fields'][ $key ]['value'] = $zone->get_postmeta( $post_id, $key );
 			}
 
-			wcpbc_pricing_input( $field, $zone );
+			wcpbc_pricing_input( $field, $zone, $post_id );
 		}
 	}
 
@@ -189,66 +194,13 @@ class WCPBC_Admin_Meta_Boxes {
 	}
 
 	/**
-	 * Quick and Bulk product edit.
-	 *
-	 * @param WC_Product $product Product instance.
-	 */
-	public static function product_quick_edit_save( $product ) {
-		foreach ( WCPBC_Pricing_Zones::get_zones() as $zone ) {
-			if ( $zone->is_exchange_rate_price( $product->get_id() ) ) {
-
-				wcpbc_update_product_pricing( $product->get_id(), $zone );
-			}
-		}
-	}
-
-	/**
-	 * Update exchange rate prices after process the CSV import.
-	 *
-	 * @param WC_Product $product Product being imported or updated.
-	 * @param array      $data CSV data read for the product.
-	 */
-	public static function import_inserted_product_object( $product, $data ) {
-		if ( in_array( $product->get_type(), WCPBC_Product_Sync::get_parent_product_types(), true ) ) {
-			return;
-		}
-
-		$default_price_keys = array_intersect( array( 'regular_price', 'sale_price', 'date_on_sale_from', 'date_on_sale_to' ), array_keys( $data ) );
-		if ( ! empty( $default_price_keys ) ) {
-			self::product_quick_edit_save( $product );
-		}
-	}
-
-	/**
-	 * Bulk edit variations via AJAX.
-	 *
-	 * @param string $bulk_action Variation bulk action.
-	 * @param array  $data Sanitized post data.
-	 * @param int    $product_id Variable product ID.
-	 * @param array  $variations Array of varations ID.
-	 */
-	public static function bulk_edit_variations( $bulk_action, $data, $product_id, $variations ) {
-		$actions = array( 'variable_regular_price', 'variable_sale_price', 'variable_sale_schedule', 'variable_regular_price_increase', 'variable_regular_price_decrease', 'variable_sale_price_increase', 'variable_sale_price_decrease' );
-
-		if ( ! in_array( $bulk_action, $actions, true ) ) {
-			return;
-		}
-
-		foreach ( WCPBC_Pricing_Zones::get_zones() as $zone ) {
-			foreach ( $variations as $variation_id ) {
-				if ( $zone->is_exchange_rate_price( $variation_id ) ) {
-					wcpbc_update_product_pricing( $variation_id, $zone );
-				}
-			}
-		}
-	}
-
-	/**
 	 * Display coupon amount options.
 	 *
 	 * @since 1.6
 	 */
-	public static function coupon_options() {
+	public static function coupon_options( $post_id ) {
+		$value = get_post_meta( $post_id, 'zone_pricing_type', true );
+
 		woocommerce_wp_checkbox(
 			array(
 				'id'          => 'zone_pricing_type',
@@ -256,6 +208,7 @@ class WCPBC_Admin_Meta_Boxes {
 				'label'       => __( 'Calculate amount by exchange rate', 'woocommerce-product-price-based-on-countries' ),
 				// Translators: HTML tags.
 				'description' => sprintf( __( 'Check this box if, for the pricing zones, the coupon amount must be calculated using the exchange rate. %1$s(%2$sUpgrade to Price Based on Country Pro to set copupon amount by zone%3$s)', 'woocommerce-product-price-based-on-countries' ), '<br />', '<a target="_blank" el="noopener noreferrer" href="' . esc_url( wcpbc_home_url( 'coupon' ) ) . '">', '</a>' ),
+				'value'       => wcpbc_is_exchange_rate( $value ) ? 'exchange_rate' : '',
 			)
 		);
 	}

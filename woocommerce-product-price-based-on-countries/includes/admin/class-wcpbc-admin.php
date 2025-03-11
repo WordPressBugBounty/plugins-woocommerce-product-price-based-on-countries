@@ -21,6 +21,7 @@ class WCPBC_Admin {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'admin_assets' ), 10 );
 		add_action( 'woocommerce_system_status_report', array( __CLASS__, 'system_status_report' ) );
 		add_action( 'wp_ajax_wc_price_based_country_remote_addr_check', array( __CLASS__, 'remote_addr_check' ) );
+		add_action( 'load-woocommerce_page_wc-reports', array( 'WCPBC_Admin_Legacy_Reports', 'init' ) );
 		add_filter( 'woocommerce_get_settings_pages', array( __CLASS__, 'settings_price_based_country' ) );
 		add_filter( 'woocommerce_paypal_supported_currencies', array( __CLASS__, 'paypal_supported_currencies' ) );
 		add_filter( 'woocommerce_gateway_payfast_available_currencies', array( __CLASS__, 'paypal_supported_currencies' ) );
@@ -170,11 +171,11 @@ class WCPBC_Admin {
 		if ( ! current_user_can( 'edit_shop_orders' ) ) {
 			wp_die( -1 );
 		}
-		$external_ip = isset( $_POST['external_ip'] ) ? wcpbc_sanitize_server_var( $_POST['external_ip'] ) : false;
+		$external_ip = isset( $_POST['external_ip'] ) ? sanitize_text_field( wp_unslash( $_POST['external_ip'] ) ) : false;
 		if ( isset( $_POST['remote_addr'] ) ) {
-			$remote_addr = wcpbc_sanitize_server_var( $_POST['remote_addr'] );
+			$remote_addr = sanitize_text_field( wp_unslash( $_POST['remote_addr'] ) );
 		} else {
-			$remote_addr = isset( $_SERVER['REMOTE_ADDR'] ) ? wcpbc_sanitize_server_var( $_SERVER['REMOTE_ADDR'] ) : false;
+			$remote_addr = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : false;
 		}
 
 		if ( $external_ip && $remote_addr ) {

@@ -398,6 +398,10 @@ if ( ! class_exists( 'WCPBC_Admin_Notices', false ) ) :
 		 * GeoIP database update result
 		 */
 		public static function display_updated_geoip_notice() {
+			if ( version_compare( WC_VERSION, '3.9.0', '>' ) ) {
+				return;
+			}
+
 			$updated_geoip = get_transient( 'wcpbc_updated_geoip' );
 			if ( false !== $updated_geoip ) {
 				delete_transient( 'wcpbc_updated_geoip' );

@@ -21,7 +21,7 @@ class WCPBC_Pricing_Zone {
 	 *
 	 * @var array
 	 */
-	protected $data = array();
+	protected $data = [];
 
 	/**
 	 * Constructor for zones.
@@ -33,6 +33,7 @@ class WCPBC_Pricing_Zone {
 		if ( is_array( $data ) && ! empty( $data ) ) {
 			$this->set_props( $data );
 		}
+		add_action( 'updated_postmeta', [ $this, 'maybe_cache_flush' ], 10, 3 );
 	}
 
 	/**
@@ -119,6 +120,62 @@ class WCPBC_Pricing_Zone {
 	protected function set_prop( $prop, $value ) {
 		if ( isset( $this->data[ $prop ] ) ) {
 			$this->data[ $prop ] = $value;
+			$this->cache_flush();
+		}
+	}
+
+	/**
+	 * Set a cache value for the given post ID.
+	 *
+	 * @param int    $post_id Post ID.
+	 * @param string $key    The cache key to use for retrieval later.
+	 * @param mixed  $data   The contents to store in the cache.
+	 */
+	protected function cache_set( $post_id, $key, $data ) {
+		if ( ! isset( $this->data['_cache'] ) ) {
+			$this->data['_cache'] = [];
+		}
+		if ( ! isset( $this->data['_cache'][ $post_id ] ) ) {
+			$this->data['_cache'][ $post_id ] = [];
+		}
+
+		$this->data['_cache'][ $post_id ][ $key ] = $data;
+	}
+
+	/**
+	 * Get a cached value for the given post ID.
+	 *
+	 * @param int    $post_id Post ID.
+	 * @param string $key    The key under which the cache contents are stored.
+	 * @return mixed|false The cache contents on success, false on failure to retrieve contents.
+	 */
+	protected function cache_get( $post_id, $key ) {
+		return isset( $this->data['_cache'][ $post_id ][ $key ] ) ? $this->data['_cache'][ $post_id ][ $key ] : false;
+	}
+
+	/**
+	 * Remove all cache items for the given post ID. All items if post ID is empty.
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	protected function cache_flush( $post_id = false ) {
+		if ( ! $post_id ) {
+			unset( $this->data['_cache'] );
+		} else {
+			unset( $this->data['_cache'][ $post_id ] );
+		}
+	}
+
+	/**
+	 * Flush cache on update post meta.
+	 *
+	 * @param int    $meta_id    ID of updated metadata entry.
+	 * @param int    $object_id  Post ID.
+	 * @param string $meta_key   Metadata key.
+	 */
+	public function maybe_cache_flush( $meta_id, $object_id, $meta_key ) {
+		if ( isset( $this->data['_cache'][ $object_id ] ) ) {
+			$this->cache_flush( $object_id );
 		}
 	}
 
@@ -321,14 +378,31 @@ class WCPBC_Pricing_Zone {
 	 *
 	 * @param int    $post_id Post ID.
 	 * @param string $meta_key Metadata key.
-	 * @param bool   $deprecated Optional. If true, returns only the first value for the specified meta key.
 	 * @return mixed
 	 */
-	public function get_postmeta( $post_id, $meta_key, $deprecated = true ) {
-		if ( ! $deprecated ) {
-			wc_deprecated_argument( 'single', '2.0.5', '' );
+	public function get_postmeta( $post_id, $meta_key = false ) {
+		if ( $meta_key ) {
+			$value = get_post_meta( $post_id, $this->get_postmetakey( $meta_key ), true );
+		} else {
+			// Reads all metadata.
+			$value            = [];
+			$meta_prefix      = $this->get_postmetakey();
+			$post_meta_values = get_post_meta( $post_id );
+
+			if ( $post_meta_values && is_array( $post_meta_values ) ) {
+
+				foreach ( $post_meta_values as $post_meta_key => $post_meta_value ) {
+					if ( ! isset( $post_meta_value[0] ) || substr( $post_meta_key, 0, strlen( $meta_prefix ) ) !== $meta_prefix ) {
+						continue;
+					}
+
+					$key           = substr( $post_meta_key, strlen( $meta_prefix ) );
+					$value[ $key ] = maybe_unserialize( $post_meta_value[0] );
+				}
+			}
 		}
-		return get_post_meta( $post_id, $this->get_postmetakey( $meta_key ), true );
+
+		return $value;
 	}
 
 	/**
@@ -340,11 +414,12 @@ class WCPBC_Pricing_Zone {
 	 * @return int|bool
 	 */
 	public function add_postmeta( $post_id, $meta_key, $meta_value ) {
-		return add_post_meta( $post_id, $this->get_postmetakey( $meta_key ), $meta_value, false );
+		wc_doing_it_wrong( __METHOD__, __( 'Adding metadata is not supported.', 'woocommerce-product-price-based-on-countries' ), '4.0' );
+		return false;
 	}
 
 	/**
-	 * Update meta value based on zone ID
+	 * Update meta value.
 	 *
 	 * @param int    $post_id Post ID.
 	 * @param string $meta_key Metadata key.
@@ -353,10 +428,24 @@ class WCPBC_Pricing_Zone {
 	 * @return int|bool
 	 */
 	public function set_postmeta( $post_id, $meta_key, $meta_value, $force = false ) {
-		if ( $force && wp_using_ext_object_cache() ) {
+
+		if ( is_float( $meta_value ) ) {
+			$meta_value = wc_float_to_string( $meta_value );
+		}
+
+		$meta_id = update_post_meta( $post_id, $this->get_postmetakey( $meta_key ), $meta_value );
+
+		$cache_delete = $force && false === $meta_id && wp_using_ext_object_cache();
+
+		if ( $cache_delete ) {
 			wp_cache_delete( $post_id, 'post_meta' );
 		}
-		return update_post_meta( $post_id, $this->get_postmetakey( $meta_key ), $meta_value );
+
+		if ( $meta_id || $cache_delete ) {
+			$this->updated_meta( $post_id, $meta_key );
+		}
+
+		return $meta_id;
 	}
 
 	/**
@@ -367,50 +456,51 @@ class WCPBC_Pricing_Zone {
 	 * @return bool True on success, false on failure.
 	 */
 	public function delete_postmeta( $post_id, $meta_key ) {
-		return delete_post_meta( $post_id, $this->get_postmetakey( $meta_key ) );
+		$deleted = delete_post_meta( $post_id, $this->get_postmetakey( $meta_key ) );
+		if ( $deleted ) {
+			$this->updated_meta( $post_id, $meta_key );
+		}
+		return $deleted;
+	}
+
+	/**
+	 * Run actions after updated a meta key.
+	 *
+	 * @param int    $post_id Post ID.
+	 * @param string $meta_key Metadata key.
+	 */
+	protected function updated_meta( $post_id, $meta_key ) {
+		WCPBC_Product_Meta_Data::maybe_enqueue_multilang_sync( $post_id, $this->get_id() );
+		if ( '_price' === $meta_key ) {
+			WCPBC_Product_Meta_Data::maybe_enqueue_children_sync( $post_id, $this->get_id() );
+			WCPBC_Product_Meta_Data::delete_product_transients( $post_id );
+		}
 	}
 
 	/**
 	 * Product price by exchange rate?
 	 *
-	 * @param WC_Data $data Object instance.
+	 * @param WC_Data $data Object instance or Post ID.
 	 * @return bool
 	 */
 	public function is_exchange_rate_price( $data ) {
-		$post_id      = false;
-		$product_type = false;
+		$post_id = is_callable( [ $data, 'get_id' ] ) ? $data->get_id() : absint( $data );
+		$cache   = $this->cache_get( $post_id, __FUNCTION__ );
 
-		if ( is_numeric( $data ) ) {
-			$post_id = $data;
-		} elseif ( is_object( $data ) && is_callable( array( $data, 'get_id' ) ) ) {
-			$post_id      = $data->get_id();
-			$product_type = is_callable( array( $data, 'get_type' ) ) && is_a( 'WC_Product', $data ) ? $data->get_type() : false;
+		if ( false !== $cache ) {
+			return 'true' === $cache;
 		}
-		$price_method = $this->get_postmeta( $post_id, '_price_method' );
 
-		return wcpbc_is_exchange_rate( $price_method ) && ! in_array( $product_type, WCPBC_Product_Sync::get_parent_product_types(), true );
-	}
+		$price_method     = $this->get_postmeta( $post_id, '_price_method' );
+		$is_exchange_rate = wcpbc_is_exchange_rate( $price_method ) && ! in_array(
+			( is_callable( [ $data, 'get_type' ] ) ? $data->get_type() : WC_Product_Factory::get_product_type( $post_id ) ),
+			wcpbc_wrapper_product_types(),
+			true
+		);
 
-	/**
-	 * Set product price by exchange
-	 *
-	 * @since 1.7.9
-	 * @param int  $post_id Post ID.
-	 * @param bool $by_exchange_rate TRUE: exchange rate price. FALSE: manual price.
-	 */
-	public function set_exchange_rate_price( $post_id, $by_exchange_rate = true ) {
-		$value = $by_exchange_rate ? 'exchange_rate' : 'manual';
-		$this->set_postmeta( $post_id, '_price_method', $value );
-	}
+		$this->cache_set( $post_id, __FUNCTION__, ( $is_exchange_rate ? 'true' : 'false' ) );
 
-	/**
-	 * Set product price manual
-	 *
-	 * @since 1.7.9
-	 * @param int $post_id Post ID.
-	 */
-	public function set_manual_price( $post_id ) {
-		$this->set_exchange_rate_price( $post_id, false );
+		return $is_exchange_rate;
 	}
 
 	/**
@@ -446,8 +536,8 @@ class WCPBC_Pricing_Zone {
 			if ( $round ) {
 				$value = $this->round( $value, '', $context, $data );
 			} else {
-				// Round to 8 decimals.
-				$value = round( $value, 8 );
+				// Round to round precision.
+				$value = round( $value, wcpbc_get_rounding_precision() );
 			}
 		}
 
@@ -488,6 +578,20 @@ class WCPBC_Pricing_Zone {
 	}
 
 	/**
+	 * Maybe update an exchange rate price.
+	 *
+	 * @since 4.0.0
+	 * @param int    $post_id Post ID.
+	 * @param string $meta_key Metadata key.
+	 * @param float  $compare Price to compare.
+	 */
+	protected function maybe_update_price( $post_id, $meta_key, $compare ) {
+		if ( '_price' === $meta_key && floatval( $compare ) !== floatval( $this->get_postmeta( $post_id, $meta_key ) ) ) {
+			$this->set_postmeta( $post_id, $meta_key, strval( $compare ), true );
+		}
+	}
+
+	/**
 	 * Get a price metada from a post ID.
 	 *
 	 * @param int    $post_id Post ID.
@@ -496,20 +600,27 @@ class WCPBC_Pricing_Zone {
 	 * @return mixed
 	 */
 	public function get_post_price( $post_id, $meta_key, $context = 'product' ) {
-		$zone_price = $this->get_postmeta( $post_id, $meta_key );
 
 		if ( $this->is_exchange_rate_price( $post_id ) ) {
 
-			$_price = strval( $this->get_exchange_rate_price_by_post( $post_id, $meta_key ) );
-
-			if ( $_price !== $zone_price ) {
-				$zone_price = $_price;
-				$this->set_postmeta( $post_id, $meta_key, $_price, true );
+			$cache = $this->cache_get( $post_id, $meta_key );
+			if ( false !== $cache ) {
+				return $cache;
 			}
-			$zone_price = $this->round( $zone_price, '', $context, $post_id );
+
+			$price = $this->get_exchange_rate_price_by_post( $post_id, $meta_key );
+
+			$this->maybe_update_price( $post_id, $meta_key, $price );
+
+			$price = $this->round( $price, '', $context );
+
+			$this->cache_set( $post_id, $meta_key, $price );
+
+		} else {
+			$price = $this->get_postmeta( $post_id, $meta_key );
 		}
 
-		return $zone_price;
+		return $price;
 	}
 
 	/**
@@ -528,18 +639,22 @@ class WCPBC_Pricing_Zone {
 			return $value;
 		}
 
-		$price = $this->get_postmeta( $data->get_id(), $meta_key );
-
 		if ( $this->is_exchange_rate_price( $data ) ) {
 
-			$_price = $this->get_exchange_rate_price( $value, false );
-
-			if ( floatval( $price ) !== floatval( $_price ) ) {
-				$price = $_price;
-				$this->set_postmeta( $data->get_id(), $meta_key, strval( $price ), true );
+			$cache = $this->cache_get( $data->get_id(), $meta_key );
+			if ( false !== $cache ) {
+				return $cache;
 			}
 
+			$price = $this->get_exchange_rate_price( $value, false );
+
+			$this->maybe_update_price( $data->get_id(), $meta_key, $price );
+
 			$price = $this->round( $price, '', $context, $data );
+
+			$this->cache_set( $data->get_id(), $meta_key, $price );
+		} else {
+			$price = $this->get_postmeta( $data->get_id(), $meta_key );
 		}
 
 		return $price;

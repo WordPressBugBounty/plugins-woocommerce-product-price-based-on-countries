@@ -10,12 +10,18 @@
 	position: absolute;
 	font-size: 12px;
 	line-height: 1.4em;
-	top: 200px;
-	left: 600px;
+}
+
+@media (max-width: 782px) {
+	.wcpbc-tooltip-confirm {
+		padding: 10px 16px;
+		position: absolute;
+		font-size: 14px;
+	}
 }
 
 .wcpbc-tooltip-confirm::before {
-	top: 100%;
+	top: calc(100% - 1px);
 	left: 50%;
 	margin-left: -6px;
 	border-top-color: #2F353E;

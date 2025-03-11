@@ -136,9 +136,9 @@ class WCPBC_Output_Settings {
 			$attr['name']    .= '[]';
 		}
 
-		$disabled = '';
+		$disabled = empty( $field['disabled_options'] ) ? [] : $field['disabled_options'];
 		if ( ! empty( $attr['disabled'] ) ) {
-			$disabled = ' disabled';
+			$disabled = array_keys( $field['options'] );
 			unset( $attr['disabled'] );
 		}
 
@@ -174,6 +174,10 @@ class WCPBC_Output_Settings {
 	 * @param array $field Field data.
 	 */
 	protected function output_country_select_html( $field ) {
+
+		if ( empty( $field['options'] ) ) {
+			$field['options'] = WC()->countries->get_countries();
+		}
 
 		$this->output_enhanced_select_html( $field );
 
@@ -232,11 +236,11 @@ class WCPBC_Output_Settings {
 	/**
 	 * Output select options.
 	 *
-	 * @param array  $options Options in array.
-	 * @param array  $values Values selected.
-	 * @param string $disabled Option disabled attr.
+	 * @param array $options Options in array.
+	 * @param array $values Values selected.
+	 * @param array $disabled Disabled options disabled array.
 	 */
-	protected function output_options( $options, $values, $disabled = '' ) {
+	protected function output_options( $options, $values, $disabled = [] ) {
 		if ( ! is_array( $options ) ) {
 			return;
 		}
@@ -249,7 +253,13 @@ class WCPBC_Output_Settings {
 				self::output_options( $option_value, $values );
 				echo '</optgroup>';
 			} else {
-				echo '<option value="' . esc_attr( $key ) . '" ' . selected( in_array( $key, $values ), true, false ) . esc_attr( $disabled ) . '>' . esc_html( $option_value ) . '</option>'; // phpcs:ignore WordPress.PHP.StrictInArray
+				printf(
+					'<option value="%s" %s %s>%s</option>',
+					esc_attr( $key ),
+					selected( in_array( $key, $values ), true, false ), // phpcs:ignore WordPress.PHP.StrictInArray
+					disabled( in_array( $key, $disabled ), true, false ), // phpcs:ignore WordPress.PHP.StrictInArray
+					esc_html( $option_value )
+				);
 			}
 		}
 	}

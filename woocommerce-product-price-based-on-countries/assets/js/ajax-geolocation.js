@@ -156,8 +156,8 @@
 		refresh_currency_settings: function( currency_params ) {
 
 			if ( typeof woocommerce_price_slider_params !== 'undefined' && typeof accounting !== 'undefined' ) {
-				var min_price = $( '.price_slider_amount #min_price' ).data( 'min' ),
-					max_price = $( '.price_slider_amount #max_price' ).data( 'max' );
+				var min_price = $( '.price_slider_amount #min_price' ).val(),
+					max_price = $( '.price_slider_amount #max_price' ).val();
 
 				$( '.price_slider_amount span.from' ).html( accounting.formatMoney( min_price, {
 					symbol:    currency_params.symbol,

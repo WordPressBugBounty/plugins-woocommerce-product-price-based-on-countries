@@ -66,7 +66,7 @@ if ( ! class_exists( 'WCPBC_WC_Payments' ) ) :
 				update_option( '_wcpay_feature_customer_multi_currency', '0' );
 
 				if ( $wcpay_currencies_count > 1 ) {
-					wcpbc_add_admin_notice( 'wc_payments_multi_currency_disabled' );
+					WCPBC_Admin_Notices::add_notice( 'wc_payments_multi_currency_disabled' );
 				}
 			}
 		}

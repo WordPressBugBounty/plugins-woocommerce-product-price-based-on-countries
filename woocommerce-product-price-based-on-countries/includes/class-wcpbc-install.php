@@ -158,17 +158,6 @@ class WCPBC_Install {
 	public static function plugin_activate() {
 		self::maybe_set_activation_redirect();
 		self::deactivate_wc_payments_multicurrency();
-		self::maybe_sync_all_product_prices();
-	}
-
-	/**
-	 * Plugin deactivation.
-	 */
-	public static function plugin_deactivate() {
-		if ( is_callable( array( 'WC_Cache_Helper', 'get_transient_version' ) ) ) {
-			$product_version = WC_Cache_Helper::get_transient_version( 'product' );
-			set_transient( 'wcpbc_unistall', $product_version, DAY_IN_SECONDS * 30 );
-		}
 	}
 
 	/**
@@ -185,21 +174,6 @@ class WCPBC_Install {
 			// Set the redirect cookie.
 			setcookie( '_wcpbc_activation_redirect', '1' );
 		}
-	}
-
-	/**
-	 * Sync all product if its required.
-	 */
-	private static function maybe_sync_all_product_prices() {
-		$unistall_version = get_transient( 'wcpbc_unistall' );
-		if ( $unistall_version && is_callable( array( 'WC_Cache_Helper', 'get_transient_version' ) ) ) {
-			$product_version = WC_Cache_Helper::get_transient_version( 'product' );
-			if ( $product_version && $product_version !== $unistall_version ) {
-				// Sync all because products have changed.
-				WCPBC_Product_Sync::sync_all();
-			}
-		}
-		delete_transient( 'wcpbc_unistall' );
 	}
 
 	/**
@@ -285,6 +259,9 @@ class WCPBC_Install {
 
 		// Enable shipping currency conversion.
 		update_option( 'wc_price_based_country_shipping_exchange_rate', 'yes' );
+
+		// Init pricing zones.
+		update_option( 'wc_price_based_country_regions', [] );
 
 		// Set installed at.
 		WCPBC_Helper_Options::update( 'install_timestamp', current_time( 'timestamp' ) );

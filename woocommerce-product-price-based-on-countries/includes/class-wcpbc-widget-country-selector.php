@@ -17,60 +17,38 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WCPBC_Widget_Country_Selector extends WC_Widget {
 
 	/**
-	 * Other countries text.
-	 *
-	 * @var string
-	 */
-	private static $_other_countries_text = ''; // phpcs:ignore
-
-	/**
 	 * Constructor
 	 */
 	public function __construct() {
-		$this->widget_description = __( 'A country switcher for your store.', 'woocommerce-product-price-based-on-countries' );
+		$this->widget_description = __( 'Display a country switcher using a dropdown.', 'woocommerce-product-price-based-on-countries' );
 		$this->widget_id          = 'wcpbc_country_selector';
-		$this->widget_name        = __( 'WooCommerce Country Switcher', 'woocommerce-product-price-based-on-countries' );
-		$this->settings           = array(
-			'title'                => array(
+		$this->widget_name        = __( 'Country Switcher', 'woocommerce-product-price-based-on-countries' );
+		$this->settings           = [
+			'title'                  => [
 				'type'  => 'text',
 				'std'   => __( 'Country', 'woocommerce-product-price-based-on-countries' ),
 				'label' => __( 'Title', 'woocommerce-product-price-based-on-countries' ),
-			),
+			],
 
-			'flag'                 => array(
+			'flag'                   => [
 				'type'  => 'checkbox',
 				'std'   => 0,
 				'label' => __( 'Display flags in supported devices', 'woocommerce-product-price-based-on-countries' ),
-			),
+			],
 
-			'other_countries_text' => array(
+			'other_countries_text'   => [
 				'type'  => 'text',
 				'std'   => __( 'Other countries', 'woocommerce-product-price-based-on-countries' ),
 				'label' => __( 'Other countries text', 'woocommerce-product-price-based-on-countries' ),
-			),
-		);
-
-		if ( wcpbc_is_pro() ) {
-			// Allow users to remove other countries.
-			$this->settings['remove_other_countries'] = array(
+			],
+			'remove_other_countries' => [
 				'type'  => 'checkbox',
 				'std'   => 0,
 				'label' => __( 'Remove "Other countries" from switcher.', 'woocommerce-product-price-based-on-countries' ),
-			);
-		} else {
-			// "Upgrade to Pro"
-			$this->settings['remove_other_countries_pro'] = array(
-				'type'  => 'wcpbc_remove_other_countries_pro',
-				'std'   => '',
-				'label' => __( 'Remove "Other countries" from switcher.', 'woocommerce-product-price-based-on-countries' ),
-			);
-		}
-
-		if ( ! has_action( 'woocommerce_widget_field_wcpbc_remove_other_countries_pro', array( __CLASS__, 'remove_other_countries_field' ) ) ) {
-			add_action( 'woocommerce_widget_field_wcpbc_remove_other_countries_pro', array( __CLASS__, 'remove_other_countries_field' ), 10, 4 );
-		}
-
+			],
+		];
 		parent::__construct();
+		add_action( 'update_option_wc_price_based_country_regions', [ $this, 'flush_widget_cache' ], 20 );
 	}
 
 	/**
@@ -97,6 +75,76 @@ class WCPBC_Widget_Country_Selector extends WC_Widget {
 	}
 
 	/**
+	 * Flush the cache.
+	 */
+	public function flush_widget_cache() {
+		WC_Cache_Helper::invalidate_cache_group( __CLASS__ );
+	}
+
+	/**
+	 * Parse widget args.
+	 *
+	 * @param array $instance Widget instance values.
+	 */
+	protected function parse_widget_args( $instance ) {
+		$selected_country = wcpbc_get_woocommerce_country();
+		$widget_data      = wp_json_encode(
+			array(
+				'instance' => $instance,
+				'id'       => $this->widget_id,
+			)
+		);
+
+		$cache_key  = WC_Cache_Helper::get_cache_prefix( __CLASS__ ) . __FUNCTION__ . $widget_data . $selected_country . wcpbc()->version;
+		$cache_data = wp_cache_get( $cache_key, 'widget' );
+		if ( $cache_data && is_array( $cache_data ) ) {
+			return $cache_data;
+		}
+
+		$rest_all_world_name    = empty( $instance['other_countries_text'] ) ? apply_filters( 'wcpbc_other_countries_text', __( 'Other countries', 'woocommerce-product-price-based-on-countries' ) ) : $instance['other_countries_text'];
+		$display_rest_all_world = empty( $instance['remove_other_countries'] ) || ! wc_string_to_bool( $instance['remove_other_countries'] );
+		$classname              = ! empty( $instance['className'] ) ? " {$instance['className']}" : '';
+		$data                   = (object) self::get_data();
+		$rest_all_world_key     = $display_rest_all_world ? $data->rest_all_world_key : false;
+		$base_country           = $data->base_country;
+
+		if ( $rest_all_world_key && $display_rest_all_world ) {
+
+			$data->data[] = [
+				'code'       => $rest_all_world_key,
+				'name'       => $rest_all_world_name,
+				'emoji_flag' => false,
+			];
+		}
+
+		$countries = wp_list_pluck( $data->data, 'name', 'code' );
+
+		/**
+		 * Allow developers filter the list of countries
+		 */
+		do_action_ref_array( 'wc_price_based_country_widget_before_selected', array( &$rest_all_world_key, &$countries, $base_country, $instance ) );
+
+		if ( is_string( $selected_country ) && ! isset( $countries[ $selected_country ] ) ) {
+			$selected_country = $rest_all_world_key ? $rest_all_world_key : $base_country;
+		}
+
+		$cache_data = [
+			'widget_data'            => $widget_data,
+			'classname'              => $classname,
+			'show_flags'             => empty( $instance['flag'] ) ? 0 : 1,
+			'other_country_id'       => $rest_all_world_key,
+			'remove_other_countries' => ! $display_rest_all_world,
+			'countries'              => $countries,
+			'selected_country'       => $selected_country,
+			'label'                  => empty( $instance['title'] ) ? __( 'Country', 'woocommerce-product-price-based-on-countries' ) : $instance['title'],
+		];
+
+		wp_cache_set( $cache_key, $cache_data, 'widget' );
+
+		return $cache_data;
+	}
+
+	/**
 	 * Widget function.
 	 *
 	 * @see WP_Widget
@@ -106,73 +154,21 @@ class WCPBC_Widget_Country_Selector extends WC_Widget {
 	 * @return void
 	 */
 	public function widget( $args, $instance ) {
-		require_once dirname( __FILE__ ) . '/class-wcpbc-country-flags.php';
 
-		$allowed_countries = apply_filters( 'wc_price_based_country_allow_all_countries', false ) ? WC()->countries->get_countries() : WC()->countries->get_allowed_countries();
-		$all_countries     = WC()->countries->get_countries();
-		$base_country      = wc_get_base_location();
-		$base_country      = isset( $base_country['country'] ) ? $base_country['country'] : '';
-		$countries         = array();
-
-		if ( array_key_exists( $base_country, $allowed_countries ) && array_key_exists( $base_country, $all_countries ) ) {
-			$countries[ $base_country ] = $all_countries[ $base_country ];
-		}
-
-		foreach ( WCPBC_Pricing_Zones::get_zones() as $zone ) {
-			if ( ! $zone->get_enabled() ) {
-				continue;
-			}
-			foreach ( $zone->get_countries() as $country ) {
-				if ( ! array_key_exists( $country, $countries ) && isset( $all_countries[ $country ] ) ) {
-					$countries[ $country ] = $all_countries[ $country ];
-				}
-			}
-		}
-
-		wcpbc_maybe_asort_locale( $countries );
-
-		// Add other countries.
-		$other_country               = key( array_diff_key( $all_countries, $countries ) );
-		$countries[ $other_country ] = empty( $instance['other_countries_text'] ) ? apply_filters( 'wcpbc_other_countries_text', __( 'Other countries', 'woocommerce-product-price-based-on-countries' ) ) : $instance['other_countries_text'];
-		$remove_other_countries      = wcpbc_is_pro() && ! empty( $instance['remove_other_countries'] ) && 'false' !== $instance['remove_other_countries'];
-
-		if ( $remove_other_countries ) {
-			unset( $countries[ $other_country ] );
-			$other_country = $base_country;
-		}
-
-		/**
-		 * Allow developers filter the list of countries
-		 */
-		do_action_ref_array( 'wc_price_based_country_widget_before_selected', array( &$other_country, &$countries, $base_country, $instance ) );
-
-		// Set selected country and display.
-		$selected_country = wcpbc_get_woocommerce_country();
-
-		if ( is_string( $selected_country ) && ! array_key_exists( $selected_country, $countries ) ) {
-			$selected_country = $other_country;
-		}
-
-		$widget_data = wp_json_encode(
-			array(
-				'instance' => $instance,
-				'id'       => $this->widget_id,
-			)
-		);
+		$params = $this->parse_widget_args( $instance );
 
 		$this->widget_start( $args, $instance );
 
-		echo '<div class="wc-price-based-country wc-price-based-country-refresh-area" data-area="widget" data-id="' . esc_attr( md5( $widget_data ) ) . '" data-options="' . esc_attr( $widget_data ) . '">';
+		printf(
+			'<div class="wc-price-based-country wc-price-based-country-refresh-area%1$s" data-area="widget" data-id="%2$s" data-options="%3$s">',
+			esc_attr( $params['classname'] ),
+			esc_attr( md5( $params['widget_data'] ) ),
+			esc_attr( $params['widget_data'] )
+		);
+
 		wc_get_template(
 			'country-selector.php',
-			array(
-				'show_flags'             => empty( $instance['flag'] ) ? 0 : 1,
-				'other_country_id'       => $other_country,
-				'remove_other_countries' => $remove_other_countries,
-				'countries'              => $countries,
-				'selected_country'       => $selected_country,
-				'label'                  => empty( $instance['title'] ) ? __( 'Country', 'woocommerce-product-price-based-on-countries' ) : $instance['title'],
-			),
+			$params,
 			'woocommerce-product-price-based-on-countries/',
 			wcpbc()->plugin_path() . '/templates/'
 		);
@@ -194,8 +190,56 @@ class WCPBC_Widget_Country_Selector extends WC_Widget {
 		?>
 		<form method="post" id="wcpbc-widget-country-switcher-form" class="wcpbc-widget-country-switcher" style="display:none;">
 			<input type="hidden" id="wcpbc-widget-country-switcher-input" name="wcpbc-manual-country" />
+			<input type="hidden" name="redirect" value="1" />
 		</form>
 		<?php
+	}
+
+	/**
+	 * Returns the countries for the country switcher.
+	 *
+	 * @return array
+	 */
+	public static function get_data() {
+
+		$data          = [];
+		$raw_countries = WC()->countries->get_countries();
+		$base_country  = wc_get_base_location()['country'];
+		$all_countries = [];
+
+		foreach ( WCPBC_Pricing_Zones::get_zones() as $zone ) {
+			if ( ! $zone->get_enabled() ) {
+				continue;
+			}
+			$all_countries = array_merge( $all_countries, $zone->get_countries() );
+		}
+
+		$rest_all_world     = array_diff( array_keys( $raw_countries ), $all_countries );
+		$rest_all_world_key = isset( $rest_all_world[0] ) ? $rest_all_world[0] : false;
+
+		if ( ! $rest_all_world_key && ! in_array( $base_country, $all_countries, true ) ) {
+			$rest_all_world_key = $base_country;
+		}
+
+		if ( $rest_all_world_key !== $base_country && ! in_array( $base_country, $all_countries, true ) ) {
+			$all_countries[] = $base_country;
+		}
+
+		foreach ( array_unique( $all_countries ) as $country_code ) {
+			$data[] = [
+				'code'       => $country_code,
+				'name'       => $raw_countries[ $country_code ],
+				'emoji_flag' => WCPBC_Country_Flags::get_by_country( $country_code ),
+			];
+		}
+
+		array_multisort( array_column( $data, 'name' ), SORT_LOCALE_STRING, $data );
+
+		return [
+			'data'               => $data,
+			'base_country'       => $base_country,
+			'rest_all_world_key' => $rest_all_world_key,
+		];
 	}
 }
 ?>

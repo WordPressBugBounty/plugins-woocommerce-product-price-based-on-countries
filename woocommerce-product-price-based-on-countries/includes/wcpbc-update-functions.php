@@ -93,6 +93,11 @@ function wcpbc_update_160() {
  */
 function wcpbc_update_162() {
 
+	$sync_queue = [
+		'parent_id' => [],
+		'zone_id'   => [],
+	];
+
 	foreach ( WCPBC_Pricing_Zones::get_zones() as $zone ) {
 		$zone_id = $zone->get_id();
 
@@ -100,33 +105,35 @@ function wcpbc_update_162() {
 		 * Get variable products without price
 		 */
 		$products = get_posts(
-			array(
+			[
 				'fields'      => 'ids',
 				'numberposts' => -1,
 				'post_type'   => 'product',
-				'meta_query'  => array(
-					'relation' => 'AND',
-					array(
-						'key'     => "_{$zone_id}_price_method",
-						'value'   => 'nothing',
-						'compare' => '=',
-					),
-					array(
-						'key'     => "_{$zone_id}_price",
+				'tax_query'   => [
+					[
+						'taxonomy' => 'product_type',
+						'field'    => 'slug',
+						'terms'    => wcpbc_wrapper_product_types(),
+						'operator' => 'IN',
+					],
+				],
+				'meta_query'  => [
+					[
+						'key'     => $zone->get_postmetakey( '_price' ),
 						'compare' => 'NOT EXISTS',
-					),
-				),
-			)
+					],
+				],
+			]
 		);
 
 		if ( ! empty( $products ) ) {
-			WCPBC_Product_Sync::parent_product_price_sync(
-				array(
-					'zone'        => $zone_id,
-					'product_ids' => $products,
-				)
-			);
+			$sync_queue['parent_id'] = array_unique( array_merge( $sync_queue['parent_id'], $products ) );
+			$sync_queue['zone_id']   = array_merge( $sync_queue['zone_id'], [ $zone_id ] );
 		}
+	}
+
+	if ( ! empty( $sync_queue['parent_id'] ) ) {
+		WCPBC_Product_Meta_Job::create( 'Sync_Price_With_Children', $sync_queue )->run();
 	}
 }
 

@@ -2,9 +2,11 @@
 .woocommerce_options_panel .options_group.wcpbc_pricing fieldset ul {
 	width: 100%;
 }
-#woocommerce-product-data .woocommerce_options_panel .wcpbc_pricing .wc-radios li {
+#woocommerce-product-data .woocommerce_options_panel .options_group.wcpbc_pricing .wc-radios li,
+#woocommerce-coupon-data .woocommerce_options_panel .options_group.wcpbc_pricing .wc-radios li {
 	padding: 0 0 5px;
 }
+
 #woocommerce-product-data .woocommerce_options_panel .wcpbc_pricing  ._sale_price_dates_wcpbc_field .wc-radios li {
 	display: inline;
 	margin-right: 20px;
@@ -175,6 +177,21 @@ p.wc-price-based-country-upgrade-notice, .woocommerce_options_panel p.wc-price-b
 	z-index: 1000;
 	top: 0;
 	left: 0;
+}
+
+span.wc-price-based-country-deprecated-pro-notice > .wc-price-based-country-check-status {
+	display: block;
+	margin-top: 1em;
+}
+tr.plugin-update-tr span.wc-price-based-country-deprecated-pro-notice > .wc-price-based-country-check-status {
+	margin-left: 26px;
+}
+tr.plugin-update-tr span.wc-price-based-country-deprecated-pro-notice > .wc-price-based-country-check-status a {
+	text-decoration: none;
+}
+
+body.wc-price-based-country-settings-page.wc-price-based-country-settings-license span.wc-price-based-country-deprecated-pro-notice > .wc-price-based-country-check-status {
+	display: none;
 }
 
 /* End Notices */

@@ -94,7 +94,7 @@ class WCPBC_Frontend {
 	public static function update_order_review_fragments( $fragments ) {
 		$cart_hash = isset( WC()->cart ) && is_callable( array( WC()->cart, 'get_cart_hash' ) ) ? WC()->cart->get_cart_hash() : '-1';
 
-		if ( ! empty( $_COOKIE['woocommerce_cart_hash'] ) && wc_clean( $_COOKIE['woocommerce_cart_hash'] ) !== $cart_hash ) {
+		if ( ! empty( $_COOKIE['woocommerce_cart_hash'] ) && wc_clean( wp_unslash( $_COOKIE['woocommerce_cart_hash'] ) ) !== $cart_hash ) {
 			ob_start();
 
 			woocommerce_mini_cart();
@@ -273,7 +273,7 @@ class WCPBC_Frontend {
 
 		$country = isset( $_POST['calc_shipping_country'] ) ? wc_clean( wp_unslash( $_POST['calc_shipping_country'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 		if ( $country ) {
-			wcpbc_set_prop_value( wc()->customer, 'billing_country', $country );
+			WC()->customer->set_billing_country( $country );
 			WC()->customer->set_shipping_country( $country );
 		}
 	}
@@ -323,6 +323,13 @@ class WCPBC_Frontend {
 		if ( WC()->cart->is_empty() ) {
 			// The cart is empty. Update the cart's hash to trigger get_refreshed_fragments.
 			wc_setcookie( 'woocommerce_cart_hash', WC()->cart->get_cart_hash() );
+		}
+
+		if ( isset( $_POST['redirect'] ) && '1' === $_POST['redirect'] ) { // phpcs:ignore WordPress.Security.NonceVerification
+			global $wp;
+			$current_url = trailingslashit( home_url( add_query_arg( [], $wp->request ) ) );
+			wp_safe_redirect( $current_url );
+			exit;
 		}
 	}
 
