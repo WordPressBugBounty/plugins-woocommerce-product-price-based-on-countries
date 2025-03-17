@@ -59,7 +59,10 @@ class WCPBC_Pricing_Zone {
 	 * @return array
 	 */
 	public function get_data() {
-		return $this->data;
+		$data = $this->data;
+		unset( $data['_cache'] );
+
+		return $data;
 	}
 
 	/**

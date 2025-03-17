@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2.
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce Price Based on Country 4.0.0\n"
+"Project-Id-Version: WooCommerce Price Based on Country 4.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-product-price-based-on-countries\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-03-11T09:00:20+00:00\n"
+"POT-Creation-Date: 2025-03-17T10:29:11+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.6.0\n"
 "X-Domain: woocommerce-product-price-based-on-countries\n"
@@ -1258,27 +1258,27 @@ msgstr ""
 msgid "Price Based on Country database update complete. Thank you for updating to the latest version!"
 msgstr ""
 
-#: includes/class-wcpbc-pricing-zone.php:190
+#: includes/class-wcpbc-pricing-zone.php:193
 msgid "Invalid value for the zone ID. Use a different value."
 msgstr ""
 
-#: includes/class-wcpbc-pricing-zone.php:239
+#: includes/class-wcpbc-pricing-zone.php:242
 msgid "Name is required."
 msgstr ""
 
-#: includes/class-wcpbc-pricing-zone.php:261
+#: includes/class-wcpbc-pricing-zone.php:264
 msgid "Add at least one country to the zone."
 msgstr ""
 
-#: includes/class-wcpbc-pricing-zone.php:283
+#: includes/class-wcpbc-pricing-zone.php:286
 msgid "A valid currency is required."
 msgstr ""
 
-#: includes/class-wcpbc-pricing-zone.php:315
+#: includes/class-wcpbc-pricing-zone.php:318
 msgid "The exchange rate must be nonzero."
 msgstr ""
 
-#: includes/class-wcpbc-pricing-zone.php:417
+#: includes/class-wcpbc-pricing-zone.php:420
 msgid "Adding metadata is not supported."
 msgstr ""
 

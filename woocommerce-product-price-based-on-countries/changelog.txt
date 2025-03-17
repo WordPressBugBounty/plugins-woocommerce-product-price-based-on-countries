@@ -1,3 +1,7 @@
+= 4.0.1 (2025-03-17) =
+* Fixed: Polylang compatibility: Empty query var index generates a PHP error.
+* Fixed: The variation prices transient cache is overridden due to the incorrect hash.
+
 = 4.0.0 (2025-03-11) =
 * Added: Tested up WooCommerce 9.7+.
 * Added: Core performance improvements:

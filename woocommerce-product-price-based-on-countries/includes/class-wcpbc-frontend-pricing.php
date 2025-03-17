@@ -90,7 +90,7 @@ class WCPBC_Frontend_Pricing {
 		self::filter( [ 'posts_clauses', array( __CLASS__, 'filter_price_post_clauses' ), 25, 2 ], $remove );
 		self::filter( [ 'woocommerce_price_filter_sql', array( __CLASS__, 'price_filter_sql' ) ], $remove );
 		self::filter( [ 'pre_transient_wc_products_onsale', array( __CLASS__, 'product_ids_on_sale' ), 10, 2 ], $remove );
-		self::filter( [ 'woocommerce_shortcode_products_query', array( __CLASS__, 'get_variation_prices_hash' ) ], $remove );
+		self::filter( [ 'woocommerce_shortcode_products_query', array( __CLASS__, 'shortcode_products_query' ) ], $remove );
 		self::filter( [ 'woocommerce_package_rates', array( __CLASS__, 'package_rates' ), 10, 2 ], $remove );
 		self::filter( [ 'woocommerce_shipping_zone_shipping_methods', array( __CLASS__, 'shipping_zone_shipping_methods' ), 10, 4 ], $remove );
 		self::filter( [ 'woocommerce_adjust_non_base_location_prices', array( __CLASS__, 'adjust_non_base_location_prices' ) ], $remove );
@@ -372,6 +372,22 @@ class WCPBC_Frontend_Pricing {
 		return $ids_on_sale[ $zone_id ];
 	}
 
+	/**
+	 * Add a query vars to Product shortocode to gerenate a diferent transient name by zone.
+	 *
+	 * @see WC_Shortcode_Products::get_transient_name
+	 * @param array $query_args Query args.
+	 * @return array
+	 */
+	public static function shortcode_products_query( $query_args ) {
+		if ( ! is_array( $query_args ) ) {
+			return $query_args;
+		}
+
+		$query_args[ __METHOD__ ] = wp_json_encode( wcpbc_the_zone()->get_data() );
+
+		return $query_args;
+	}
 	/**
 	 * Apply exchange rate to shipping cost
 	 *
