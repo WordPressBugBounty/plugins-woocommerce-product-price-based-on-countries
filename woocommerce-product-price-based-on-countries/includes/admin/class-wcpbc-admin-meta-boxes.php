@@ -196,6 +196,7 @@ class WCPBC_Admin_Meta_Boxes {
 	/**
 	 * Display coupon amount options.
 	 *
+	 * @param int $post_id Post ID.
 	 * @since 1.6
 	 */
 	public static function coupon_options( $post_id ) {

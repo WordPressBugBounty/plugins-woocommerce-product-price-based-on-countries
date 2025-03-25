@@ -190,7 +190,7 @@ class WCPBC_Pricing_Zone {
 	 */
 	public function set_id( $id ) {
 		if ( 'new' === $id ) {
-			throw new Exception( __( 'Invalid value for the zone ID. Use a different value.', 'woocommerce-product-price-based-on-countries' ) );
+			throw new Exception( esc_html__( 'Invalid value for the zone ID. Use a different value.', 'woocommerce-product-price-based-on-countries' ) );
 		}
 		$this->set_prop( 'zone_id', $id );
 	}
@@ -239,7 +239,7 @@ class WCPBC_Pricing_Zone {
 	 */
 	public function set_name( $name ) {
 		if ( empty( $name ) ) {
-			throw new Exception( __( 'Name is required.', 'woocommerce-product-price-based-on-countries' ) );
+			throw new Exception( esc_html__( 'Name is required.', 'woocommerce-product-price-based-on-countries' ) );
 		}
 		$this->set_prop( 'name', trim( $name ) );
 	}
@@ -261,7 +261,7 @@ class WCPBC_Pricing_Zone {
 	 */
 	public function set_countries( $countries ) {
 		if ( empty( $countries ) || ! is_array( $countries ) ) {
-			throw new Exception( __( 'Add at least one country to the zone.', 'woocommerce-product-price-based-on-countries' ) );
+			throw new Exception( esc_html__( 'Add at least one country to the zone.', 'woocommerce-product-price-based-on-countries' ) );
 		}
 		$this->set_prop( 'countries', $countries );
 	}
@@ -283,7 +283,7 @@ class WCPBC_Pricing_Zone {
 	 */
 	public function set_currency( $currency ) {
 		if ( empty( $currency ) ) {
-			throw new Exception( __( 'A valid currency is required.', 'woocommerce-product-price-based-on-countries' ) );
+			throw new Exception( esc_html__( 'A valid currency is required.', 'woocommerce-product-price-based-on-countries' ) );
 		}
 		$this->set_prop( 'currency', $currency );
 	}
@@ -315,7 +315,7 @@ class WCPBC_Pricing_Zone {
 	 */
 	public function set_exchange_rate( $exchange_rate ) {
 		if ( empty( $exchange_rate ) ) {
-			throw new Exception( __( 'The exchange rate must be nonzero.', 'woocommerce-product-price-based-on-countries' ) );
+			throw new Exception( esc_html__( 'The exchange rate must be nonzero.', 'woocommerce-product-price-based-on-countries' ) );
 		}
 		$this->set_prop( 'exchange_rate', is_float( $exchange_rate ) ? wcpbc_float_to_string( $exchange_rate ) : wc_format_decimal( $exchange_rate ) );
 	}

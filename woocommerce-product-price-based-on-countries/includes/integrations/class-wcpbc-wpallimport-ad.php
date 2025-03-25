@@ -195,7 +195,7 @@ final class WCPBC_WPAllImport_Ad {
 		$screen_id = $screen ? $screen->id : '';
 		?>
 		<div class="wcpbc-upgrade-pro-logo">
-			<img src="https://i.ibb.co/nD4PZvW/logo-pbc-green-400-min.png" />
+			<img src="<?php echo esc_url( WCPBC()->plugin_url() . 'assets/images/pricebasedcountry-logo.png' ); ?>" />
 		</div>
 		<h2>
 			<?php esc_html_e( 'Upgrade For Additional Features', 'woocommerce-product-price-based-on-countries' ); ?>

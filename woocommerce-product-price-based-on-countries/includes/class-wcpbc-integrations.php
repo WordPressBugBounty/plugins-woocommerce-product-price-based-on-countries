@@ -18,11 +18,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WCPBC_Integrations {
 
 	/**
+	 * Integrations array.
+	 *
+	 * @var array
+	 */
+	private static $integrations = false;
+
+	/**
 	 * Add built-in integrations
 	 */
 	public static function init() {
 
-		$integrations = array(
+		self::$integrations = [
 			'woogle_get_container'                 => dirname( __FILE__ ) . '/integrations/class-wcpbc-google-listing-and-ads.php',
 			'wcpay_init'                           => dirname( __FILE__ ) . '/integrations/class-wcpbc-wc-payments.php',
 			'Sitepress'                            => dirname( __FILE__ ) . '/integrations/class-wcpbc-wpml.php',
@@ -47,9 +54,19 @@ class WCPBC_Integrations {
 			'DevOwl\RealCookieBanner\Core'         => dirname( __FILE__ ) . '/integrations/class-wcpbc-real-cookie-banner.php',
 			'woocommerce_gateway_stripe'           => dirname( __FILE__ ) . '/integrations/class-wcpbc-stripe-upe.php',
 			'PMWI_Plugin'                          => dirname( __FILE__ ) . '/integrations/class-wcpbc-wpallimport-ad.php',
-		);
+		];
+	}
 
-		foreach ( $integrations as $class => $integration_file ) {
+	/**
+	 * Add built-in integrations
+	 */
+	public static function add() {
+
+		if ( ! self::$integrations ) {
+			return;
+		}
+
+		foreach ( self::$integrations as $class => $integration_file ) {
 
 			if ( class_exists( $class ) || function_exists( $class ) ) {
 

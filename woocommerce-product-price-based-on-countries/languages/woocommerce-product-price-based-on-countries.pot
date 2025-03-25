@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2.
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce Price Based on Country 4.0.1\n"
+"Project-Id-Version: WooCommerce Price Based on Country 4.0.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-product-price-based-on-countries\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-03-17T10:29:11+00:00\n"
+"POT-Creation-Date: 2025-03-25T09:11:30+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.6.0\n"
 "X-Domain: woocommerce-product-price-based-on-countries\n"
@@ -36,6 +36,30 @@ msgstr ""
 
 #: includes/admin/class-wcpbc-admin-ads.php:45
 msgid "Load country pricing"
+msgstr ""
+
+#: includes/admin/class-wcpbc-admin-ads.php:56
+msgid "Set regular prices"
+msgstr ""
+
+#: includes/admin/class-wcpbc-admin-ads.php:57
+msgid "Increase regular prices (fixed amount or percentage)"
+msgstr ""
+
+#: includes/admin/class-wcpbc-admin-ads.php:58
+msgid "Decrease regular prices (fixed amount or percentage)"
+msgstr ""
+
+#: includes/admin/class-wcpbc-admin-ads.php:59
+msgid "Set sale prices"
+msgstr ""
+
+#: includes/admin/class-wcpbc-admin-ads.php:60
+msgid "Increase sale prices (fixed amount or percentage)"
+msgstr ""
+
+#: includes/admin/class-wcpbc-admin-ads.php:61
+msgid "Decrease sale prices (fixed amount or percentage)"
 msgstr ""
 
 #. Translators: 1: pricing zone name; 2: Pricing zone currency.
@@ -84,6 +108,9 @@ msgstr ""
 
 #: includes/admin/class-wcpbc-admin-ads.php:257
 #: includes/admin/views/html-notice-geolocation.php:13
+#: includes/admin/views/html-notice-maxmind-geoip-database.php:14
+#: includes/admin/views/html-notice-pro-csv-tool.php:19
+#: includes/admin/views/html-notice-pro-german-market.php:13
 #: includes/admin/views/html-notice-updated.php:18
 msgid "Dismiss"
 msgstr ""
@@ -140,12 +167,12 @@ msgstr ""
 msgid "Sale end date"
 msgstr ""
 
-#: includes/admin/class-wcpbc-admin-meta-boxes.php:208
+#: includes/admin/class-wcpbc-admin-meta-boxes.php:209
 msgid "Calculate amount by exchange rate"
 msgstr ""
 
 #. Translators: HTML tags.
-#: includes/admin/class-wcpbc-admin-meta-boxes.php:210
+#: includes/admin/class-wcpbc-admin-meta-boxes.php:211
 msgid "Check this box if, for the pricing zones, the coupon amount must be calculated using the exchange rate. %1$s(%2$sUpgrade to Price Based on Country Pro to set copupon amount by zone%3$s)"
 msgstr ""
 
@@ -565,7 +592,7 @@ msgstr ""
 
 #. translators: 1, 2 HTML tags. 3 plugin version.
 #: includes/admin/settings/views/html-incompatible-pro-version.php:13
-#: includes/class-wc-product-price-based-country.php:383
+#: includes/class-wc-product-price-based-country.php:384
 #: includes/integrations/class-wcpbc-rightpress-product-price-shop.php:113
 msgid "Heads up!"
 msgstr ""
@@ -581,7 +608,7 @@ msgid "You need a valid license to receive %1$sPro updates%2$s."
 msgstr ""
 
 #: includes/admin/settings/views/html-incompatible-pro-version.php:26
-#: includes/class-wc-product-price-based-country.php:319
+#: includes/class-wc-product-price-based-country.php:320
 msgid "Check license status"
 msgstr ""
 
@@ -1014,7 +1041,7 @@ msgstr ""
 msgid "Zone Pricing"
 msgstr ""
 
-#: includes/admin/views/html-global-product-addon.php:10
+#: includes/admin/views/html-global-product-addon.php:16
 #: includes/integrations/class-wcpbc-product-addons-basic.php:51
 msgid "Add-ons zone pricing"
 msgstr ""
@@ -1190,44 +1217,44 @@ msgstr ""
 msgid "Other countries"
 msgstr ""
 
-#: includes/class-wc-product-price-based-country.php:229
+#: includes/class-wc-product-price-based-country.php:230
 msgid "View Price Based on Country settings"
 msgstr ""
 
-#: includes/class-wc-product-price-based-country.php:229
+#: includes/class-wc-product-price-based-country.php:230
 msgid "Settings"
 msgstr ""
 
-#: includes/class-wc-product-price-based-country.php:233
+#: includes/class-wc-product-price-based-country.php:234
 msgid "Get Pro"
 msgstr ""
 
-#: includes/class-wc-product-price-based-country.php:250
+#: includes/class-wc-product-price-based-country.php:251
 msgid "Docs"
 msgstr ""
 
 #. translators: HTML Tags.
-#: includes/class-wc-product-price-based-country.php:298
+#: includes/class-wc-product-price-based-country.php:299
 msgid "%1$sPrice Based on Country%2$s requires WooCommerce to be activated to work. Learn how to install Price Based on Country in the %3$sGetting Started Guide%4$s."
 msgstr ""
 
 #. translators: HTML Tags.
-#: includes/class-wc-product-price-based-country.php:304
+#: includes/class-wc-product-price-based-country.php:305
 msgid "The minimum WooCommerce version required for this plugin is %1$s. You are running %2$s."
 msgstr ""
 
 #. translators: HTML Tags.
-#: includes/class-wc-product-price-based-country.php:312
+#: includes/class-wc-product-price-based-country.php:313
 msgid "%1$sYou use a deprecated version of %2$sPrice Based on Country PRO%3$s, which is incompatible with your current \"Price Based on Country (Basic or Free)\" version. The plugin features have been deactivated to prevent issues and fatal errors on your site.%6$sUpdate %2$sPrice Based on Country PRO%3$s to the latest version.%4$s%5$s"
 msgstr ""
 
 #. translators: 1: frontend_pricing_init 2: woocommerce_init
-#: includes/class-wc-product-price-based-country.php:428
+#: includes/class-wc-product-price-based-country.php:429
 msgid "%1$s should not be called before the %2$s action."
 msgstr ""
 
 #. Translators: 1: Site URL 2: admin email.
-#: includes/class-wc-product-price-based-country.php:599
+#: includes/class-wc-product-price-based-country.php:616
 msgid ""
 "Howdy!\n"
 "\n"
@@ -1245,7 +1272,7 @@ msgid ""
 msgstr ""
 
 #. Translators: %s: Site title.
-#: includes/class-wc-product-price-based-country.php:619
+#: includes/class-wc-product-price-based-country.php:636
 msgid "[%s] \"Price Based on Country\" is inactive on your site."
 msgstr ""
 
@@ -1280,6 +1307,11 @@ msgstr ""
 
 #: includes/class-wcpbc-pricing-zone.php:420
 msgid "Adding metadata is not supported."
+msgstr ""
+
+#: includes/class-wcpbc-store-api.php:169
+#: includes/traits/wcpbc-multilang-trait.php:44
+msgid "Unserializing instances of this class is forbidden."
 msgstr ""
 
 #: includes/class-wcpbc-widget-country-selector.php:29

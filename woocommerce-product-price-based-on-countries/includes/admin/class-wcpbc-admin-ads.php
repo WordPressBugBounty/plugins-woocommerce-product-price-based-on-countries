@@ -53,12 +53,12 @@ class WCPBC_Admin_Ads {
 	public static function variable_product_bulk_edit_actions() {
 
 		$variable_actions = array(
-			__( 'Set regular prices', 'woocommerce' ),
-			__( 'Increase regular prices (fixed amount or percentage)', 'woocommerce' ),
-			__( 'Decrease regular prices (fixed amount or percentage)', 'woocommerce' ),
-			__( 'Set sale prices', 'woocommerce' ),
-			__( 'Increase sale prices (fixed amount or percentage)', 'woocommerce' ),
-			__( 'Decrease sale prices (fixed amount or percentage)', 'woocommerce' ),
+			__( 'Set regular prices', 'woocommerce-product-price-based-on-countries' ),
+			__( 'Increase regular prices (fixed amount or percentage)', 'woocommerce-product-price-based-on-countries' ),
+			__( 'Decrease regular prices (fixed amount or percentage)', 'woocommerce-product-price-based-on-countries' ),
+			__( 'Set sale prices', 'woocommerce-product-price-based-on-countries' ),
+			__( 'Increase sale prices (fixed amount or percentage)', 'woocommerce-product-price-based-on-countries' ),
+			__( 'Decrease sale prices (fixed amount or percentage)', 'woocommerce-product-price-based-on-countries' ),
 		);
 
 		foreach ( WCPBC_Pricing_Zones::get_zones() as $zone ) {

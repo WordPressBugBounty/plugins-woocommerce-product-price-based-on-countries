@@ -17,7 +17,7 @@ class WC_Product_Price_Based_Country {
 	 *
 	 * @var string
 	 */
-	public $version = '4.0.1';
+	public $version = '4.0.2';
 
 	/**
 	 * The front-end pricing zone
@@ -123,6 +123,7 @@ class WC_Product_Price_Based_Country {
 		add_filter( 'plugin_action_links_' . plugin_basename( WCPBC_PLUGIN_FILE ), array( $this, 'plugin_action_links' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
 		add_action( 'plugins_loaded', array( $this, 'init_plugin' ), 5 );
+		add_action( 'plugins_loaded', array( 'WCPBC_Integrations', 'add' ), 15 );
 	}
 
 	/**
@@ -522,25 +523,41 @@ class WC_Product_Price_Based_Country {
 		$rest_url = preg_quote( trailingslashit( str_replace( [ 'https://', 'http://', 'www.' ], '', get_rest_url() ) ), '/' );
 		$pattern  = '/^' . $rest_url . '/';
 
+		if ( 1 !== preg_match( $pattern, $request ) ) {
+			return false;
+		}
+
 		if ( 1 === preg_match( $pattern, $request ) && $this->is_referer_type( 'frontend' ) ) {
 			return true;
 		}
 
 		// Check the known API REST routes if no HTTP referer.
-		$rest_api_routes =
-		array_merge(
-			[
-				'wc\/store\/',
-				'elementor\-pro\/v\d+\/refresh\-loop',
-				'woo\-variation\-swatches',
-				'wholesale\/v\d+\/products',
-			],
-			apply_filters( 'wc_price_based_country_frontend_rest_routes', [] )
-		);
+		$rest_api_routes = [
+			'wc\/store\/',
+			'elementor\-pro\/v\d+\/refresh\-loop',
+			'woo\-variation\-swatches',
+			'wholesale\/v\d+\/products',
+		];
 
 		$pattern = '/^' . $rest_url . '(' . implode( '|', $rest_api_routes ) . ')/';
 
-		return 1 === preg_match( $pattern, $request );
+		if ( 1 === preg_match( $pattern, $request ) ) {
+			return true;
+		}
+
+		/**
+		 * Allow third-party frontend API REST routes.
+		 */
+		$rest_api_routes = apply_filters( 'wc_price_based_country_frontend_rest_routes', [] );
+		$rest_api_routes = is_array( $rest_api_routes ) ? array_filter( $rest_api_routes, 'is_string' ) : [];
+
+		if ( ! empty( $rest_api_routes ) ) {
+			$pattern = '/^' . $rest_url . '(' . implode( '|', $rest_api_routes ) . ')/';
+
+			return 1 === @preg_match( $pattern, $request ); // phpcs:ignore WordPress.PHP.NoSilencedErrors
+		}
+
+		return false;
 	}
 
 	/**

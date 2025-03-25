@@ -162,7 +162,7 @@ function wcpbc_update_product_pricing( $post_id, $zone, $data = array() ) {
 			// Force date from to beginning of day.
 			if ( isset( $data['_sale_price_dates_from'] ) ) {
 				if ( ! empty( $data['_sale_price_dates_from'] ) ) {
-					$data['_sale_price_dates_from'] = wcpbc_string_to_timestamp( date( 'Y-m-d 00:00:00', strtotime( $data['_sale_price_dates_from'] ) ) );
+					$data['_sale_price_dates_from'] = wcpbc_string_to_timestamp( gmdate( 'Y-m-d 00:00:00', strtotime( $data['_sale_price_dates_from'] ) ) );
 				}
 			} else {
 				$data['_sale_price_dates_from'] = $zone->get_postmeta( $post_id, '_sale_price_dates_from' );
@@ -171,7 +171,7 @@ function wcpbc_update_product_pricing( $post_id, $zone, $data = array() ) {
 			// Force date to to the end of the day.
 			if ( isset( $data['_sale_price_dates_to'] ) ) {
 				if ( ! empty( $data['_sale_price_dates_to'] ) ) {
-					$data['_sale_price_dates_to'] = wcpbc_string_to_timestamp( date( 'Y-m-d 23:59:59', strtotime( $data['_sale_price_dates_to'] ) ) );
+					$data['_sale_price_dates_to'] = wcpbc_string_to_timestamp( gmdate( 'Y-m-d 23:59:59', strtotime( $data['_sale_price_dates_to'] ) ) );
 				}
 			} else {
 				$data['_sale_price_dates_to'] = $zone->get_postmeta( $post_id, '_sale_price_dates_to' );
