@@ -3,7 +3,7 @@ Contributors: oscargare
 Tags:  woocommerce, price based country, price by country, geoip, woocommerce-multi-currency
 Requires at least: 3.8
 Tested up to: 6.7
-Stable tag: 4.0.2
+Stable tag: 4.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -112,6 +112,9 @@ You should do the test in a private browsing window to prevent data stored in th
 7. Includes a country selector widget.
 
 == Changelog ==
+
+= 4.0.3 (2025-03-28) =
+* Fixed: Compatibility issue with "WooCommerce Stripe Payment Gateway by Automattic" 9.3+.
 
 = 4.0.2 (2025-03-25) =
 * Fixed: PHP Warning when third-party dev adds a nonvalid regex using the 'wc_price_based_country_frontend_rest_routes' filter.

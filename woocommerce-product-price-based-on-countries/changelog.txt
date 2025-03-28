@@ -1,3 +1,6 @@
+= 4.0.3 (2025-03-28) =
+* Fixed: Compatibility issue with "WooCommerce Stripe Payment Gateway by Automattic" 9.3+.
+
 = 4.0.2 (2025-03-25) =
 * Fixed: PHP Warning when third-party dev adds a nonvalid regex using the 'wc_price_based_country_frontend_rest_routes' filter.
 * Fixed: I18n: Text domain mismatch on some texts.

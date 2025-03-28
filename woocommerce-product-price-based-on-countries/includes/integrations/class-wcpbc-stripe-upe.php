@@ -102,15 +102,7 @@ if ( ! class_exists( 'WCPBC_Stripe_UPE' ) ) :
 			static $all_currencies = false;
 
 			if ( false === $all_currencies ) {
-				foreach ( WCPBC_Pricing_Zones::get_zones() as $zone ) {
-					if ( ! $zone->get_enabled() ) {
-						continue;
-					}
-					$all_currencies[] = $zone->get_currency();
-				}
-
-				$all_currencies[] = wcpbc_get_base_currency();
-				$all_currencies   = array_unique( $all_currencies );
+				$all_currencies = self::get_available_currencies();
 			}
 
 			if ( count( array_intersect( $supported_currencies, $all_currencies ) ) ) {
@@ -172,44 +164,74 @@ if ( ! class_exists( 'WCPBC_Stripe_UPE' ) ) :
 		 * @param array $params JavaScript configuration object.
 		 */
 		public static function stripe_upe_params( $params ) {
-			if ( ! is_checkout() ) {
+			if ( ! ( is_checkout() && ! is_checkout_pay_page() && isset( $params['paymentMethodsConfig'] ) ) ) {
 				return $params;
 			}
 
-			$params['paymentMethodsConfig'] = self::get_enabled_payment_method_config();
+			$available_currencies = self::get_available_currencies();
+
+			if ( count( $available_currencies ) < 2 ) {
+				return $params;
+			}
+
+			$payment_methods_config = $params['paymentMethodsConfig'];
+			$main_gateway           = woocommerce_gateway_stripe()->get_main_stripe_gateway();
+
+			foreach ( $available_currencies as $currency ) {
+
+				$filter = ( function( $value ) use ( $currency ) {
+					return $currency;
+				} );
+
+				add_filter( 'woocommerce_currency', $filter, 999999 );
+
+				$js_params = $main_gateway->javascript_params();
+
+				remove_filter( 'woocommerce_currency', $filter, 999999 );
+
+				if ( ! is_array( $js_params['paymentMethodsConfig'] ) ) {
+					continue;
+				}
+
+				$payment_methods_config = array_merge( $payment_methods_config, $js_params['paymentMethodsConfig'] );
+			}
+
+			/*
+			Remove country restrictions to prevent "is null" errors when hiding/showing the payment method.
+			The update_order_review action already does the country restriction check!
+			*/
+			$payment_methods_config = array_map(
+				function( $config ) {
+					$config['countries'] = [];
+					return $config;
+				},
+				$payment_methods_config
+			);
+
+			$params['paymentMethodsConfig'] = $payment_methods_config;
 
 			return $params;
 		}
 
 		/**
-		 * Returns the enabled payment method settings.
+		 * Returns all available currencies.
 		 *
 		 * @return array
 		 */
-		private static function get_enabled_payment_method_config() {
-			$settings                = [];
-			$main_gateway            = woocommerce_gateway_stripe()->get_main_stripe_gateway();
-			$enabled_payment_methods = $main_gateway->get_upe_enabled_payment_method_ids();
+		private static function get_available_currencies() {
+			$currencies = [ wcpbc_get_base_currency() ];
 
-			foreach ( $enabled_payment_methods as $payment_method_id ) {
-
-				$payment_method = isset( $main_gateway->payment_methods[ $payment_method_id ] ) ? $main_gateway->payment_methods[ $payment_method_id ] : null;
-
-				if ( is_null( $payment_method ) ) {
+			foreach ( WCPBC_Pricing_Zones::get_zones() as $zone ) {
+				if ( ! $zone->get_enabled() ) {
 					continue;
 				}
 
-				$settings[ $payment_method_id ] = [
-					'isReusable'          => $payment_method->is_reusable(),
-					'title'               => $payment_method->get_title(),
-					'testingInstructions' => $payment_method->get_testing_instructions(),
-					'showSaveOption'      => $payment_method->is_reusable() && $main_gateway->is_saved_cards_enabled() && ! $main_gateway->is_subscription_item_in_cart() && ! $main_gateway->is_pre_order_charged_upon_release_in_cart(),
-					'countries'           => [], // No countries to prevent "is null" error on hide/show the payment method. Delegate to update_order_review.
-				];
+				$currencies[] = $zone->get_currency();
 			}
 
-			return $settings;
+			return array_unique( $currencies );
 		}
+
 	}
 
 	WCPBC_Stripe_UPE::init();
