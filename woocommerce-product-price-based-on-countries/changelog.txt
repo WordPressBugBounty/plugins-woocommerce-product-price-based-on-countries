@@ -1,3 +1,7 @@
+= 4.0.4 (2025-04-08) =
+* Fixed: MySql error on the "sync price with children" task if the option "Hide out-of-stock items from the catalog" is enabled.
+* Fixed: The Analytics Taxes report is not converted to the default currency.
+
 = 4.0.3 (2025-03-28) =
 * Fixed: Compatibility issue with "WooCommerce Stripe Payment Gateway by Automattic" 9.3+.
 

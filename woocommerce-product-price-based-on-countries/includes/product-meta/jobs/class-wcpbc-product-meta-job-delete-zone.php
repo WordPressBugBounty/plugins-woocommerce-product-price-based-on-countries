@@ -71,8 +71,27 @@ class WCPBC_Product_Meta_Job_Delete_Zone extends WCPBC_Product_Meta_Job {
 		}
 
 		if ( $meta_keys_to_delete ) {
+			$post_ids = false;
+
+			if ( wp_using_ext_object_cache() ) {
+				$post_ids = get_posts(
+					[
+						'fields'         => 'ids',
+						'posts_per_page' => -1,
+						'post_type'      => [ 'product', 'product_variation' ],
+						'post_status'    => 'publish',
+						'meta_key'       => $meta_keys_to_delete, // phpcs:ignore WordPress.DB.SlowDBQuery
+						'meta_compare'   => 'EXISTS',
+					]
+				);
+			}
+
 			$rows_affected     = $this->delete_postmeta_keys( $meta_keys_to_delete );
 			$this->clear_cache = $rows_affected > 0;
+
+			if ( $this->clear_cache && $post_ids && function_exists( 'wp_cache_delete_multiple' ) ) {
+				wp_cache_delete_multiple( $post_ids, 'post_meta' );
+			}
 		}
 	}
 }

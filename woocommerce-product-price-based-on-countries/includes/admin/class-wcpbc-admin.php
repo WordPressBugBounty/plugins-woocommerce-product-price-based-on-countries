@@ -192,19 +192,25 @@ class WCPBC_Admin {
 	 * A list of available tools for use in the system status section.
 	 *
 	 * @since 1.8.8
+	 * @version 4.0.4 Replace DB update with Sync Price with children.
 	 * @param array $debug_tools Debug tools.
 	 * @return array
 	 */
 	public static function debug_tools( $debug_tools ) {
-		$debug_tools['wcpbc_db_update'] = array(
-			'name'     => __( 'Price Based on Country Update database', 'woocommerce-product-price-based-on-countries' ),
-			'button'   => __( 'Update database', 'woocommerce-product-price-based-on-countries' ),
-			'desc'     => sprintf(
-				'<strong class="red">%1$s</strong> %2$s',
-				__( 'Note:', 'woocommerce-product-price-based-on-countries' ),
-				__( 'This tool will update your Price Based on Country database to the latest version. Please ensure you make sufficient backups before proceeding.', 'woocommerce-product-price-based-on-countries' )
+		$debug_tools['wcpbc_sync_price_with_children'] = array(
+			'name'     => 'Price Based on Country: ' . _x( 'Synchronize variable product price', 'WooCommerce tool name', 'woocommerce-product-price-based-on-countries' ),
+			'button'   => __( 'Update', 'woocommerce-product-price-based-on-countries' ),
+			'desc'     => __( 'This tool will update the price of the variable product with a minimum and maximum price of its variations. It solves sorting issues.', 'woocommerce-product-price-based-on-countries' ),
+			'callback' => (
+				function() {
+					WCPBC_Product_Meta_Job::create(
+						'Sync_Price_With_Children',
+						[
+							'zone_id' => wc_list_pluck( WCPBC_Pricing_Zones::get_zones(), 'get_id' ),
+						]
+					)->run_async();
+				}
 			),
-			'callback' => array( 'WCPBC_Install', 'update_database' ),
 		);
 		return $debug_tools;
 	}

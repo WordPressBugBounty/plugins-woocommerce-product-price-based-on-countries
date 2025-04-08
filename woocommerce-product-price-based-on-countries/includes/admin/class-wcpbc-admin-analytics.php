@@ -99,6 +99,11 @@ if ( ! class_exists( 'WCPBC_Admin_Analytics' ) ) :
 						'(shipping_tax)' => false,
 						'(order_tax)'    => false,
 					),
+					'taxes_subquery'           => array(
+						'(total_tax)'    => false,
+						'(shipping_tax)' => false,
+						'(order_tax)'    => false,
+					),
 					'customers_subquery'       => array(
 						'total_sales' => false,
 					),

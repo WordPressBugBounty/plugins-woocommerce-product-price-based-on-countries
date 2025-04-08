@@ -26,7 +26,7 @@ class WCPBC_Product_Meta_Job_Sync_Price_With_Children extends WCPBC_Product_Meta
 		];
 
 		if ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) ) {
-			$query['from']  .= "INNER JOIN `{$this->table->prefix}wc_product_meta_lookup` ON product_meta_lookup.product_id = posts.ID ";
+			$query['from']  .= "INNER JOIN `{$this->table->prefix}wc_product_meta_lookup` product_meta_lookup ON product_meta_lookup.product_id = posts.ID ";
 			$query['where'] .= "AND product_meta_lookup.stock_status <> 'outofstock' ";
 		}
 
