@@ -3,7 +3,7 @@ Contributors: oscargare
 Tags:  woocommerce, price based country, price by country, geoip, woocommerce-multi-currency
 Requires at least: 3.8
 Tested up to: 6.7
-Stable tag: 4.0.4
+Stable tag: 4.0.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -112,6 +112,11 @@ You should do the test in a private browsing window to prevent data stored in th
 7. Includes a country selector widget.
 
 == Changelog ==
+
+= 4.0.5 (2025-05-13) =
+* Fixed: All Products for WooCommerce Subscriptions compatibility: The Ajax geolocation feature replaces variations' prices incorrectly.
+* Fixed: WPML compatibility: Product meta synchronization fails when the main site language does not match the product's original language.
+* Fixed: PHP error when the plugin functions are called before the plugins_loaded hook ends.
 
 = 4.0.4 (2025-04-08) =
 * Fixed: MySql error on the "sync price with children" task if the option "Hide out-of-stock items from the catalog" is enabled.

@@ -45,6 +45,7 @@ if ( ! class_exists( 'WCPBC_WCS_ATT' ) ) :
 				add_action( 'woocommerce_after_template_part', array( __CLASS__, 'subscription_options_wrapper_end' ), 0 );
 				add_filter( 'wc_price_based_country_ajax_geolocation_wcsatt_content', array( __CLASS__, 'ajax_geolocation_wcsatt_content' ), 10, 2 );
 				add_filter( 'woocommerce_get_price_html', array( __CLASS__, 'price_html_wrapper' ), 10000, 2 );
+				add_filter( 'wc_price_based_country_ajax_geolocation_product_data', array( __CLASS__, 'ajax_geolocation_product_data' ), 20, 3 );
 			}
 		}
 
@@ -191,6 +192,43 @@ if ( ! class_exists( 'WCPBC_WCS_ATT' ) ) :
 				$value = WCPBC_Ajax_Geolocation::wrapper_price( $product, $value );
 			}
 			return $value;
+		}
+
+
+		/**
+		 * Ajax geolocation supports variations.
+		 *
+		 * @param array      $data Array of product data.
+		 * @param WC_Product $variation_product Product instance.
+		 * @param bool       $is_single Is single page?.
+		 * @return array
+		 */
+		public static function ajax_geolocation_product_data( $data, $variation_product, $is_single ) {
+			if ( ! $is_single || ! is_a( $variation_product, 'WC_Product_Variation' ) || ! is_callable( [ 'WCS_ATT_Display_Product', 'add_subscription_options_to_variation_data' ] ) ) {
+				return $data;
+			}
+
+			$variable_product = wc_get_product( $variation_product->get_parent_id() );
+			if ( ! $variable_product ) {
+				return $data;
+			}
+
+			// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
+			global $product;
+			$global_product = $product;
+
+			$product = $variable_product;
+
+			$_data = WCS_ATT_Display_Product::add_subscription_options_to_variation_data( $data, $variable_product, $variation_product );
+
+			if ( $data['price_html'] !== $_data['price_html'] ) {
+				$data['price_html'] = $_data['price_html'];
+			}
+
+			$product = $global_product;
+			// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals
+
+			return $data;
 		}
 
 		/**

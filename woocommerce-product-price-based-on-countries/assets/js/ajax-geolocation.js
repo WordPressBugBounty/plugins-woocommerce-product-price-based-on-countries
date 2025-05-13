@@ -105,7 +105,7 @@
 
 								if ( $price_html.length > 0 ) {
 									// Replace the price.
-									if ( $price_html.hasClass( 'price' ) ) {
+									if ( $price_html.hasClass( 'price' ) && 1 === $price_html.length ) {
 										// Find the .price element and change the HTML.
 										var $price_wrap = $('<div></div>').append($price_html);
 										$price_wrap.find('.price').html( products[ variation.variation_id ].price_html );

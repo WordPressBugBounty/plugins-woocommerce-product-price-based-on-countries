@@ -229,7 +229,7 @@ function wcpbc_get_rounding_precision() {
 
 	if ( wcpbc_is_pro() ) {
 		foreach ( WCPBC_Pricing_Zones::get_zones() as $zone ) {
-			if ( $num_decimals < $zone->get_price_num_decimals() ) {
+			if ( is_callable( [ $zone, 'get_price_num_decimals' ] ) && $num_decimals < $zone->get_price_num_decimals() ) {
 				$num_decimals = $zone->get_price_num_decimals();
 			}
 		}

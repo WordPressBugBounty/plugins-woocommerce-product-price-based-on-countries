@@ -1,3 +1,8 @@
+= 4.0.5 (2025-05-13) =
+* Fixed: All Products for WooCommerce Subscriptions compatibility: The Ajax geolocation feature replaces variations' prices incorrectly.
+* Fixed: WPML compatibility: Product meta synchronization fails when the main site language does not match the product's original language.
+* Fixed: PHP error when the plugin functions are called before the plugins_loaded hook ends.
+
 = 4.0.4 (2025-04-08) =
 * Fixed: MySql error on the "sync price with children" task if the option "Hide out-of-stock items from the catalog" is enabled.
 * Fixed: The Analytics Taxes report is not converted to the default currency.

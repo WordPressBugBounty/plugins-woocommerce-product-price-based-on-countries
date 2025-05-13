@@ -28,7 +28,7 @@ class WCPBC_Admin_Legacy_Reports {
 	 * @param array  $rates Array of currency exchange rates.
 	 * @return string
 	 */
-	private static function built_query_case( $field, $rates ) {
+	public static function built_query_case( $field, $rates ) {
 
 		$case_ex = ' CASE meta__order_currency.meta_value ';
 		foreach ( $rates as $currency => $rate ) {
@@ -48,7 +48,7 @@ class WCPBC_Admin_Legacy_Reports {
 	 * @param string $id_field Order ID field. Default "ID".
 	 * @return string
 	 */
-	private static function built_join_meta_currency( $from_table = false, $join_type = 'INNER', $id_field = 'ID' ) {
+	public static function built_join_meta_currency( $from_table = false, $join_type = 'INNER', $id_field = 'ID' ) {
 		global $wpdb;
 
 		$from_table = $from_table ? $from_table : 'posts';

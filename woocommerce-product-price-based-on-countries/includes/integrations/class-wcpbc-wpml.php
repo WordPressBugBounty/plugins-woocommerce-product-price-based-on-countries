@@ -66,10 +66,8 @@ class WCPBC_WPML implements WCPBC_Multilang_Interface {
 	 * @return bool
 	 */
 	protected function is_translation( $post_id ) {
-		$master_lang    = $this->get_default_language();
-		$master_post_id = $this->get_translate_object_id( $post_id, $master_lang );
-
-		return absint( $post_id ) !== absint( $master_post_id );
+		$master_post_id = apply_filters( 'wpml_original_element_id', null, $post_id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
+		return $master_post_id && absint( $post_id ) !== absint( $master_post_id );
 	}
 
 	/**
@@ -81,13 +79,13 @@ class WCPBC_WPML implements WCPBC_Multilang_Interface {
 	protected function get_translations( $post_id ) {
 		$translation_post_ids = [];
 
-		$langs = array_diff( $this->get_languages(), [ $this->get_default_language() ] );
+		$langs = $this->get_languages();
 
 		foreach ( $langs as $lang ) {
 
 			$tr_id = $this->get_translate_object_id( $post_id, $lang );
 
-			if ( $tr_id ) {
+			if ( $tr_id && absint( $tr_id ) !== absint( $post_id ) ) {
 				$translation_post_ids[] = $tr_id;
 			}
 		}
