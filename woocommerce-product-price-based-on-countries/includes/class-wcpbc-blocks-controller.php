@@ -27,6 +27,7 @@ class WCPBC_Blocks_Controller {
 		add_filter( 'block_categories_all', [ __CLASS__, 'block_categories_all' ] );
 		add_action( 'init', [ __CLASS__, 'register_blocks' ] );
 		add_action( 'admin_footer', [ __CLASS__, 'block_script_data' ] );
+		add_action( 'customize_controls_print_footer_scripts', [ __CLASS__, 'block_script_data' ], 1 );
 	}
 
 	/**

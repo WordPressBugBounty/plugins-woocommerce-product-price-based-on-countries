@@ -1,7 +1,6 @@
 ( function ( wp, data ) {
     const el = wp.element.createElement,
 	components = wp.components,
-	blockEditor = wp.blockEditor,
 	__ = wp.i18n.__;
 
 	const icon = function() {
@@ -85,9 +84,9 @@
 
 			return el(
                 'div',
-                blockEditor.useBlockProps(),
+                wp.blockEditor.useBlockProps(),
 				el(
-					blockEditor.InspectorControls,
+					wp.blockEditor.InspectorControls,
 					{},
 					el(
 						components.PanelBody,
@@ -111,5 +110,5 @@
     } );
 } )(
 	wp,
-	wc_price_based_country_country_switcher_block_data
+	( 'undefined' === typeof wc_price_based_country_country_switcher_block_data ? {data:[], rest_all_world_key:false} : wc_price_based_country_country_switcher_block_data)
 );

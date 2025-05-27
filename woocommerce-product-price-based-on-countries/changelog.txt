@@ -1,3 +1,8 @@
+= 4.0.6 (2025-05-27) =
+* Added: Tested up WooCommerce 9.8+.
+* Fixed: The pricing zone internal cache causes issues with discount plugins.
+* Fixed: Blocks included are not available on the Customizer > Widgets page
+
 = 4.0.5 (2025-05-13) =
 * Fixed: All Products for WooCommerce Subscriptions compatibility: The Ajax geolocation feature replaces variations' prices incorrectly.
 * Fixed: WPML compatibility: Product meta synchronization fails when the main site language does not match the product's original language.

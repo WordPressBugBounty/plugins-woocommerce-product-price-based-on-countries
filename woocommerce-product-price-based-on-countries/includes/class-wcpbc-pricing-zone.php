@@ -586,10 +586,14 @@ class WCPBC_Pricing_Zone {
 	 * @since 4.0.0
 	 * @param int    $post_id Post ID.
 	 * @param string $meta_key Metadata key.
-	 * @param float  $compare Price to compare.
+	 * @param float  $compare Price to compare. Optional.
 	 */
-	protected function maybe_update_price( $post_id, $meta_key, $compare ) {
-		if ( '_price' === $meta_key && floatval( $compare ) !== floatval( $this->get_postmeta( $post_id, $meta_key ) ) ) {
+	protected function maybe_update_price( $post_id, $meta_key, $compare = false ) {
+		if ( '_price' !== $meta_key ) {
+			return;
+		}
+		$compare = false === $compare ? $this->get_exchange_rate_price_by_post( $post_id, $meta_key ) : $compare;
+		if ( floatval( $compare ) !== floatval( $this->get_postmeta( $post_id, $meta_key ) ) ) {
 			$this->set_postmeta( $post_id, $meta_key, strval( $compare ), true );
 		}
 	}
@@ -644,18 +648,19 @@ class WCPBC_Pricing_Zone {
 
 		if ( $this->is_exchange_rate_price( $data ) ) {
 
-			$cache = $this->cache_get( $data->get_id(), $meta_key );
+			$cache_key = "{$meta_key}_{$value}";
+			$cache     = $this->cache_get( $data->get_id(), $cache_key );
+
 			if ( false !== $cache ) {
 				return $cache;
 			}
 
-			$price = $this->get_exchange_rate_price( $value, false );
+			$price = $this->get_exchange_rate_price( $value, true, $context, $data );
 
-			$this->maybe_update_price( $data->get_id(), $meta_key, $price );
+			$this->cache_set( $data->get_id(), $cache_key, $price );
 
-			$price = $this->round( $price, '', $context, $data );
+			$this->maybe_update_price( $data->get_id(), $meta_key );
 
-			$this->cache_set( $data->get_id(), $meta_key, $price );
 		} else {
 			$price = $this->get_postmeta( $data->get_id(), $meta_key );
 		}
