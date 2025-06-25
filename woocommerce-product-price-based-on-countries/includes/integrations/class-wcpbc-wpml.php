@@ -24,8 +24,8 @@ class WCPBC_WPML implements WCPBC_Multilang_Interface {
 		add_filter( 'wcml_js_lock_fields_ids', [ $this, 'js_lock_fields_ids' ] );
 		add_filter( 'wcml_js_lock_fields_classes', [ $this, 'lock_fields_classes' ] );
 		add_action( 'wcml_after_load_lock_fields_js', [ $this, 'load_lock_fields_js' ] );
-		add_action( 'wpml_after_copy_custom_field', [ $this, 'after_copy_custom_field' ], 10, 3 );
-		add_action( 'woocommerce_ajax_save_product_variations', [ $this, 'save_product_variations' ], 20 );
+		add_action( 'update_post_metadata', [ $this, 'after_copy_custom_field' ], 5, 3 );
+		add_action( 'added_post_meta', [ $this, 'after_copy_custom_field' ], 5, 3 );
 	}
 
 	/**
@@ -60,13 +60,23 @@ class WCPBC_WPML implements WCPBC_Multilang_Interface {
 	}
 
 	/**
+	 * Returns the original object ID.
+	 *
+	 * @param int $object_id The ID of the post type (post, page, attachment, custom post) or taxonomy term.
+	 * @return int
+	 */
+	protected function get_original_object_id( $object_id ) {
+		return apply_filters( 'wpml_original_element_id', null, $object_id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
+	}
+
+	/**
 	 * Is the post ID a translation?
 	 *
 	 * @param int $post_id Post ID.
 	 * @return bool
 	 */
 	protected function is_translation( $post_id ) {
-		$master_post_id = apply_filters( 'wpml_original_element_id', null, $post_id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
+		$master_post_id = $this->get_original_object_id( $post_id );
 		return $master_post_id && absint( $post_id ) !== absint( $master_post_id );
 	}
 
@@ -156,31 +166,27 @@ class WCPBC_WPML implements WCPBC_Multilang_Interface {
 	/**
 	 * Enqueues a product for multilang price sync after copy custom field.
 	 *
-	 * @param int    $post_id_from Original post ID.
-	 * @param int    $post_id_to Translation post ID.
-	 * @param string $meta_key Meta key copied.
+	 * @param null|bool $check      Whether to allow updating metadata for the given type.
+	 * @param int       $object_id  Post ID.
+	 * @param string    $meta_key   Metadata key.
 	 */
-	public function after_copy_custom_field( $post_id_from, $post_id_to, $meta_key ) {
-		if ( '_price' !== $meta_key ||
-			! in_array( get_post_type( $post_id_from ), [ 'product', 'product_variation' ], true ) ||
-			$this->is_translation( $post_id_from ) ) {
-			return;
+	public function after_copy_custom_field( $check, $object_id, $meta_key ) {
+
+		$original_id = false;
+
+		if ( '_price' === $meta_key &&
+			in_array( get_post_type( $object_id ), [ 'product', 'product_variation' ], true ) &&
+			! in_array( get_post_status( $object_id ), [ 'trash', 'auto-draft' ], true )
+		) {
+			$original_id = $this->get_original_object_id( $object_id );
 		}
 
-		$this->enqueue_sync( $post_id_from );
-	}
-
-	/**
-	 * Enqueues variation IDs for multilang price sync after saved. WPML does not use the WPML functions to copy variation fields.
-	 */
-	public function save_product_variations() {
-		if ( empty( $_POST['variable_post_id'] ) || empty( $_POST['security'] ) || ! wp_verify_nonce( wc_clean( wp_unslash( $_POST['security'] ) ), 'save-variations', '' ) ) {
-			return;
+		if ( $original_id && absint( $original_id ) !== absint( $object_id ) ) {
+			// It is a translation. WPML runs the custom fields copy. Enqueue the original post.
+			$this->enqueue( $original_id );
 		}
 
-		foreach ( wc_clean( wp_unslash( $_POST['variable_post_id'] ) ) as $post_id ) {
-			$this->enqueue_sync( $post_id );
-		}
+		return $check;
 	}
 }
 return WCPBC_WPML::instance();

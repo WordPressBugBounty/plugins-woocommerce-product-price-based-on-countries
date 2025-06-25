@@ -23,13 +23,6 @@ class WCPBC_Product_Meta_Data {
 	private static $children_sync_queue = [];
 
 	/**
-	 * Multilang sync queue;
-	 *
-	 * @var array
-	 */
-	private static $multilang_sync_queue = [];
-
-	/**
 	 * Updated meta price queue;
 	 *
 	 * @var array
@@ -85,19 +78,13 @@ class WCPBC_Product_Meta_Data {
 	 * @param string $zone_id Zone ID.
 	 */
 	public static function maybe_enqueue_multilang_sync( $post_id, $zone_id ) {
-		if ( ! self::get_multilang_handler() ) {
+		$multilang = self::get_multilang_handler();
+
+		if ( ! $multilang ) {
 			return;
 		}
 
-		if ( ! isset( self::$multilang_sync_queue[ $post_id ] ) ) {
-			self::$multilang_sync_queue[ $post_id ] = [];
-		}
-
-		if ( in_array( $zone_id, self::$multilang_sync_queue[ $post_id ], true ) ) {
-			return;
-		}
-
-		self::$multilang_sync_queue[ $post_id ][] = $zone_id;
+		$multilang->enqueue( $post_id, $zone_id );
 	}
 
 	/**
@@ -176,10 +163,6 @@ class WCPBC_Product_Meta_Data {
 			return;
 		}
 
-		if ( empty( self::$multilang_sync_queue ) ) {
-			return;
-		}
-
 		$multilang = self::get_multilang_handler();
 
 		if ( ! $multilang ) {
@@ -188,7 +171,7 @@ class WCPBC_Product_Meta_Data {
 
 		$avoid_recursion = true;
 
-		$multilang->sync_queue( self::$multilang_sync_queue );
+		$multilang->sync_queue();
 
 		$avoid_recursion = false;
 	}

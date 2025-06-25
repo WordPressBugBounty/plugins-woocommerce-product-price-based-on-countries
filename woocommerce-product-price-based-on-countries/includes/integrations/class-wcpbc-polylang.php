@@ -21,6 +21,7 @@ class WCPBC_Polylang implements WCPBC_Multilang_Interface {
 	 * @return void
 	 */
 	protected function __construct() {
+		add_action( 'pll_copy_post_metas', [ $this, 'copy_metas' ], 10, 4 );
 		add_action( 'pll_save_post', [ $this, 'pll_save_post' ], 20, 2 );
 	}
 
@@ -43,6 +44,23 @@ class WCPBC_Polylang implements WCPBC_Multilang_Interface {
 	}
 
 	/**
+	 * Copy metas.
+	 *
+	 * @param string[] $keys List of custom fields names.
+	 * @param bool     $sync True if it is synchronization, false if it is a copy.
+	 * @param int      $from Id of the post from which we copy information.
+	 * @param int      $to   Id of the post to which we paste information.
+	 */
+	public function copy_metas( $keys, $sync, $from, $to ) {
+		if ( in_array( get_post_type( $from ), [ 'product', 'product_variation' ], true ) && ! $sync ) {
+			foreach ( WCPBC_Pricing_Zones::get_zones() as $zone ) {
+				$this->sync_metadata( $from, [ $to ], $zone );
+			}
+		}
+		return $keys;
+	}
+
+	/**
 	 * Enqueues a product for multilang price sync after PLL Saved the post.
 	 *
 	 * @param int     $post_id  Post id.
@@ -53,7 +71,7 @@ class WCPBC_Polylang implements WCPBC_Multilang_Interface {
 			return;
 		}
 
-		$this->enqueue_sync( $post_id );
+		$this->enqueue( $post_id );
 	}
 }
 return WCPBC_Polylang::instance();

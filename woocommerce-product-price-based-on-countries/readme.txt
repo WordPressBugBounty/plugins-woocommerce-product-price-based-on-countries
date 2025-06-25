@@ -3,7 +3,7 @@ Contributors: oscargare
 Tags:  woocommerce, price based country, price by country, geoip, woocommerce-multi-currency
 Requires at least: 3.8
 Tested up to: 6.7
-Stable tag: 4.0.6
+Stable tag: 4.0.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -112,6 +112,11 @@ You should do the test in a private browsing window to prevent data stored in th
 7. Includes a country selector widget.
 
 == Changelog ==
+
+= 4.0.7 (2025-06-25) =
+* Added: Tested up WooCommerce 9.9+.
+* Fixed: Polylang and WPML compatibility: Product meta is not synchronized when the translation is added after editing the prices.
+* Fixed: The "Country Switcher" widget does not include the shop's base country in some use cases.
 
 = 4.0.6 (2025-05-27) =
 * Added: Tested up WooCommerce 9.8+.

@@ -174,6 +174,28 @@ class WCPBC_Dynamic_Pricing_Basic {
 
 		}
 	}
+
+	/**
+	 * Removes actions and filters.
+	 */
+	public static function unset() {
+		remove_filter( 'woocommerce_product_get__pricing_rules', array( __CLASS__, 'get_product_pricing_rules' ), 10, 2 );
+
+		// Re initialize rulesets.
+		if ( is_callable( [ 'WC_Dynamic_Pricing_Simple_Membership', 'instance' ] ) && is_callable( [ WC_Dynamic_Pricing_Simple_Membership::instance(), 'initialize_rules' ] ) ) {
+			WC_Dynamic_Pricing_Simple_Membership::instance()->initialize_rules();
+		}
+
+		if ( is_callable( [ 'WC_Dynamic_Pricing_Simple_Category', 'instance' ] ) && is_callable( [ WC_Dynamic_Pricing_Simple_Category::instance(), 'initialize_rules' ] ) ) {
+			WC_Dynamic_Pricing_Simple_Category::instance()->initialize_rules();
+		}
+
+		if ( is_callable( [ 'WC_Dynamic_Pricing_Advanced_Category', 'instance' ] ) && is_callable( [ WC_Dynamic_Pricing_Advanced_Category::instance(), 'initialize_rules' ] ) ) {
+			WC_Dynamic_Pricing_Advanced_Category::instance()->initialize_rules();
+		}
+	}
 }
 
-add_action( 'wc_price_based_country_frontend_princing_init', array( 'WCPBC_Dynamic_Pricing_Basic', 'init' ) );
+add_action( 'wc_price_based_country_frontend_princing_init', [ 'WCPBC_Dynamic_Pricing_Basic', 'init' ] );
+add_action( 'wc_price_based_country_frontend_princing_unset', [ 'WCPBC_Dynamic_Pricing_Basic', 'unset' ] );
+

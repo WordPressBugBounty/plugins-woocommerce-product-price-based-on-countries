@@ -37,6 +37,7 @@ if ( ! class_exists( 'WCPBC_WCS_ATT' ) ) :
 		 */
 		public static function init() {
 			add_action( 'wc_price_based_country_frontend_princing_init', array( __CLASS__, 'frontend_init' ), 100 );
+			add_action( 'wc_price_based_country_frontend_princing_unset', array( __CLASS__, 'frontend_unset' ), 100 );
 			add_action( 'woocommerce_product_data_panels', array( __CLASS__, 'product_data_panel' ), 20 );
 			add_action( 'wcsatt_subscription_scheme_product_content', array( __CLASS__, 'subscription_scheme_product_content' ), 20, 3 );
 			add_action( 'woocommerce_admin_process_product_object', array( __CLASS__, 'save_data' ) );
@@ -55,6 +56,14 @@ if ( ! class_exists( 'WCPBC_WCS_ATT' ) ) :
 		public static function frontend_init() {
 			add_filter( 'wc_price_based_country_should_filter_property', array( __CLASS__, 'should_filter_property' ), 10, 3 );
 			add_filter( 'woocommerce_product_get__wcsatt_schemes', array( __CLASS__, 'get_wcsatt_schemes' ), 10, 2 );
+		}
+
+		/**
+		 * Frontend princing unset
+		 */
+		public static function frontend_unset() {
+			remove_filter( 'wc_price_based_country_should_filter_property', array( __CLASS__, 'should_filter_property' ), 10, 3 );
+			remove_filter( 'woocommerce_product_get__wcsatt_schemes', array( __CLASS__, 'get_wcsatt_schemes' ), 10, 2 );
 		}
 
 		/**

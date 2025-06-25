@@ -19,9 +19,15 @@ interface WCPBC_Multilang_Interface {
 	public static function instance();
 
 	/**
-	 * Syncs a queue
-	 *
-	 * @param array $queue Array of post_id => zones to sync with the translations.
+	 * Syncs the queue.
 	 */
-	public function sync_queue( $queue );
+	public function sync_queue();
+
+	/**
+	 * Enqueue a post ID for multilang sync.
+	 *
+	 * @param int    $post_id Post ID.
+	 * @param string $zone_id Zone ID. Optional.
+	 */
+	public function enqueue( $post_id, $zone_id = false );
 }

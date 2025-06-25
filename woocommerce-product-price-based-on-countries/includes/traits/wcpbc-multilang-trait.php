@@ -18,7 +18,21 @@ trait WCPBC_Multilang_Trait {
 	 *
 	 * @var object;
 	 */
-	private static $instance;
+	private static $instance = null;
+
+	/**
+	 * Sync queue.
+	 *
+	 * @var array;
+	 */
+	protected $queue = [];
+
+	/**
+	 * Post ID in the sync process.
+	 *
+	 * @var array;
+	 */
+	protected $doing_sync = false;
 
 	/**
 	 * Get class instance.
@@ -46,17 +60,6 @@ trait WCPBC_Multilang_Trait {
 	}
 
 	/**
-	 * Enqueue a post ID for multilang sync.
-	 *
-	 * @param int $post_id Post ID.
-	 */
-	protected function enqueue_sync( $post_id ) {
-		foreach ( array_keys( WCPBC_Pricing_Zones::get_zones() ) as $zone_id ) {
-			WCPBC_Product_Meta_Data::maybe_enqueue_multilang_sync( $post_id, $zone_id );
-		}
-	}
-
-	/**
 	 * Returns the translation post IDs for the give post.
 	 *
 	 * @param int $post_id Post ID.
@@ -77,16 +80,50 @@ trait WCPBC_Multilang_Trait {
 	}
 
 	/**
+	 * Enqueue a post ID for multilang sync.
+	 *
+	 * @param int    $post_id Post ID.
+	 * @param string $zone_id Zone ID. Optional.
+	 */
+	public function enqueue( $post_id, $zone_id = false ) {
+
+		if ( absint( $post_id ) === $this->doing_sync ) {
+			return;
+		}
+
+		if ( ! is_array( $this->queue ) ) {
+			$this->queue = [];
+		}
+
+		if ( ! isset( $this->queue[ $post_id ] ) ) {
+			$this->queue[ $post_id ] = [];
+		}
+
+		$zone_ids = $zone_id ? [ $zone_id ] : wc_list_pluck( WCPBC_Pricing_Zones::get_zones(), 'get_id' );
+
+		foreach ( $zone_ids as $id ) {
+			if ( in_array( $id, $this->queue[ $post_id ], true ) ) {
+				continue;
+			}
+
+			$this->queue[ $post_id ][] = $id;
+		}
+	}
+
+	/**
 	 * Syncs the product meta with the translations.
 	 *
 	 * @param int                $post_id Post ID.
+	 * @param int[]              $translations Array of translations.
 	 * @param WCPBC_Pricing_Zone $zone Pricing zone instance.
 	 */
-	protected function sync_metadata( $post_id, $zone ) {
+	protected function sync_metadata( $post_id, $translations, $zone ) {
 
 		$metadata = $zone->get_postmeta( $post_id );
 
-		foreach ( $this->get_translations( $post_id ) as $tr_post_id ) {
+		foreach ( $translations as $tr_post_id ) {
+
+			$this->doing_sync = absint( $tr_post_id );
 
 			$tr_metakeys = array_keys( $zone->get_postmeta( $tr_post_id ) );
 
@@ -101,18 +138,22 @@ trait WCPBC_Multilang_Trait {
 				$zone->set_postmeta( $tr_post_id, $meta_key, $meta_value );
 			}
 		}
+
+		$this->doing_sync = false;
 	}
 
 	/**
-	 * Syncs a queue
-	 *
-	 * @param array $queue Array of post_id => zones to sync with the translations.
+	 * Syncs the queue
 	 */
-	public function sync_queue( $queue ) {
+	public function sync_queue() {
+
+		if ( empty( $this->queue ) ) {
+			return;
+		}
 
 		$zones = WCPBC_Pricing_Zones::get_zones();
 
-		foreach ( $queue as $post_id => $zone_ids ) {
+		foreach ( $this->queue as $post_id => $zone_ids ) {
 			if ( ! $this->should_copy_meta( $post_id ) ) {
 				continue;
 			}
@@ -122,9 +163,11 @@ trait WCPBC_Multilang_Trait {
 					continue;
 				}
 
-				$this->sync_metadata( $post_id, $zones[ $id ] );
+				$this->sync_metadata( $post_id, $this->get_translations( $post_id ), $zones[ $id ] );
 			}
 		}
+
+		$this->queue = [];
 	}
 }
 

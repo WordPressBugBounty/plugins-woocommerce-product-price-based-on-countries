@@ -205,7 +205,7 @@ class WCPBC_Widget_Country_Selector extends WC_Widget {
 		$data          = [];
 		$raw_countries = WC()->countries->get_countries();
 		$base_country  = wc_get_base_location()['country'];
-		$all_countries = [];
+		$all_countries = [ $base_country ];
 
 		foreach ( WCPBC_Pricing_Zones::get_zones() as $zone ) {
 			if ( ! $zone->get_enabled() ) {
@@ -215,15 +215,7 @@ class WCPBC_Widget_Country_Selector extends WC_Widget {
 		}
 
 		$rest_all_world     = array_diff( array_keys( $raw_countries ), $all_countries );
-		$rest_all_world_key = isset( $rest_all_world[0] ) ? $rest_all_world[0] : false;
-
-		if ( ! $rest_all_world_key && ! in_array( $base_country, $all_countries, true ) ) {
-			$rest_all_world_key = $base_country;
-		}
-
-		if ( $rest_all_world_key !== $base_country && ! in_array( $base_country, $all_countries, true ) ) {
-			$all_countries[] = $base_country;
-		}
+		$rest_all_world_key = $rest_all_world ? array_shift( $rest_all_world ) : false;
 
 		foreach ( array_unique( $all_countries ) as $country_code ) {
 			$data[] = [
@@ -242,4 +234,4 @@ class WCPBC_Widget_Country_Selector extends WC_Widget {
 		];
 	}
 }
-?>
+

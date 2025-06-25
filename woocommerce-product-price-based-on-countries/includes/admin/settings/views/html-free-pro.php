@@ -54,21 +54,25 @@ $features = array(
 		'indicator' => array( 'no-alt', 'yes' ),
 	),
 	array(
+		// Translators: "Subscriptions" is a product name. Do not translate it.
 		'label'     => __( 'Compatible with Subscriptions by WooCommerce', 'woocommerce-product-price-based-on-countries' ),
 		'desc'      => __( 'Includes compatibility with the "WooCommerce Subscriptions" plugin developed by WooCommerce.', 'woocommerce-product-price-based-on-countries' ),
 		'indicator' => array( 'no-alt', 'yes' ),
 	),
 	array(
+		// Translators: "Product Bundles" is a product name. Do not translate it.
 		'label'     => __( 'Compatible with Product Bundles by WooCommerce', 'woocommerce-product-price-based-on-countries' ),
 		'desc'      => __( 'Includes compatibility with the "Product Bundles" plugin developed by WooCommerce.', 'woocommerce-product-price-based-on-countries' ),
 		'indicator' => array( 'no-alt', 'yes' ),
 	),
 	array(
+		// Translators: "Bookings" is a product name. Do not translate it.
 		'label'     => __( 'Compatible with Bookings by WooCommerce', 'woocommerce-product-price-based-on-countries' ),
 		'desc'      => __( 'Includes compatibility with the "WooCommerce Bookings" plugin developed by WooCommerce.', 'woocommerce-product-price-based-on-countries' ),
 		'indicator' => array( 'no-alt', 'yes' ),
 	),
 	array(
+		// Translators: "Product Add-Ons" is a product name. Do not translate it.
 		'label'     => __( 'Compatible with Product Add-Ons by WooCommerce', 'woocommerce-product-price-based-on-countries' ),
 		'desc'      => __( 'Includes compatibility with the "Product Add-Ons" plugin developed by WooCommerce.', 'woocommerce-product-price-based-on-countries' ),
 		'indicator' => array( 'no-alt', 'yes' ),

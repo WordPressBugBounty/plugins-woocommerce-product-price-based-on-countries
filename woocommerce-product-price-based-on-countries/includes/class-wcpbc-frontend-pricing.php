@@ -16,10 +16,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WCPBC_Frontend_Pricing {
 
 	/**
+	 * Status flag. init|unset.
+	 *
+	 * @var string
+	 */
+	private static $status = 'unset';
+
+	/**
 	 * Init the frontend pricing.
 	 */
 	public static function init() {
-		if ( ! wcpbc_the_zone() || did_action( 'wc_price_based_country_frontend_princing_init' ) ) {
+		if ( ! wcpbc_the_zone() || 'init' === self::$status ) {
 			return;
 		}
 
@@ -27,7 +34,7 @@ class WCPBC_Frontend_Pricing {
 		self::init_filters();
 
 		/**
-		 * Fires after frontend pricing init.
+		 * Fires after frontend pricing init filters.
 		 *
 		 * @since 1.7.0
 		 */
@@ -38,7 +45,7 @@ class WCPBC_Frontend_Pricing {
 	 * Unset the frontend pricing.
 	 */
 	public static function unset() {
-		if ( wcpbc_the_zone() || ! did_action( 'wc_price_based_country_frontend_princing_init' ) ) {
+		if ( 'init' !== self::$status ) {
 			return;
 		}
 
@@ -46,7 +53,7 @@ class WCPBC_Frontend_Pricing {
 		self::init_filters( true );
 
 		/**
-		 * Fires after frontend pricing unset.
+		 * Fires after frontend pricing unset filters.
 		 *
 		 * @since 4.0.0
 		 */
@@ -96,6 +103,8 @@ class WCPBC_Frontend_Pricing {
 		self::filter( [ 'woocommerce_adjust_non_base_location_prices', array( __CLASS__, 'adjust_non_base_location_prices' ) ], $remove );
 		self::filter( [ 'woocommerce_coupon_loaded', array( __CLASS__, 'coupon_loaded' ) ], $remove );
 		self::filter( [ 'woocommerce_cart_hash', array( __CLASS__, 'cart_hash' ) ], $remove );
+
+		self::$status = $remove ? 'unset' : 'init';
 	}
 
 	/**

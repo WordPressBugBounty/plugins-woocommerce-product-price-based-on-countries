@@ -87,6 +87,11 @@ if ( ! class_exists( 'WCPBC_Rightpress_Product_Price_Shop' ) ) :
 		 * @param bool              $single Whether to return only the first value of the specified $meta_key.
 		 */
 		public static function get_post_metadata( $meta_value, $object_id, $meta_key, $single ) {
+
+			if ( ! wcpbc_the_zone() ) {
+				return $meta_value;
+			}
+
 			if ( $single && in_array( $meta_key, array( '_price', '_regular_price', '_sale_price' ), true ) && 'product_variation' === get_post_type( $object_id ) ) {
 
 				remove_filter( 'get_post_metadata', array( __CLASS__, 'get_post_metadata' ), 10, 4 );

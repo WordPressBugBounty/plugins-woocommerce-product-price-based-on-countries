@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-05-27T08:38:48+00:00\n"
+"POT-Creation-Date: 2025-06-18T14:17:43+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.6.0\n"
 "X-Domain: woocommerce-product-price-based-on-countries\n"
@@ -118,14 +118,14 @@ msgstr ""
 #. Translators: currency symbol.
 #: includes/admin/class-wcpbc-admin-meta-boxes.php:48
 #: includes/admin/class-wcpbc-admin-meta-boxes.php:113
-#: includes/integrations/class-wcpbc-wcs-att.php:288
+#: includes/integrations/class-wcpbc-wcs-att.php:297
 msgid "Regular price (%s)"
 msgstr ""
 
 #. Translators: currency symbol.
 #: includes/admin/class-wcpbc-admin-meta-boxes.php:53
 #: includes/admin/class-wcpbc-admin-meta-boxes.php:121
-#: includes/integrations/class-wcpbc-wcs-att.php:294
+#: includes/integrations/class-wcpbc-wcs-att.php:303
 msgid "Sale price (%s)"
 msgstr ""
 
@@ -539,55 +539,63 @@ msgstr ""
 msgid "Display the price of a specific product on any page using a shortcode."
 msgstr ""
 
-#: includes/admin/settings/views/html-free-pro.php:57
+#. Translators: "Subscriptions" is a product name. Do not translate it.
+#: includes/admin/settings/views/html-free-pro.php:58
 msgid "Compatible with Subscriptions by WooCommerce"
 msgstr ""
 
-#: includes/admin/settings/views/html-free-pro.php:58
+#. Translators: "Subscriptions" is a product name. Do not translate it.
+#: includes/admin/settings/views/html-free-pro.php:59
 msgid "Includes compatibility with the \"WooCommerce Subscriptions\" plugin developed by WooCommerce."
 msgstr ""
 
-#: includes/admin/settings/views/html-free-pro.php:62
+#. Translators: "Product Bundles" is a product name. Do not translate it.
+#: includes/admin/settings/views/html-free-pro.php:64
 msgid "Compatible with Product Bundles by WooCommerce"
 msgstr ""
 
-#: includes/admin/settings/views/html-free-pro.php:63
+#. Translators: "Product Bundles" is a product name. Do not translate it.
+#: includes/admin/settings/views/html-free-pro.php:65
 msgid "Includes compatibility with the \"Product Bundles\" plugin developed by WooCommerce."
 msgstr ""
 
-#: includes/admin/settings/views/html-free-pro.php:67
+#. Translators: "Bookings" is a product name. Do not translate it.
+#: includes/admin/settings/views/html-free-pro.php:70
 msgid "Compatible with Bookings by WooCommerce"
 msgstr ""
 
-#: includes/admin/settings/views/html-free-pro.php:68
+#. Translators: "Bookings" is a product name. Do not translate it.
+#: includes/admin/settings/views/html-free-pro.php:71
 msgid "Includes compatibility with the \"WooCommerce Bookings\" plugin developed by WooCommerce."
 msgstr ""
 
-#: includes/admin/settings/views/html-free-pro.php:72
+#. Translators: "Product Add-Ons" is a product name. Do not translate it.
+#: includes/admin/settings/views/html-free-pro.php:76
 msgid "Compatible with Product Add-Ons by WooCommerce"
 msgstr ""
 
-#: includes/admin/settings/views/html-free-pro.php:73
+#. Translators: "Product Add-Ons" is a product name. Do not translate it.
+#: includes/admin/settings/views/html-free-pro.php:77
 msgid "Includes compatibility with the \"Product Add-Ons\" plugin developed by WooCommerce."
 msgstr ""
 
 #. Translators: Link.
-#: includes/admin/settings/views/html-free-pro.php:78
+#: includes/admin/settings/views/html-free-pro.php:82
 msgid "%1$sSee all PRO features and compatibilities%2$s"
 msgstr ""
 
-#: includes/admin/settings/views/html-free-pro.php:128
+#: includes/admin/settings/views/html-free-pro.php:132
 msgid "Get access to all Pro features and power-up your store"
 msgstr ""
 
-#: includes/admin/settings/views/html-free-pro.php:131
+#: includes/admin/settings/views/html-free-pro.php:135
 msgid "Get Price Based on Country Pro now"
 msgstr ""
 
 #. translators: 1, 2 HTML tags. 3 plugin version.
 #: includes/admin/settings/views/html-incompatible-pro-version.php:13
 #: includes/class-wc-product-price-based-country.php:384
-#: includes/integrations/class-wcpbc-rightpress-product-price-shop.php:113
+#: includes/integrations/class-wcpbc-rightpress-product-price-shop.php:118
 msgid "Heads up!"
 msgstr ""
 
@@ -1304,7 +1312,7 @@ msgid "Adding metadata is not supported."
 msgstr ""
 
 #: includes/class-wcpbc-store-api.php:169
-#: includes/traits/wcpbc-multilang-trait.php:44
+#: includes/traits/wcpbc-multilang-trait.php:58
 msgid "Unserializing instances of this class is forbidden."
 msgstr ""
 
@@ -1373,7 +1381,7 @@ msgid "Country for \"Google Listings & Ads\" compatibility"
 msgstr ""
 
 #. translators: 1, 2 HTML tags. 3 plugin version.
-#: includes/integrations/class-wcpbc-rightpress-product-price-shop.php:112
+#: includes/integrations/class-wcpbc-rightpress-product-price-shop.php:117
 msgid "You are using a not supported version of %1$sWooCommerce Dynamic Pricing & Discounts by RightPress%2$s. The minimum compatible version for this plugin is %3$s."
 msgstr ""
 
@@ -1383,7 +1391,7 @@ msgid "%1$sPrice Based on Country & Variation Swatches for WooCommerce Pro%2$s c
 msgstr ""
 
 #. Translators: 1, 2: HTML tags.
-#: includes/integrations/class-wcpbc-wcs-att.php:349
+#: includes/integrations/class-wcpbc-wcs-att.php:358
 msgid "%1$sPrice Based on Country Pro & All Products For Subscriptions%2$s compatibility requires All Products For Subscriptions +3.1.21."
 msgstr ""
 
