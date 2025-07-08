@@ -168,18 +168,17 @@ function wcpbc_update_228() {
 
 	if ( $post_ids ) {
 		foreach ( $post_ids as $post_id ) {
-			$currency = get_post_meta( $post_id, '_order_currency', true );
-			$data     = get_post_meta( $post_id, '_wcpbc_pricing_zone' );
+			$data = get_post_meta( $post_id, '_wcpbc_pricing_zone', true );
 
-			delete_post_meta( $post_id, '_wcpbc_base_exchange_rate' );
-			delete_post_meta( $post_id, '_wcpbc_pricing_zone' );
+			if ( $data ) {
+				$zone = WCPBC_Pricing_Zones::create();
+				$zone->set_props( $data );
 
-			foreach ( $data as $zone ) {
-				if ( $zone['currency'] === $currency ) {
-					update_post_meta( $post_id, '_wcpbc_base_exchange_rate', 1 / floatval( $zone['real_exchange_rate'] ) );
-					update_post_meta( $post_id, '_wcpbc_pricing_zone', $zone );
-					break;
-				}
+				delete_post_meta( $post_id, '_wcpbc_base_exchange_rate' );
+				delete_post_meta( $post_id, '_wcpbc_pricing_zone' );
+
+				update_post_meta( $post_id, '_wcpbc_base_exchange_rate', $zone->get_base_currency_amount( 1 ) );
+				update_post_meta( $post_id, '_wcpbc_pricing_zone', $zone->get_data() );
 			}
 		}
 	}
