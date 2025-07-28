@@ -23,22 +23,35 @@ if ( ! class_exists( 'WCPBC_Stripe_UPE' ) ) :
 		 * Init integration
 		 */
 		public static function init() {
+			if ( self::get_main_stripe_gateway() ) {
+				self::init_hooks();
+			}
+		}
+
+		/**
+		 * Returns the Stripe main gateway.
+		 *
+		 * @return WC_Stripe_UPE_Payment_Gateway|bool
+		 */
+		private static function get_main_stripe_gateway() {
 			$main_gateway = null;
-			$stripe       = woocommerce_gateway_stripe();
+			$stripe       = function_exists( 'woocommerce_gateway_stripe' ) ? woocommerce_gateway_stripe() : null;
 
 			if ( is_callable( [ $stripe, 'get_main_stripe_gateway' ] ) ) {
 				$main_gateway = woocommerce_gateway_stripe()->get_main_stripe_gateway();
 			}
 
 			if ( is_a( $main_gateway, 'WC_Stripe_UPE_Payment_Gateway' ) ) {
-				self::init_hooks();
+				return $main_gateway;
+			} else {
+				return false;
 			}
 		}
 
 		/**
 		 * Hook actions and filters
 		 */
-		public static function init_hooks() {
+		private static function init_hooks() {
 			add_action( 'admin_notices', [ __CLASS__, 'add_supported_currencies_filter' ], 0 );
 			add_action( 'admin_notices', [ __CLASS__, 'remove_supported_currencies_filter' ], 20 );
 			add_action( 'wp_footer', [ __CLASS__, 'enqueue_scripts' ], 0 );
@@ -75,8 +88,12 @@ if ( ! class_exists( 'WCPBC_Stripe_UPE' ) ) :
 		 */
 		private static function supported_currencies_filter( $add_or_remove = 'add' ) {
 
-			$main_gateway = woocommerce_gateway_stripe()->get_main_stripe_gateway();
+			$main_gateway = self::get_main_stripe_gateway();
 			$callback     = 'add' === $add_or_remove ? 'add_filter' : 'remove_filter';
+
+			if ( ! $main_gateway ) {
+				return;
+			}
 
 			foreach ( $main_gateway->get_upe_enabled_payment_method_ids() as $payment_method_id ) {
 
@@ -116,7 +133,7 @@ if ( ! class_exists( 'WCPBC_Stripe_UPE' ) ) :
 		 * Enqueue scripts
 		 */
 		public static function enqueue_scripts() {
-			if ( ! is_checkout() ) {
+			if ( ! ( is_checkout() && self::get_main_stripe_gateway() && self::get_main_stripe_gateway()->is_available() ) ) {
 				return;
 			}
 
