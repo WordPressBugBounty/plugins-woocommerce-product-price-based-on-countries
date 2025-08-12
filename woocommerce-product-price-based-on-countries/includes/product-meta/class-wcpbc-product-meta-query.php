@@ -99,6 +99,7 @@ class WCPBC_Product_Meta_Query {
 		];
 
 		$post_args = [
+			'cache_results'    => false,
 			'posts_per_page'   => -1,
 			'suppress_filters' => false,
 			'fields'           => 'id=>parent',
@@ -179,7 +180,7 @@ class WCPBC_Product_Meta_Query {
 	public function exchage_rate_price_on_sale_clauses( $args ) {
 		global $wpdb;
 		$pos            = strpos( $args['join'], ' LEFT JOIN ' );
-		$args['join']   = substr( $args['join'], 0, $pos ) . "INNER JOIN {$wpdb->wc_product_meta_lookup} AS lookup ON wp_posts.ID = lookup.product_id " . substr( $args['join'], $pos );
+		$args['join']   = substr( $args['join'], 0, $pos ) . "INNER JOIN {$wpdb->wc_product_meta_lookup} AS lookup ON {$wpdb->posts}.ID = lookup.product_id " . substr( $args['join'], $pos );
 		$args['where'] .= ' AND (lookup.onsale = 1) ';
 		return $args;
 	}

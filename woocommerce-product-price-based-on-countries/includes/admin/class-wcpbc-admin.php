@@ -26,6 +26,7 @@ class WCPBC_Admin {
 		add_filter( 'woocommerce_paypal_supported_currencies', array( __CLASS__, 'paypal_supported_currencies' ) );
 		add_filter( 'woocommerce_gateway_payfast_available_currencies', array( __CLASS__, 'paypal_supported_currencies' ) );
 		add_filter( 'woocommerce_debug_tools', array( __CLASS__, 'debug_tools' ), 20 );
+		add_action( 'woocommerce_system_status_tool_executed', array( __CLASS__, 'system_status_tool_executed' ) );
 
 		do_action( 'wc_price_based_country_admin_init' );
 	}
@@ -213,6 +214,19 @@ class WCPBC_Admin {
 			),
 		);
 		return $debug_tools;
+	}
+
+	/**
+	 * Runs after a WooCommerce system status tool has been executed.
+	 *
+	 * @param array $tool  Details about the tool that has been executed.
+	 */
+	public static function system_status_tool_executed( $tool ) {
+		$action = isset( $tool['id'] ) ? $tool['id'] : false;
+		if ( 'clear_transients' === $action ) {
+			// Delete plugin transient on WooCommerce clear transients tool.
+			delete_transient( 'wcpbc_products_onsale' );
+		}
 	}
 }
 

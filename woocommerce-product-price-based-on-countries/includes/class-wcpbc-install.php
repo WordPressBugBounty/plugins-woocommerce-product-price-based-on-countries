@@ -150,6 +150,10 @@ class WCPBC_Install {
 			self::set_gla_integration_option();
 			self::deactivate_wc_payments_multicurrency();
 		}
+
+		if ( version_compare( $current_version, '4.0.10', '<' ) ) {
+			delete_transient( 'wcpbc_products_onsale' );
+		}
 	}
 
 	/**

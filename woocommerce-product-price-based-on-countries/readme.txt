@@ -3,7 +3,7 @@ Contributors: oscargare
 Tags:  woocommerce, price based country, price by country, geoip, woocommerce-multi-currency
 Requires at least: 3.8
 Tested up to: 6.7
-Stable tag: 4.0.9
+Stable tag: 4.0.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -112,6 +112,10 @@ You should do the test in a private browsing window to prevent data stored in th
 7. Includes a country selector widget.
 
 == Changelog ==
+
+= 4.0.10 (2025-08-12) =
+* Fixed: PHP Notice: Function _load_textdomain_just_in_time was called incorrectly when "WooCommerce Stripe Payment Gateway" plugin is active.
+* Fixed: Error on the "get product on sale" function.
 
 = 4.0.9 (2025-07-28) =
 * Fixed: JavaScript error if "WooCommerce Stripe Payment Gateway" plugin is active but the Stripe payment gateway is disabled.

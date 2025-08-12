@@ -23,9 +23,11 @@ if ( ! class_exists( 'WCPBC_Stripe_UPE' ) ) :
 		 * Init integration
 		 */
 		public static function init() {
-			if ( self::get_main_stripe_gateway() ) {
-				self::init_hooks();
-			}
+			add_action( 'admin_notices', [ __CLASS__, 'add_supported_currencies_filter' ], 0 );
+			add_action( 'admin_notices', [ __CLASS__, 'remove_supported_currencies_filter' ], 20 );
+			add_action( 'wp_footer', [ __CLASS__, 'enqueue_scripts' ], 0 );
+			add_filter( 'wc_stripe_upe_params', [ __CLASS__, 'stripe_upe_params' ] );
+			add_filter( 'woocommerce_update_order_review_fragments', [ __CLASS__, 'update_order_review_fragments' ] );
 		}
 
 		/**
@@ -46,17 +48,6 @@ if ( ! class_exists( 'WCPBC_Stripe_UPE' ) ) :
 			} else {
 				return false;
 			}
-		}
-
-		/**
-		 * Hook actions and filters
-		 */
-		private static function init_hooks() {
-			add_action( 'admin_notices', [ __CLASS__, 'add_supported_currencies_filter' ], 0 );
-			add_action( 'admin_notices', [ __CLASS__, 'remove_supported_currencies_filter' ], 20 );
-			add_action( 'wp_footer', [ __CLASS__, 'enqueue_scripts' ], 0 );
-			add_filter( 'wc_stripe_upe_params', [ __CLASS__, 'stripe_upe_params' ] );
-			add_filter( 'woocommerce_update_order_review_fragments', [ __CLASS__, 'update_order_review_fragments' ] );
 		}
 
 		/**
@@ -186,13 +177,13 @@ if ( ! class_exists( 'WCPBC_Stripe_UPE' ) ) :
 			}
 
 			$available_currencies = self::get_available_currencies();
+			$main_gateway         = self::get_main_stripe_gateway();
 
-			if ( count( $available_currencies ) < 2 ) {
+			if ( ! $main_gateway || count( $available_currencies ) < 2 ) {
 				return $params;
 			}
 
 			$payment_methods_config = $params['paymentMethodsConfig'];
-			$main_gateway           = woocommerce_gateway_stripe()->get_main_stripe_gateway();
 
 			foreach ( $available_currencies as $currency ) {
 

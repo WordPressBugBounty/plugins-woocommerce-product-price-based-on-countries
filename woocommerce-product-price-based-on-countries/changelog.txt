@@ -1,3 +1,7 @@
+= 4.0.10 (2025-08-12) =
+* Fixed: PHP Notice: Function _load_textdomain_just_in_time was called incorrectly when "WooCommerce Stripe Payment Gateway" plugin is active.
+* Fixed: Error on the "get product on sale" function.
+
 = 4.0.9 (2025-07-28) =
 * Fixed: JavaScript error if "WooCommerce Stripe Payment Gateway" plugin is active but the Stripe payment gateway is disabled.
 
