@@ -175,7 +175,7 @@ class WCPBC_Frontend {
 			// Checkout page.
 			self::checkout_country();
 
-		} elseif ( ! empty( $_POST['calc_shipping_country'] ) && self::verify_shipping_calculator_nonce() ) {
+		} elseif ( ! empty( $_POST['calc_shipping_country'] ) && ! empty( $_POST['calc_shipping'] ) && self::verify_shipping_calculator_nonce() ) {
 			// Shipping calculator.
 			self::calculate_shipping_country();
 		}
@@ -267,13 +267,24 @@ class WCPBC_Frontend {
 	}
 
 	/**
-	 * Update WooCommerce Customer country on calculate shipping
+	 * Updates the customer country on calculate shipping.
+	 *
+	 * @see WC_Shortcode_Cart::calculate_shipping
 	 */
 	private static function calculate_shipping_country() {
 
-		$country = isset( $_POST['calc_shipping_country'] ) ? wc_clean( wp_unslash( $_POST['calc_shipping_country'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+		$country  = ! empty( $_POST['calc_shipping_country'] ) ? wc_clean( wp_unslash( $_POST['calc_shipping_country'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+		$postcode = ! empty( $_POST['calc_shipping_postcode'] ) ? wc_format_postcode( wc_clean( wp_unslash( $_POST['calc_shipping_postcode'] ) ), $country ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+
+		if ( $postcode && $country && ! WC_Validation::is_postcode( $postcode, $country ) ) {
+			return;
+		}
+
 		if ( $country ) {
-			WC()->customer->set_billing_country( $country );
+
+			if ( ! WC()->customer->get_billing_first_name() || apply_filters( 'wc_price_based_country_calculate_shipping_billing_country_update', true ) ) {
+				WC()->customer->set_billing_country( $country );
+			}
 			WC()->customer->set_shipping_country( $country );
 		}
 	}
