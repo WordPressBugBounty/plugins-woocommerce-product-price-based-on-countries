@@ -143,19 +143,6 @@ global $wpdb;
 			<td data-export-label="Real external IP"><?php esc_html_e( 'Real external IP', 'woocommerce-product-price-based-on-countries' ); ?>:</td>
 			<td class="help">&nbsp;</td>
 			<td id="wcpbc-real-external-ip"></td>
-			<?php
-				wc_enqueue_js(
-					"function show_real_ip(ip){
-						$('#wcpbc-real-external-ip').text(ip.trim());
-						$('#wcpbc-real-external-ip').data('value', ip.trim());
-						$( '#wcpbc-geolocation-debug' ).trigger( 'wc_price_based_country_real_external_ip_loaded' );
-					}
-					$.get('https://icanhazip.com/', show_real_ip)
-					.fail(function(){
-						$.get('https://ident.me/', show_real_ip);
-					});"
-				);
-				?>
 		</tr>
 		<tr id="wcpbc-use-remote-addr" data-value="<?php echo defined( 'WCPBC_USE_REMOTE_ADDR' ) && WCPBC_USE_REMOTE_ADDR ? '1' : ''; ?>">
 			<td data-export-label="WCPBC_USE_REMOTE_ADDR">Const WCPBC_USE_REMOTE_ADDR:</td>

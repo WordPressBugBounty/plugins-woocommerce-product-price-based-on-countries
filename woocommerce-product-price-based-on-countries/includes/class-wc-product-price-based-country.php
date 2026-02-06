@@ -17,7 +17,7 @@ class WC_Product_Price_Based_Country {
 	 *
 	 * @var string
 	 */
-	public $version = '4.0.11';
+	public $version = '4.1.1';
 
 	/**
 	 * The front-end pricing zone
@@ -281,9 +281,9 @@ class WC_Product_Price_Based_Country {
 			wp_kses_post( $this->environment_alert )
 		);
 
-		if ( function_exists( 'wc_enqueue_js' ) ) {
-			wc_enqueue_js(
-				"$('tr[data-plugin=\"woocommerce-product-price-based-on-countries/woocommerce-product-price-based-on-countries.php\"]').addClass('update');"
+		if ( function_exists( 'wcpbc_enqueue_js' ) ) {
+			wcpbc_enqueue_js(
+				"jQuery('tr[data-plugin=\"woocommerce-product-price-based-on-countries/woocommerce-product-price-based-on-countries.php\"]').addClass('update');"
 			);
 		}
 	}

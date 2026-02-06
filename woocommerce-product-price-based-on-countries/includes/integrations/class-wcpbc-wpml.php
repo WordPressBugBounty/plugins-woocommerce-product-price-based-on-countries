@@ -144,21 +144,21 @@ class WCPBC_WPML implements WCPBC_Multilang_Interface {
 	 * Add the JS to lock the variation fields.
 	 */
 	public function load_lock_fields_js() {
-		wc_enqueue_js(
-			"$( '#woocommerce-product-data' ).on( 'woocommerce_variations_loaded', function() {
-				$('._price_method_wcpbc_field').prop('disabled',true);
-				$('._price_method_wcpbc_field').after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
+		wcpbc_enqueue_js(
+			"jQuery( '#woocommerce-product-data' ).on( 'woocommerce_variations_loaded', function() {
+				jQuery('._price_method_wcpbc_field').prop('disabled',true);
+				jQuery('._price_method_wcpbc_field').after(jQuery('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
 
-				$('.wcpbc_pricing .wc_input_price').prop('readonly',true);
-				$('.wcpbc_pricing .wc_input_price').after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
+				jQuery('.wcpbc_pricing .wc_input_price').prop('readonly',true);
+				jQuery('.wcpbc_pricing .wc_input_price').after(jQuery('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
 
-				$('.wcpbc_pricing .sale_price_dates_from').prop('readonly',true);
-				$('.wcpbc_pricing .sale_price_dates_from').after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
-				$('.wcpbc_pricing .sale_price_dates_to').prop('readonly',true);
-				$('.wcpbc_pricing .sale_price_dates_to').after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
+				jQuery('.wcpbc_pricing .sale_price_dates_from').prop('readonly',true);
+				jQuery('.wcpbc_pricing .sale_price_dates_from').after(jQuery('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
+				jQuery('.wcpbc_pricing .sale_price_dates_to').prop('readonly',true);
+				jQuery('.wcpbc_pricing .sale_price_dates_to').after(jQuery('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
 
-				$('.wcpbc_sale_price_dates_wrapper').prop('disabled',true);
-				$('.wcpbc_sale_price_dates_wrapper').after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
+				jQuery('.wcpbc_sale_price_dates_wrapper').prop('disabled',true);
+				jQuery('.wcpbc_sale_price_dates_wrapper').after(jQuery('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
 			} );"
 		);
 	}

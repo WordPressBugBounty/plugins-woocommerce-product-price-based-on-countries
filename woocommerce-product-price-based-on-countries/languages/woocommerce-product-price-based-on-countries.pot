@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2.
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce Price Based on Country 4.0.11\n"
+"Project-Id-Version: WooCommerce Price Based on Country 4.1.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-product-price-based-on-countries\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-09-23T08:28:15+00:00\n"
+"POT-Creation-Date: 2025-12-23T09:10:07+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: woocommerce-product-price-based-on-countries\n"
@@ -1068,15 +1068,15 @@ msgstr ""
 msgid "Real external IP"
 msgstr ""
 
-#: includes/admin/views/html-admin-page-status-report.php:166
+#: includes/admin/views/html-admin-page-status-report.php:153
 msgid "Geolocation Test"
 msgstr ""
 
-#: includes/admin/views/html-admin-page-status-report.php:168
+#: includes/admin/views/html-admin-page-status-report.php:155
 msgid "Runing"
 msgstr ""
 
-#: includes/admin/views/html-admin-page-status-report.php:197
+#: includes/admin/views/html-admin-page-status-report.php:184
 msgid "Zone Pricing"
 msgstr ""
 
@@ -1339,10 +1339,6 @@ msgstr ""
 msgid "%1$sPrice Based Country%2$s test mode enabled for testing %3$s. You should do tests on private browsing mode. Browse in private with %4$sFirefox%7$s, %5$sChrome%7$s and %6$sSafari%7$s"
 msgstr ""
 
-#: includes/class-wcpbc-install.php:194
-msgid "Price Based on Country database update complete. Thank you for updating to the latest version!"
-msgstr ""
-
 #: includes/class-wcpbc-pricing-zone.php:193
 msgid "Invalid value for the zone ID. Use a different value."
 msgstr ""
@@ -1459,7 +1455,7 @@ msgid "%1$sPrice Based on Country Pro & All Products For Subscriptions%2$s compa
 msgstr ""
 
 #: includes/integrations/class-wcpbc-wpallimport-ad.php:58
-#: includes/wcpbc-core-functions.php:519
+#: includes/wcpbc-core-functions.php:535
 msgid "Price for"
 msgstr ""
 
@@ -1498,11 +1494,11 @@ msgstr ""
 msgid "\"zone\" argument must be a WCPBC_Pricing_Zone instance."
 msgstr ""
 
-#: includes/wcpbc-core-functions.php:483
+#: includes/wcpbc-core-functions.php:499
 msgid "Calculate prices by the exchange rate"
 msgstr ""
 
-#: includes/wcpbc-core-functions.php:484
+#: includes/wcpbc-core-functions.php:500
 msgid "Set prices manually"
 msgstr ""
 

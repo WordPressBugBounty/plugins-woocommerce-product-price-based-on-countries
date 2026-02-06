@@ -438,7 +438,20 @@ class WCPBC_Frontend_Pricing {
 			if ( $change ) {
 
 				// Apply exchange rate.
-				$rate_cost = wcpbc_the_zone()->get_exchange_rate_price( $rate_cost, ! wc_prices_include_tax(), 'shipping', $rate );
+				$rate_cost = wcpbc_the_zone()->get_exchange_rate_price(
+					$rate_cost,
+					/**
+					 * Allow developers to modify the "round" parameter.
+					 *
+					 * @param bool $round Whether to round the result.
+					 */
+					apply_filters(
+						'wc_price_based_country_round_rate_cost',
+						! wc_prices_include_tax()
+					),
+					'shipping',
+					$rate
+				);
 
 				// Recalculate taxes.
 				$rate_taxes = array();

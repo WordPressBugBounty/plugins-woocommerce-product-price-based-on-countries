@@ -1,3 +1,16 @@
+= 4.1.1 (2025-12-23) =
+* Fixed: Bug introduced by WPML that breaks the get_post_meta function and affects product variation synchronization.
+
+= 4.1.0 (2025-12-04) =
+* Added: Tested up WordPress 6.9+.
+* Added: Tested up WooCommerce 10.4+.
+* Fixed: Deprecated wc_enqueue_js on WooCommerce 10.4
+* Fixed: PHP Notice: Function _load_textdomain_just_in_time was called incorrectly when "WooCommerce PayPal Payments" plugin is active.
+
+= 4.0.12 (2025-11-20) =
+* Added: Tested up WooCommerce 10.3+.
+* Fix: The check "Calculate amount by exchange rate" on coupons can't be unchecked.
+
 = 4.0.11 (2025-09-23) =
 * Added: Tested up WooCommerce 10.2+.
 * Added: Tested up WordPress 6.8+.

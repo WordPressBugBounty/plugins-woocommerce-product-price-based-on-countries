@@ -398,6 +398,22 @@ function wcpbc_geoipdb_exists() {
 	return $exists;
 }
 
+/**
+ * Queue JavaScript code to be output in the footer.
+ *
+ * @param string $code Code.
+ * @since 4.1.0
+ */
+function wcpbc_enqueue_js( $code ) {
+	$handle = 'wc-price-based-country-inline';
+	if ( ! wp_script_is( $handle, 'enqueued' ) ) {
+		wp_register_script( $handle, '', [ 'jquery' ], WCPBC()->version, true );
+		wp_enqueue_script( $handle );
+	}
+
+	wp_add_inline_script( $handle, $code );
+}
+
 /*
 |--------------------------------------------------------------------------
 | HPOS compatiblity Functions

@@ -222,7 +222,7 @@ class WCPBC_Admin_Meta_Boxes {
 	 */
 	public static function coupon_options_save( $post_id ) {
 		$discount_type     = empty( $_POST['discount_type'] ) ? 'fixed_cart' : wc_clean( wp_unslash( $_POST['discount_type'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
-		$zone_pricing_type = in_array( $discount_type, array( 'fixed_cart', 'fixed_product' ), true ) && isset( $_POST['zone_pricing_type'] ) ? 'exchange_rate' : 'nothig'; // phpcs:ignore WordPress.Security.NonceVerification
+		$zone_pricing_type = in_array( $discount_type, array( 'fixed_cart', 'fixed_product' ), true ) && isset( $_POST['zone_pricing_type'] ) ? 'exchange_rate' : 'manual'; // phpcs:ignore WordPress.Security.NonceVerification
 		update_post_meta( $post_id, 'zone_pricing_type', $zone_pricing_type );
 	}
 }

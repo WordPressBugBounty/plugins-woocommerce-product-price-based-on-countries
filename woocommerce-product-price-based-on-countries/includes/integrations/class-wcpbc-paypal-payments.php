@@ -31,10 +31,8 @@ if ( ! class_exists( 'WCPBC_PayPal_Payments' ) ) :
 				return;
 			}
 
-			if ( version_compare( $ppcp_version, '2.9.0', '>=' ) ) {
-
+			if ( version_compare( $ppcp_version, '2.9.0', '>=' ) && version_compare( $ppcp_version, '2.9.3', '<' ) ) {
 				include dirname( __FILE__ ) . '/paypal-payments/2.9/class-wcpbc-paypalcommerce.php';
-
 			} elseif ( version_compare( $ppcp_version, '1.7.0', '<' ) ) {
 				add_filter( 'woocommerce_paypal_payments_modules', array( __CLASS__, 'paypal_payments_modules' ) );
 			}
@@ -92,7 +90,7 @@ if ( ! class_exists( 'WCPBC_PayPal_Payments' ) ) :
 				require_once ABSPATH . 'wp-admin/includes/plugin.php';
 			}
 			$file        = str_replace( 'woocommerce-product-price-based-on-countries', 'woocommerce-paypal-payments', dirname( WCPBC_PLUGIN_FILE ) ) . '/woocommerce-paypal-payments.php';
-			$plugin_data = get_plugin_data( $file );
+			$plugin_data = get_plugin_data( $file, false, false );
 			$version     = isset( $plugin_data['Version'] ) ? $plugin_data['Version'] : false;
 			return $version;
 		}
@@ -129,8 +127,6 @@ if ( ! class_exists( 'WCPBC_PayPal_Payments' ) ) :
 
 			return $fragments;
 		}
-
-
 	}
 
 	WCPBC_PayPal_Payments::init();

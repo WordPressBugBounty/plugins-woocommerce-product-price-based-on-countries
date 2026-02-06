@@ -186,3 +186,26 @@ function wcpbc_update_228() {
 	// Invalidate the WooCommerce Admin reports cache.
 	wcpbc_update_200();
 }
+
+/**
+ * Fixes incorrect discount_type meta value in coupons
+ */
+function wcpbc_update_4012() {
+	$post_ids = get_posts(
+		[
+			'post_type'      => 'shop_coupon',
+			'meta_key'       => 'zone_pricing_type',
+			'meta_value'     => 'nothig',
+			'fields'         => 'ids',
+			'posts_per_page' => -1,
+		]
+	);
+
+	if ( ! $post_ids ) {
+		return;
+	}
+
+	foreach ( $post_ids as $post_id ) {
+		update_post_meta( $post_id, 'zone_pricing_type', 'manual' );
+	}
+}

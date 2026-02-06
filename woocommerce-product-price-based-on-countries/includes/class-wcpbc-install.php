@@ -28,30 +28,26 @@ class WCPBC_Install {
 		'2.0.0'  => 'wcpbc_update_200',
 		'2.0.3'  => 'wcpbc_update_200',
 		'2.0.28' => 'wcpbc_update_228',
+		'4.0.12' => 'wcpbc_update_4012',
 	);
 
 	/**
 	 * Hooks.
 	 */
 	public static function init() {
-		add_action( 'admin_init', array( __CLASS__, 'update_db' ), 5 );
+		add_action( 'wc_price_based_country_update_database', array( __CLASS__, 'update_database' ) );
 		add_action( 'admin_init', array( __CLASS__, 'check_version' ), 10 );
 		add_action( 'in_plugin_update_message-woocommerce-product-price-based-on-countries/woocommerce-product-price-based-on-countries.php', array( __CLASS__, 'in_plugin_update_message' ) );
 	}
 
 	/**
 	 * Update database to the last version.
+	 *
+	 * @param string $current_version Current version.
 	 */
-	public static function update_db() {
-		if ( empty( $_GET['update_wc_price_based_country_nonce'] ) ) {
-			return;
-		}
-
-		check_admin_referer( 'do_update_wc_price_based_country', 'update_wc_price_based_country_nonce' );
+	public static function update_database( $current_version ) {
 
 		include_once dirname( __FILE__ ) . '/wcpbc-update-functions.php';
-
-		$current_version = self::get_install_version();
 
 		foreach ( self::$db_updates as $version => $callback ) {
 			if ( version_compare( $current_version, $version, '<' ) ) {
@@ -60,11 +56,6 @@ class WCPBC_Install {
 				}
 			}
 		}
-
-		self::update_wcpbc_version();
-		self::update_options( $current_version );
-
-		WCPBC_Admin_Notices::add_notice( 'updated' );
 	}
 
 	/**
@@ -82,12 +73,12 @@ class WCPBC_Install {
 			$update_versions = array_keys( self::$db_updates );
 			$needs_db_update = version_compare( $current_db_version, end( $update_versions ), '<' );
 
-			if ( $needs_db_update ) {
-				WCPBC_Admin_Notices::add_temp_notice( 'update_db' );
+			if ( $needs_db_update && ! as_next_scheduled_action( 'wc_price_based_country_update_database' ) ) {
+				as_enqueue_async_action( 'wc_price_based_country_update_database', [ 'current_version' => $current_db_version ] );
 			}
 		}
 
-		if ( ! $needs_db_update && WCPBC()->version !== $current_db_version ) {
+		if ( WCPBC()->version !== $current_db_version ) {
 
 			self::update_wcpbc_version();
 
@@ -178,20 +169,6 @@ class WCPBC_Install {
 			// Set the redirect cookie.
 			setcookie( '_wcpbc_activation_redirect', '1' );
 		}
-	}
-
-	/**
-	 * Run the last update db.
-	 *
-	 * @since 1.8.8
-	 */
-	public static function update_database() {
-		include_once dirname( __FILE__ ) . '/wcpbc-update-functions.php';
-		$callback = end( self::$db_updates );
-		call_user_func( $callback );
-		self::update_wcpbc_version();
-
-		return __( 'Price Based on Country database update complete. Thank you for updating to the latest version!', 'woocommerce-product-price-based-on-countries' );
 	}
 
 	/**

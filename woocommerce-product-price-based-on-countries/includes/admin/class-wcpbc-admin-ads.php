@@ -128,9 +128,9 @@ class WCPBC_Admin_Ads {
 
 			printf( '<div id="wcpbc-dynamic-pricing-notice" class="inline notice woocommerce-message is-dismissible"><p style="font-size: 13px;">%1$s</p><p><a href="%2$s" class="button-primary" rel="noopener noreferrer" target="_blank">%3$s</a></p></div>', wp_kses_post( $notice_text ), esc_url( $upgrade_url ), esc_html( $upgrade_text ) );
 
-			wc_enqueue_js(
-				"$(document).ready(function(){
-					$('#woocommerce-pricing-rules-wrap').before($('#wcpbc-dynamic-pricing-notice'));
+			wcpbc_enqueue_js(
+				"jQuery(document).ready(function(){
+					jQuery('#woocommerce-pricing-rules-wrap').before(jQuery('#wcpbc-dynamic-pricing-notice'));
 				});"
 			);
 		}

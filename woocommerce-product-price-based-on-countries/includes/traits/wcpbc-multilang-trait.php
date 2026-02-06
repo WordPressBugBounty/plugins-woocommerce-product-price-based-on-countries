@@ -119,13 +119,13 @@ trait WCPBC_Multilang_Trait {
 	 */
 	protected function sync_metadata( $post_id, $translations, $zone ) {
 
-		$metadata = $zone->get_postmeta( $post_id );
+		$metadata = $this->get_metadata( $post_id, $zone );
 
 		foreach ( $translations as $tr_post_id ) {
 
 			$this->doing_sync = absint( $tr_post_id );
 
-			$tr_metakeys = array_keys( $zone->get_postmeta( $tr_post_id ) );
+			$tr_metakeys = array_keys( $this->get_metadata( $tr_post_id, $zone ) );
 
 			foreach ( $tr_metakeys as $meta_key ) {
 
@@ -140,6 +140,23 @@ trait WCPBC_Multilang_Trait {
 		}
 
 		$this->doing_sync = false;
+	}
+
+	/**
+	 * Returns post metadata. Fix bug on WMPL.
+	 *
+	 * @see https://wordpress.org/support/topic/plugin-breaks-get_post_meta-function-for-product-variations/
+	 * @param int                $post_id Post ID.
+	 * @param WCPBC_Pricing_Zone $zone Pricing zone instance.
+	 */
+	protected function get_metadata( $post_id, $zone ) {
+		add_filter( 'get_post_metadata', '__return_null', 99999 ); // Remove get_post_metadata filters.
+
+		$metadata = $zone->get_postmeta( $post_id );
+
+		remove_filter( 'get_post_metadata', '__return_null', 99999 );
+
+		return $metadata;
 	}
 
 	/**

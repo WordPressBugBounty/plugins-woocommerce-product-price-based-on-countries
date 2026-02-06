@@ -142,9 +142,16 @@ jQuery( function( $ ) {
 			}
 		},
 
+		show_real_ip: function(value) {
+			$('#wcpbc-real-external-ip').text(value.trim());
+			$('#wcpbc-real-external-ip').data('value', value.trim());
+			geolocation_debug.geolocation_test();
+		},
+
 		init: function(){
-			$( '#wcpbc-geolocation-debug' ).on( 'wc_price_based_country_real_external_ip_loaded', function() {
-				geolocation_debug.geolocation_test();
+			jQuery.get('https://icanhazip.com/', geolocation_debug.show_real_ip)
+			.fail(function(){
+				jQuery.get('https://4.ident.me/', geolocation_debug.show_real_ip);
 			});
 		}
 	};

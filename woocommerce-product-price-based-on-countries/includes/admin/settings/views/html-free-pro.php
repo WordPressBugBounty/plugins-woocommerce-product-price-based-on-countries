@@ -84,7 +84,7 @@ $features = array(
 	),
 );
 
-wc_enqueue_js(
+wcpbc_enqueue_js(
 	";jQuery(document).ready(function($){
 		$('.feature-wrap [data-tip-info]').tipTip( {
 			attribute: 'data-tip-info',
