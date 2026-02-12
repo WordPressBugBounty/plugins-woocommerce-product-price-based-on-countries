@@ -1,3 +1,6 @@
+= 4.2.1 (2026-02-12) =
+* Fixed: WCPBC_Runtime_Meta" not found.
+
 = 4.2.0 (2026-02-12) =
 * Added: Compatible with WooCommerce 10.5+.
 * Fixed: The product default price fields could be updated with the pricing zone value if another process saves the products in the cart.
