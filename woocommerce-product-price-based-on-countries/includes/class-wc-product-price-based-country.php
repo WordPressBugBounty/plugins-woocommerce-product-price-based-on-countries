@@ -17,7 +17,7 @@ class WC_Product_Price_Based_Country {
 	 *
 	 * @var string
 	 */
-	public $version = '4.1.1';
+	public $version = '4.2.0';
 
 	/**
 	 * The front-end pricing zone
@@ -38,7 +38,7 @@ class WC_Product_Price_Based_Country {
 	 *
 	 * @var string
 	 */
-	protected $min_pro_version = '3.6.0';
+	protected $min_pro_version = '4.1.0';
 
 	/**
 	 * Enviroment alert
@@ -165,6 +165,7 @@ class WC_Product_Price_Based_Country {
 			'WCPBC_Store_API'            => 'class-wcpbc-store-api.php',
 			'WCPBC_Country_Flags'        => 'class-wcpbc-country-flags.php',
 			'WCPBC_Blocks_Controller'    => 'class-wcpbc-blocks-controller.php',
+			'WCPBC_Runtime_Meta'         => 'class-wcpbc-runtime-meta.php',
 			'WCPBC_Admin_Analytics'      => 'admin/class-wcpbc-admin-analytics.php',
 			'WCPBC_Admin_Notices'        => 'admin/class-wcpbc-admin-notices.php',
 			'WCPBC_Admin'                => 'admin/class-wcpbc-admin.php',
@@ -373,7 +374,7 @@ class WC_Product_Price_Based_Country {
 		}
 
 		add_action( 'widgets_init', array( $this, 'register_widgets' ) );
-		add_action( 'woocommerce_init', array( $this, 'frontend_init' ), 999 );
+		add_action( 'woocommerce_init', array( $this, 'frontend_init' ), 0 );
 		add_action( 'init', array( $this, 'ajax_frontend_init' ), 9999 );
 	}
 

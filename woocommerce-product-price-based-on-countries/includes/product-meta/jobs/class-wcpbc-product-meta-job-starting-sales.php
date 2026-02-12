@@ -32,9 +32,13 @@ class WCPBC_Product_Meta_Job_Starting_Sales extends WCPBC_Product_Meta_Job {
 			}
 
 			$sale_price = $zone->get_postmeta( $row->post_id, '_sale_price' );
+			$price      = $zone->get_postmeta( $row->post_id, '_price' );
+
+			if ( ! $sale_price || floatval( $price ) === floatval( $sale_price ) ) {
+				continue;
+			}
 
 			$zone->set_postmeta( $row->post_id, '_price', $sale_price );
-			$zone->delete_postmeta( $row->post_id, '_sale_price_dates_from' );
 		}
 	}
 
@@ -49,10 +53,10 @@ class WCPBC_Product_Meta_Job_Starting_Sales extends WCPBC_Product_Meta_Job {
 				'product_ids' => [],
 			]
 		);
-		$meta_keys_query = $this->get_zones_metaquery( [ '_price_method', '_sale_price_dates', '_sale_price', '_sale_price_dates_from' ] );
+		$meta_keys_query = $this->get_zones_metaquery( [ '_price_method', '_sale_price_dates', '_price', '_sale_price', '_sale_price_dates_from', '_sale_price_dates_to' ] );
 		$rows            = [];
 
-		if ( 'manual' !== $this->args['method'] && ! empty( $this->args['product_ids'] ) ) {
+		if ( 'manual' !== $this->args['method'] && ! empty( $this->args['product_ids'] ) && is_array( $this->args['product_ids'] ) ) {
 
 			$starting_sale_where = $this->prepare_in( 'posts.ID IN (%d)', array_map( 'absint', $this->args['product_ids'] ) );
 
@@ -87,22 +91,31 @@ class WCPBC_Product_Meta_Job_Starting_Sales extends WCPBC_Product_Meta_Job {
 					INNER JOIN {$this->table->postmeta} meta__price_method
 						ON meta__price_method.post_id = posts.ID
 						AND meta__price_method.meta_key = zones_query._price_method_field_name
-					INNER JOIN {$this->table->postmeta} meta__sale_price
-						ON meta__sale_price.post_id = posts.ID
-						AND meta__sale_price.meta_key = zones_query._sale_price_field_name
 					INNER JOIN {$this->table->postmeta} meta__sale_price_dates
 						ON meta__sale_price_dates.post_id = posts.ID
 						AND meta__sale_price_dates.meta_key = zones_query._sale_price_dates_field_name
 					INNER JOIN {$this->table->postmeta} meta__sale_price_dates_from
 						ON meta__sale_price_dates_from.post_id = posts.ID
 						AND meta__sale_price_dates_from.meta_key = zones_query._sale_price_dates_from_field_name
+					INNER JOIN {$this->table->postmeta} meta__sale_price_dates_to
+						ON meta__sale_price_dates_to.post_id = posts.ID
+						AND meta__sale_price_dates_to.meta_key = zones_query._sale_price_dates_to_field_name
+					INNER JOIN {$this->table->postmeta} meta__sale_price
+						ON meta__sale_price.post_id = posts.ID
+						AND meta__sale_price.meta_key = zones_query._sale_price_field_name
+					INNER JOIN {$this->table->postmeta} meta__price
+						ON meta__price.post_id = posts.ID
+						AND meta__price.meta_key = zones_query._price_field_name
 					WHERE {$this->get_post_filter()}
 					AND meta__price_method.meta_value = 'manual'
-					AND meta__sale_price.meta_value != ''
 					AND meta__sale_price_dates.meta_value = 'manual'
+					AND meta__sale_price.meta_value != ''
+					AND meta__price.meta_value != meta__sale_price.meta_value
 					AND meta__sale_price_dates_from.meta_value < %s
 					AND meta__sale_price_dates_from.meta_value > 0
+					AND ( meta__sale_price_dates_to.meta_value > %s OR meta__sale_price_dates_to.meta_value + 0 = 0 )
 					ORDER BY zones_query.zone_id, posts.ID",
+					time(),
 					time()
 				)
 			);

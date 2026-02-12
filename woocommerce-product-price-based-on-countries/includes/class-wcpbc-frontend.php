@@ -29,6 +29,7 @@ class WCPBC_Frontend {
 		add_action( 'woocommerce_order_refunded', array( __CLASS__, 'order_refunded' ), 10, 2 );
 		add_action( 'wp_loaded', array( __CLASS__, 'maybe_calculate_totals' ), 11 );
 		add_action( 'wp_footer', array( __CLASS__, 'test_store_message' ) );
+		add_action( 'woocommerce_after_checkout_validation', array( __CLASS__, 'validate_checkout' ), 10, 2 );
 		add_action( 'wcpbc_manual_country_selector', array( __CLASS__, 'output_country_selector' ) );
 		add_shortcode( 'wcpbc_country_selector', array( __CLASS__, 'shortcode_country_selector' ) );
 	}
@@ -412,6 +413,53 @@ class WCPBC_Frontend {
 			$country = WC()->countries->countries[ $test_country ];
 			// translators: HTML tags.
 			echo wp_kses_post( '<p class="demo_store">' . sprintf( __( '%1$sPrice Based Country%2$s test mode enabled for testing %3$s. You should do tests on private browsing mode. Browse in private with %4$sFirefox%7$s, %5$sChrome%7$s and %6$sSafari%7$s', 'woocommerce-product-price-based-on-countries' ), '<strong>', '</strong>', $country, '<a style="display:inline;float:none;text-decoration:underline;" target="_blank" href="https://support.mozilla.org/en-US/kb/private-browsing-use-firefox-without-history">', '<a style="display:inline;float:none;text-decoration:underline;" target="_blank" href="https://support.google.com/chrome/answer/95464?hl=en">', '<a style="display:inline;float:none;text-decoration:underline;" target="_blank" href="https://support.apple.com/kb/ph19216?locale=en_US">', '</a>' ) . '</p>' );
+		}
+	}
+
+	/**
+	 * Validates that the pricing zone against the order.
+	 *
+	 * @since  4.2.0
+	 * @param  array    $data   An array of posted data.
+	 * @param  WP_Error $errors Validation errors.
+	 */
+	public static function validate_checkout( $data, $errors ) {
+
+		if ( ! ( empty( $errors->errors ) && apply_filters( 'wc_price_based_country_validate_checkout', true, $data ) ) ) {
+			return;
+		}
+
+		$zone_id         = wcpbc_the_zone() ? wcpbc_the_zone()->get_id() : false;
+		$country_zone    = wcpbc_get_zone_by_country();
+		$country_zone_id = $country_zone ? $country_zone->get_id() : false;
+
+		if ( $zone_id !== $country_zone_id ) {
+
+			WC()->session->set( 'refresh_totals', true );
+
+			$debug_data = [
+				'loaded'   => $zone_id,
+				'checkout' => $country_zone_id,
+			];
+
+			$errors->add( 'pricing_zone', __( 'We were unable to process your order, please try again.', 'woocommerce-product-price-based-on-countries' ) );
+
+			if ( current_user_can( 'manage_woocommerce' ) ) {
+				$errors->add(
+					'pricing_zone_debug',
+					__( 'The loaded pricing zone does not match the pricing zone for the checkout billing/shipping country. This message is visible only to admins.', 'woocommerce-product-price-based-on-countries' )
+				);
+				$errors->add( 'pricing_zone_debug_data', wp_json_encode( $debug_data ) );
+			}
+
+			if ( function_exists( 'wc_log_order_step' ) ) {
+				wc_log_order_step(
+					'[Shortcode] Pricing zone validation error. Refresh total and try again.',
+					[
+						'price_based_on_country' => $debug_data,
+					]
+				);
+			}
 		}
 	}
 

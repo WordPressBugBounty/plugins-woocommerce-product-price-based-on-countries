@@ -36,8 +36,10 @@ class WCPBC_Product_Meta_Data {
 		add_action( 'shutdown', [ __CLASS__, 'maybe_sync_products' ], 9 );
 		add_action( 'updated_postmeta', [ __CLASS__, 'maybe_enqueue_update_meta_price' ], 10, 4 );
 		add_action( 'update_option_wc_price_based_country_regions', [ __CLASS__, 'update_pricing_zones' ], 10, 2 );
-		add_action( 'wc_after_products_starting_sales', [ __CLASS__, 'after_products_starting_sales' ], 10, 2 );
-		add_action( 'wc_after_products_ending_sales', [ __CLASS__, 'after_products_ending_sales' ], 10, 2 );
+		add_action( 'wc_after_products_starting_sales', [ __CLASS__, 'after_products_starting_sales' ] );
+		add_action( 'wc_product_start_scheduled_sale', [ __CLASS__, 'after_products_starting_sales' ], 15 );
+		add_action( 'wc_after_products_ending_sales', [ __CLASS__, 'after_products_ending_sales' ] );
+		add_action( 'wc_product_end_scheduled_sale', [ __CLASS__, 'after_products_ending_sales' ], 15 );
 		add_action( 'woocommerce_scheduled_sales', [ __CLASS__, 'scheduled_sales' ], 11 );
 		add_action( 'wc_price_based_country_product_meta_job', [ __CLASS__, 'run_product_meta_job' ], 10, 2 );
 	}
@@ -264,6 +266,10 @@ class WCPBC_Product_Meta_Data {
 	 * @param array $product_ids Array of product IDs which starting/ending sales.
 	 */
 	public static function after_products_starting_sales( $product_ids ) {
+		if ( ! is_array( $product_ids ) && is_scalar( $product_ids ) ) {
+			$product_ids = [ $product_ids ];
+		}
+
 		WCPBC_Product_Meta_Job::create(
 			'Starting_Sales',
 			[
@@ -279,6 +285,10 @@ class WCPBC_Product_Meta_Data {
 	 * @param array $product_ids Array of product IDs which starting/ending sales.
 	 */
 	public static function after_products_ending_sales( $product_ids ) {
+		if ( ! is_array( $product_ids ) && is_scalar( $product_ids ) ) {
+			$product_ids = [ $product_ids ];
+		}
+
 		WCPBC_Product_Meta_Job::create(
 			'Ending_Sales',
 			[

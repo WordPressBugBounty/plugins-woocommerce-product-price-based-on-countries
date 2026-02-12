@@ -1,86 +1,75 @@
 === Price Based on Country for WooCommerce ===
 Contributors: oscargare
-Tags:  woocommerce, currency, pricing, geolocation, multi currency, price by country
+Tags:  woocommerce, country-based pricing, price by country, geolocation, multi currency
 Requires at least: 3.8
 Tested up to: 6.9
 Requires PHP: 7.0
-Stable tag: 4.1.1
+Stable tag: 4.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Sell globally, price locally. The #1 Country Pricing plugin for WooCommerce with multi-currency support and geolocation integration to boost international sales and reduce friction.
+Product Pricing and Currency based on Shopper's Country for WooCommerce with multi-currency support and geolocation to boost international sales.
 
 == Description ==
 
-**Stop leaving money on the table. Start selling to the world like a local.**
+[Documentation](https://www.pricebasedcountry.com/docs/?utm_medium=banner&utm_campaign=upgrade-pro&utm_source=wordpress) | [Upgrade to Pro](https://www.pricebasedcountry.com/pricing/?utm_medium=banner&utm_campaign=upgrade-pro&utm_source=wordpress)
 
-E-commerce has no borders, but currencies and pricing strategies do. If you are selling internationally but showing a single price (or the wrong currency), you are adding friction to the checkout process. Friction kills conversions.
+[Price Based on Country for WooCommerce](https://www.pricebasedcountry.com/?utm_medium=banner&utm_campaign=upgrade-pro&utm_source=wordpress) allows you to define country-specific prices for your WooCommerce products, either in a single currency or across multiple currencies.
 
-**Price Based on Country for WooCommerce** is the solution to localize your store. It allows you to sell the same product at different prices—in the same currency or a different one—depending on the customer's country.
+The plugin is designed for stores that sell internationally and need greater control over how prices are presented to customers across regions. You can adapt your pricing strategy to reflect local markets and currencies.
 
-It's not just a currency converter; it is a strategic pricing tool.
+== KEY FEATURES ==
 
-= 🚀 Boost Your International Sales =
+The core plugin is 100% free. It provides all functionality needed to sell internationally with localized pricing.
 
-* **Slash Cart Abandonment**: Customers buy more when they see prices in their own currency.
-* **Absorb Shipping Costs**: Set higher prices for countries with expensive shipping without scaring away local customers.
-* **Regional Strategy**: Adjust your margins based on the purchasing power of each country.
+✔️ **Multi-Currency**
 
-= ✨ Key Features (Free Version) =
+Add multi-currency support to WooCommerce to enable selling products in multiple currencies and reduce checkout friction.
 
-We believe in giving you a robust tool right out of the box:
+✔️ **Geolocation**
 
-* **Geolocation Integration**: Automatically detects visitor country (fully compatible with cache plugins like WP Rocket).
-* **Multi-Currency Support**: Sell in USD, EUR, GBP, or any currency you need.
-* **Manual Overrides**: Don't trust the auto-exchange rate? Set clean pricing manually (e.g., 19.99 instead of 19.43).
-* **Shipping Currency Conversion**: Applies currency conversion to your shipping costs automatically.
-* **Country Switcher Widget**: Add a country switcher to your store to let users manually change their country.
-* **Translation Ready**: Compatible with WPML and Polylang workflows (sync data between product translations).
+The plugin detects the country of the website visitor automatically through the geolocation feature included in WooCommerce and displays the price and currency you have defined previously for this country. Compatible with cache plugins.
 
-= 💎 Go PRO: Scale Without Limits =
+✔️  **Manual Fixed Price**
 
-Running a serious business? You need professional tools.
+Leave the price to be calculated using the exchange rate, or set a fixed price manually for each country or region.
 
-The [PRO version](https://www.pricebasedcountry.com/product-tour/free-vs-pro/?utm_medium=banner&utm_campaign=upgrade-pro&utm_source=wordpress) adds features that save time, automate tasks, and provide seamless integration with professional plugins.
+✔️  **Country Switcher Widget**
 
-* **Auto-update of Exchange Rates**: Daily automatic exchange rate updates.
-* **Pretty prices**: Keep your store looking professional by rounding converted prices to clean numbers (e.g., $19.99 instead of $19.43).
-* **Bulk update from a CSV file**: Save hours of manual work by updating all your regional prices at once.
-* **Additional shortcodes and widgets**: Unlock exclusive shortcodes and widgets.
+Add a country switcher to your store to let users manually change their country.
 
-> *"Highly recommend the plugin, both free and paid versions. Have had it running for 4+ years now and never had an issue. When I have had a question, support has been quick to reply and deal with it."* — wmacmill (Verified WordPress.org User)
+✔️  **Multilingual Ready**
 
-⚡ **Exclusive PRO Integrations**:
-The PRO version ensures full compatibility with:
+Compatible with WPML and Polylang workflows (sync data between product translations).
 
-* WooCommerce Subscriptions by Woo (Recurring payments in local currency).
-* Product Add-ons for WooCommerce by Woo.
-* WooCommerce Bookings by Woo.
-* WP All Import.
-* [and more...](https://www.pricebasedcountry.com/product-tour/free-vs-pro/?utm_medium=banner&utm_campaign=upgrade-pro&utm_source=wordpress)
+== How It Works ==
 
-👉 **[Upgrade to Price Based on Country PRO today →](https://www.pricebasedcountry.com/pricing/?utm_medium=banner&utm_campaign=upgrade-pro&utm_source=wordpress)**
+Prices are organized into pricing zones, each one associated with one or more countries. For each zone, you can choose a currency.
 
-= 🗣️ What Users Are Saying =
+You may rely on automatic currency conversion using exchange rates, or define fixed prices manually for full control.
 
-Over 20,000 active stores trust us. Here is why they love us:
+Once configured, prices are displayed dynamically based on the customer's country, while remaining compatible with caching and performance plugins.
 
-**"Flexible and efficient, with outstanding support."**
-*"With this plugin, I can solve one of the biggest challenges for my business without spending hours on setup – unified worldwide pricing. And the best of all is the support. Flexible and efficient."* — ⭐⭐⭐⭐⭐ vromans12345 (Verified WordPress.org User)
+== Use Cases ==
 
-**"The reason we use WooCommerce."**
-*"This plugin is the reason we made our most recent website on WooCommerce and not Shopify. It works perfectly as soon as you plug it in. Don't try to run an international e-commerce store without this plugin."* — ⭐⭐⭐⭐⭐ Atlantic Folk (Verified WordPress.org User)
+* **Boost international sales** – Display price in local currency to reduce checkout friction and cart abandonment.
+* **Regional strategy** – Adjust prices based on regional purchasing power.
+* **Absorb shipping costs** – Set higher prices for countries with expensive shipping without scaring away local customers.
+* **Keeping profit** – Maintain consistent margins across international markets.
 
-**"Perfect plugin, it does its job."**
-*"I've had it installed for 7 years. Immediate and excellent support, highly recommended."* — ⭐⭐⭐⭐⭐ javiiblanco (Verified WordPress.org User)
+== Price Based on Country PRO ==
 
-= 🏆 Featured In =
+The [PRO version](https://www.pricebasedcountry.com/pricing/?utm_medium=banner&utm_campaign=upgrade-pro&utm_source=wordpress) extends the core functionality with features that save time, automate tasks, and provide integration with professional plugins.
 
-The top WordPress experts recommend us:
+* **Automatic Exchange Rate Updates** – The daily automatic update of the exchange rate allows prices to stay in sync without manual intervention.
+* **Pretty prices** – Converted prices can be rounded to clean values, helping maintain a professional appearance across currencies (e.g., 19.99 instead of 19.43).
+* **Custom Currency Symbol** – Display the prices as USD 99.99, US$ 99.99, ...
+* **Bulk Updates from file** – Save hours of manual work by updating the product prices in bulk using the CSV import or "WP All Import" integration.
+* **Support for Manual Orders** – Update the order with the regional price from the administration panel.
+* **Additional Shortcodes and Widgets** – Display custom content based on the user's country or the price of a specific product in a pricing table with the PRO shortcodes.
+* **Exclusive Compatibilities and Integrations** – The PRO version adds compatibility with several WooCommerce.com extensions, including *WooCommerce Subscriptions by Woo*, *Product Bundles for WooCommerce by Woo*, *Product Add-Ons for WooCommerce by Woo*, and other professional extensions like *German Market by Marketpress* or *WP All Import*.
 
-* **Chris Lema**: Changing WooCommerce Product Pricing based on Shopper’s Location (chrislema.com/woocommerce-product-pricing/)
-* **Tutsflow**: How to Set Prices Based on Country in WooCommerce (5 Step Easy Guide) (tutsflow.com/how-to-set-prices-based-on-country-in-woocommerce/)
-* **Bluehost**: Listed in the "7 Best Multi Currency WordPress Plugins" as a top solution for specific country-based pricing strategies.
+[**Free vs PRO full comparison**](https://www.pricebasedcountry.com/product-tour/free-vs-pro/?utm_medium=banner&utm_campaign=upgrade-pro&utm_source=wordpress)
 
 == Installation ==
 
@@ -137,23 +126,20 @@ Please review [How to test the pricing zones](https://www.pricebasedcountry.com/
 3. Pricing zone properties.
 4. Pricing zone properties (2).
 5. Plugin settings.
-6. Set the price manually or calculate by the exchange rate.
+6. Set the price manually or calculate it by the exchange rate.
 7. Includes a country selector widget.
 
 == Changelog ==
 
-= 4.1.1 (2025-12-23) =
-* Fixed: Bug introduced by WPML that breaks the get_post_meta function and affects product variation synchronization.
-
-= 4.1.0 (2025-12-04) =
-* Added: Tested up WordPress 6.9+.
-* Added: Tested up WooCommerce 10.4+.
-* Fixed: Deprecated wc_enqueue_js on WooCommerce 10.4
-* Fixed: PHP Notice: Function _load_textdomain_just_in_time was called incorrectly when "WooCommerce PayPal Payments" plugin is active.
+= 4.2.0 (2026-02-12) =
+* Added: Compatible with WooCommerce 10.5+.
+* Fixed: The product default price fields could be updated with the pricing zone value if another process saves the products in the cart.
+* Fixed: Security - Checkout validation to prevent an order from being created with an incorrect pricing zone.
+* Tweak: Keep the value of the schedule sales "from" and "to" dates after setting the sale price on/off.
 
 [See changelog for all versions](https://plugins.svn.wordpress.org/woocommerce-product-price-based-on-countries/trunk/changelog.txt).
 
 == Upgrade Notice ==
 
-= 4.0 =
-<strong>4.0 is a major update</strong>. We recommend that you backup your website before updating it.
+= 4.2 =
+<strong>4.2 is a major update</strong>. We recommend that you backup your website before updating it.

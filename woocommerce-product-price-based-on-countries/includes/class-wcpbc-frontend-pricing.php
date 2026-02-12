@@ -135,7 +135,7 @@ class WCPBC_Frontend_Pricing {
 	}
 
 	/**
-	 * Returns the current metakey for the currenty filter.
+	 * Returns the meta key for the current filter.
 	 *
 	 * @param WC_Product $product Product instance.
 	 * @return string Property name or False if overwrite is no needed.
@@ -144,7 +144,7 @@ class WCPBC_Frontend_Pricing {
 		$metakey = false;
 		$prop    = str_replace( array( 'woocommerce_variation_prices_', 'woocommerce_product_variation_get_', 'woocommerce_product_get_' ), '', current_filter() );
 
-		if ( ! array_key_exists( $prop, $product->get_changes() ) && self::is_supported_product( $product ) && apply_filters( 'wc_price_based_country_should_filter_property', true, $product, $prop ) ) {
+		if ( ! array_key_exists( $prop, $product->get_changes() ) && ! WCPBC_Runtime_Meta::get( $product, "_{$prop}" ) && self::is_supported_product( $product ) && apply_filters( 'wc_price_based_country_should_filter_property', true, $product, $prop ) ) {
 			$metakey    = $prop;
 			$date_props = array(
 				'date_on_sale_from' => 'sale_price_dates_from',
@@ -161,7 +161,7 @@ class WCPBC_Frontend_Pricing {
 	}
 
 	/**
-	 * Retruns a product price property.
+	 * Returns a product price property.
 	 *
 	 * @since 1.9.0
 	 * @param mixed      $value Property value.
@@ -178,7 +178,7 @@ class WCPBC_Frontend_Pricing {
 	}
 
 	/**
-	 * Retrun a product date property.
+	 * Retruns a product date property.
 	 *
 	 * @since 1.9.0
 	 * @param mixed      $value Property value.
@@ -196,7 +196,7 @@ class WCPBC_Frontend_Pricing {
 	}
 
 	/**
-	 * Return price meta data value
+	 * Returns price meta data value.
 	 *
 	 * @deprecated 1.9.0
 	 * @param null|array|string $meta_value The value get_metadata() should return - a single metadata value or an array of values.
@@ -256,6 +256,8 @@ class WCPBC_Frontend_Pricing {
 			return;
 		}
 
+		$product->set_object_read( false );
+
 		foreach ( array( '_price', '_regular_price', '_sale_price' ) as $meta_key ) {
 			$getter = 'get' . $meta_key;
 			$setter = 'set' . $meta_key;
@@ -272,7 +274,12 @@ class WCPBC_Frontend_Pricing {
 					$meta_key
 				)
 			);
+
+			// Add the metakey to the properties changed.
+			WCPBC_Runtime_Meta::set( $product, $meta_key, true );
 		}
+
+		$product->set_object_read( true );
 	}
 
 	/**
