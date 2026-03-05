@@ -4,7 +4,7 @@ Tags:  woocommerce, country-based pricing, price by country, geolocation, multi 
 Requires at least: 3.8
 Tested up to: 6.9
 Requires PHP: 7.0
-Stable tag: 4.2.1
+Stable tag: 4.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -130,6 +130,10 @@ Please review [How to test the pricing zones](https://www.pricebasedcountry.com/
 7. Includes a country selector widget.
 
 == Changelog ==
+
+= 4.2.2 (2026-03-05) =
+* Fixed: WCPBC_Runtime_Meta could be stored along with product metadata.
+* Fixed: Checkout validation fails if the price zone has not been loaded using the `wc_price_based_country_stop_pricing` filter.
 
 = 4.2.1 (2026-02-12) =
 * Fixed: WCPBC_Runtime_Meta" not found.

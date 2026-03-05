@@ -1,5 +1,9 @@
+= 4.2.2 (2026-03-05) =
+* Fixed: WCPBC_Runtime_Meta could be stored along with product metadata.
+* Fixed: Checkout validation fails if the price zone has not been loaded using the `wc_price_based_country_stop_pricing` filter.
+
 = 4.2.1 (2026-02-12) =
-* Fixed: WCPBC_Runtime_Meta" not found.
+* Fixed: WCPBC_Runtime_Meta not found.
 
 = 4.2.0 (2026-02-12) =
 * Added: Compatible with WooCommerce 10.5+.

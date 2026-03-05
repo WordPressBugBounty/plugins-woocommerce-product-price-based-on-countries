@@ -209,3 +209,11 @@ function wcpbc_update_4012() {
 		update_post_meta( $post_id, 'zone_pricing_type', 'manual' );
 	}
 }
+
+/**
+ * Delete the "runtime meta" key if it exists.
+ */
+function wcpbc_update_422() {
+	delete_post_meta_by_key( 'WCPBC_Runtime_Meta' );
+}
+

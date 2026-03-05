@@ -29,6 +29,7 @@ class WCPBC_Install {
 		'2.0.3'  => 'wcpbc_update_200',
 		'2.0.28' => 'wcpbc_update_228',
 		'4.0.12' => 'wcpbc_update_4012',
+		'4.2.2'  => 'wcpbc_update_422',
 	);
 
 	/**

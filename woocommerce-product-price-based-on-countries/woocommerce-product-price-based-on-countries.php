@@ -4,13 +4,13 @@
  * Plugin URI: https://wordpress.org/plugins/woocommerce-product-price-based-on-countries/
  * Description: Product Pricing and Currency based on Shopper’s Country for WooCommerce.
  * Author: Oscar Gare
- * Version: 4.2.1
+ * Version: 4.2.2
  * Author URI: https://oscargare.com/
  * Text Domain: woocommerce-product-price-based-on-countries
  * Domain Path: /languages
  *
  * WC requires at least: 4.0
- * WC tested up to: 10.4
+ * WC tested up to: 10.5
  * License: GPLv2
  *
  * @package WCPBC

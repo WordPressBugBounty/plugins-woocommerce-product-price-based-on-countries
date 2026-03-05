@@ -29,7 +29,6 @@ class WCPBC_Frontend {
 		add_action( 'woocommerce_order_refunded', array( __CLASS__, 'order_refunded' ), 10, 2 );
 		add_action( 'wp_loaded', array( __CLASS__, 'maybe_calculate_totals' ), 11 );
 		add_action( 'wp_footer', array( __CLASS__, 'test_store_message' ) );
-		add_action( 'woocommerce_after_checkout_validation', array( __CLASS__, 'validate_checkout' ), 10, 2 );
 		add_action( 'wcpbc_manual_country_selector', array( __CLASS__, 'output_country_selector' ) );
 		add_shortcode( 'wcpbc_country_selector', array( __CLASS__, 'shortcode_country_selector' ) );
 	}
@@ -353,6 +352,7 @@ class WCPBC_Frontend {
 	public static function frontend_init() {
 		add_action( 'woocommerce_checkout_create_order', array( __CLASS__, 'update_order_meta' ) );
 		add_action( 'woocommerce_store_api_checkout_update_order_meta', array( __CLASS__, 'update_order_meta' ) );
+		add_action( 'woocommerce_after_checkout_validation', array( __CLASS__, 'validate_checkout' ), 10, 2 );
 	}
 
 	/**
