@@ -32,9 +32,9 @@
 			});
 
 			// Add product variations
-			if ( $( '.variations_form' ).length > 0 ) {
+			if ( $( '[data-product_variations]' ).length > 0 ) {
 
-				$( '.variations_form' ).each( function() {
+				$( '[data-product_variations]' ).each( function() {
 
 					var product_variations = $(this).data('product_variations');
 
@@ -87,8 +87,8 @@
 			});
 
 			// update product variation
-			if ( $( '.variations_form' ).length > 0 ) {
-				$( '.variations_form' ).each( function() {
+			if ( $( '[data-product_variations]' ).length > 0 ) {
+				$( '[data-product_variations]' ).each( function() {
 
 					var product_variations = $( this ).data( 'product_variations' );
 					var $variation_form    = $(this);

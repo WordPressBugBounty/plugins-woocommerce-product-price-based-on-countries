@@ -235,11 +235,7 @@ function wcpbc_get_rounding_precision() {
 		}
 	}
 
-	$precision = $num_decimals + 4;
-
-	if ( $precision < WC_ROUNDING_PRECISION ) {
-		$precision = WC_ROUNDING_PRECISION;
-	}
+	$precision = $num_decimals + 3;
 
 	return $precision;
 }
@@ -668,6 +664,10 @@ function wcpbc_product_types_supported( $source = '', $context = '' ) {
 		$types['pro']['composite'] = 'WooCommerce Composite Products';
 	}
 
+	if ( class_exists( 'learndash_woocommerce' ) ) {
+		$types['basic']['course'] = 'Course';
+	}
+
 	$types['third-party'] = apply_filters( 'wc_price_based_country_third_party_product_types', array() );
 
 	if ( empty( $source ) ) {
@@ -684,67 +684,24 @@ function wcpbc_product_types_supported( $source = '', $context = '' ) {
 }
 
 /**
- * Return an array with all currencies avaiables in WooCommerce with associate countries
+ * Return an array with the countries that use a specific currency.
  *
+ * @version 4.3.0
  * @param string $currency_code Currency code.
  * @return array
  */
-function wcpbc_get_currencies_countries( $currency_code = false ) {
+function wcpbc_get_currencies_countries( $currency_code ) {
 
-	$currencies = array(
-		'AED' => array( 'AE' ),
-		'ARS' => array( 'AR' ),
-		'AUD' => array( 'AU', 'CC', 'CX', 'HM', 'KI', 'NF', 'NR', 'TV' ),
-		'BDT' => array( 'BD' ),
-		'BRL' => array( 'BR' ),
-		'BGN' => array( 'BG' ),
-		'CAD' => array( 'CA' ),
-		'CLP' => array( 'CL' ),
-		'CNY' => array( 'CN' ),
-		'COP' => array( 'CO' ),
-		'CZK' => array( 'CZ' ),
-		'DKK' => array( 'DK', 'FO', 'GL' ),
-		'DOP' => array( 'DO' ),
-		'EUR' => array( 'AD', 'AT', 'AX', 'BE', 'BL', 'CY', 'DE', 'EE', 'ES', 'FI', 'FR', 'GF', 'GP', 'GR', 'IE', 'IT', 'LT', 'LU', 'LV', 'MC', 'ME', 'MF', 'MQ', 'MT', 'NL', 'PM', 'PT', 'RE', 'SI', 'SK', 'SM', 'TF', 'VA', 'YT' ),
-		'HKD' => array( 'HK' ),
-		'HRK' => array( 'HR' ),
-		'HUF' => array( 'HU' ),
-		'ISK' => array( 'IS' ),
-		'IDR' => array( 'ID' ),
-		'INR' => array( 'IN' ),
-		'NPR' => array( 'NP' ),
-		'ILS' => array( 'IL' ),
-		'JPY' => array( 'JP' ),
-		'KIP' => array( 'LA' ),
-		'KRW' => array( 'KR' ),
-		'MYR' => array( 'MY' ),
-		'MXN' => array( 'MX' ),
-		'NGN' => array( 'NG' ),
-		'NOK' => array( 'BV', 'NO', 'SJ' ),
-		'NZD' => array( 'CK', 'NU', 'NZ', 'PN', 'TK' ),
-		'PYG' => array( 'PY' ),
-		'PHP' => array( 'PH' ),
-		'PLN' => array( 'PL' ),
-		'GBP' => array( 'GB', 'GG', 'GS', 'IM', 'JE' ),
-		'RON' => array( 'RO' ),
-		'RUB' => array( 'RU' ),
-		'SGD' => array( 'SG' ),
-		'ZAR' => array( 'ZA' ),
-		'SEK' => array( 'SE' ),
-		'CHF' => array( 'LI' ),
-		'TWD' => array( 'TW' ),
-		'THB' => array( 'TH' ),
-		'TRY' => array( 'TR' ),
-		'UAH' => array( 'UA' ),
-		'USD' => array( 'BQ', 'EC', 'FM', 'IO', 'MH', 'PW', 'TC', 'TL', 'US', 'VG' ),
-		'VND' => array( 'VN' ),
-		'EGP' => array( 'EG' ),
-	);
-
-	if ( $currency_code && array_key_exists( $currency_code, $currencies ) ) {
-		$currencies = $currencies[ $currency_code ];
+	if ( ! ( function_exists( 'WC' ) && is_callable( [ WC(), 'plugin_path' ] ) && file_exists( WC()->plugin_path() . '/i18n/locale-info.php' ) ) ) {
+		return [];
 	}
 
-	return $currencies;
+	$locale_info = include WC()->plugin_path() . '/i18n/locale-info.php';
+	$countries   = [];
+	foreach ( $locale_info as $country => $info ) {
+		if ( isset( $info['currency_code'] ) && $info['currency_code'] === $currency_code ) {
+			$countries[] = $country;
+		}
+	}
+	return $countries;
 }
-

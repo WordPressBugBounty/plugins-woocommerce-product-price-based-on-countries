@@ -199,17 +199,30 @@ class WCPBC_Admin {
 	 */
 	public static function debug_tools( $debug_tools ) {
 		$debug_tools['wcpbc_sync_price_with_children'] = array(
-			'name'     => 'Price Based on Country: ' . _x( 'Synchronize variable product price', 'WooCommerce tool name', 'woocommerce-product-price-based-on-countries' ),
+			'name'     => 'Price Based on Country: ' . _x( 'Synchronize the price of variable products', 'WooCommerce tool name', 'woocommerce-product-price-based-on-countries' ),
 			'button'   => __( 'Update', 'woocommerce-product-price-based-on-countries' ),
-			'desc'     => __( 'This tool will update the price of the variable product with a minimum and maximum price of its variations. It solves sorting issues.', 'woocommerce-product-price-based-on-countries' ),
+			'desc'     => __( 'This tool will update the price of the variable products with a minimum and maximum price of its variations. It solves sorting issues.', 'woocommerce-product-price-based-on-countries' ),
 			'callback' => (
 				function() {
-					WCPBC_Product_Meta_Job::create(
-						'Sync_Price_With_Children',
+					$job = 'Sync_Price_With_Children_Batch';
+					$actions = as_get_scheduled_actions(
 						[
-							'zone_id' => wc_list_pluck( WCPBC_Pricing_Zones::get_zones(), 'get_id' ),
+							'hook'     => WCPBC_Product_Meta_Job::ACTION_HOOK,
+							'group'    => WCPBC_Product_Meta_Job::ACTION_HOOK,
+							'status'   => [ ActionScheduler_Store::STATUS_PENDING, ActionScheduler_Store::STATUS_RUNNING ],
+							'per_page' => -1,
 						]
-					)->run_async();
+					);
+
+					foreach ( $actions as $action_id => $action ) {
+						$action_args = is_callable( [ $action, 'get_args' ] ) ? $action->get_args() : [];
+						if ( isset( $action_args['job'] ) && $job === $action_args['job'] ) {
+							return __( 'The tool is running in the background. Please wait for it to finish before running it again.', 'woocommerce-product-price-based-on-countries' );
+						}
+					}
+
+					WCPBC_Product_Meta_Job::create( $job )->run_async();
+					return __( 'The tool is running in the background.', 'woocommerce-product-price-based-on-countries' );
 				}
 			),
 		);

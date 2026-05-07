@@ -14,9 +14,16 @@ defined( 'ABSPATH' ) || exit;
 abstract class WCPBC_Product_Meta_Job {
 
 	/**
-	 * Table names
+	 * Action Scheduler hook name.
 	 *
 	 * @var string
+	 */
+	const ACTION_HOOK = 'wc_price_based_country_product_meta_job';
+
+	/**
+	 * Table names
+	 *
+	 * @var stdClass
 	 */
 	protected $table;
 
@@ -26,6 +33,13 @@ abstract class WCPBC_Product_Meta_Job {
 	 * @var array
 	 */
 	protected $args;
+
+	/**
+	 * Job name.
+	 *
+	 * @var string
+	 */
+	protected $name;
 
 	/**
 	 * Clear cache flag.
@@ -42,6 +56,7 @@ abstract class WCPBC_Product_Meta_Job {
 	protected function __construct( $args = false ) {
 		global $wpdb;
 		$this->args  = is_array( $args ) ? $args : [];
+		$this->name  = substr( get_class( $this ), 23 );
 		$this->table = (object) [
 			'prefix'              => $wpdb->prefix,
 			'posts'               => $wpdb->posts,
@@ -50,21 +65,53 @@ abstract class WCPBC_Product_Meta_Job {
 		];
 	}
 
-
 	/**
 	 * Runs the job asynchronous.
 	 */
 	public function run_async() {
 		as_enqueue_async_action(
-			'wc_price_based_country_product_meta_job',
+			self::ACTION_HOOK,
 			[
-				'job'  => substr( get_class( $this ), 23 ),
+				'job'  => $this->name,
 				'args' => $this->args,
 			],
-			'wc_price_based_country_product_meta_job',
+			self::ACTION_HOOK,
 			false,
 			5
 		);
+	}
+
+	/**
+	 * Cancel a pending job.
+	 *
+	 * @return \WCPBC_Product_Meta_Job;
+	 */
+	public function cancel() {
+		$actions = as_get_scheduled_actions(
+			[
+				'hook'     => self::ACTION_HOOK,
+				'group'    => self::ACTION_HOOK,
+				'status'   => ActionScheduler_Store::STATUS_PENDING,
+				'per_page' => -1,
+			]
+		);
+
+		foreach ( $actions as $action_id => $action ) {
+			$action_args = is_callable( [ $action, 'get_args' ] ) ? $action->get_args() : [];
+			if ( ! ( isset( $action_args['job'] ) && $this->name === $action_args['job'] ) ) {
+				continue;
+			}
+
+			$action_args['args'] = isset( $action_args['args'] ) ? (array) $action_args['args'] : [];
+
+			if ( $this->args != $action_args['args'] ) { // phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
+				continue;
+			}
+
+			ActionScheduler::store()->cancel_action( $action_id );
+		}
+
+		return $this;
 	}
 
 	/**
@@ -112,53 +159,17 @@ abstract class WCPBC_Product_Meta_Job {
 	 * @return string
 	 */
 	protected function get_post_filter( $tablename = 'posts' ) {
-		return "{$tablename}.post_type IN ('product', 'product_variation') AND {$tablename}.post_status NOT IN ('trash', 'auto-draft')";
+		return "{$tablename}.post_type IN ('product', 'product_variation') AND {$tablename}.post_status IN ('publish', 'draft', 'pending', 'private')";
 	}
 
 	/**
-	 * Returns the pricing zones query.
+	 * Returns the batch size.
 	 *
-	 * @param array $meta_keys Array of metakeys to generate query.
-	 * @param array $zone_ids Array of zone IDs.
+	 * @since 4.3.0
+	 * @return int
 	 */
-	protected function get_zones_metaquery( $meta_keys, $zone_ids = false ) {
-
-		if ( ! $meta_keys ) {
-			return false;
-		}
-
-		$metaquery = false;
-		$query     = [];
-
-		if ( ! $meta_keys ) {
-			return false;
-		}
-
-		foreach ( WCPBC_Pricing_Zones::get_zones( $zone_ids ) as $zone ) {
-
-			$fields = [];
-			foreach ( $meta_keys as $meta_key ) {
-
-				$fields[] = $this->db()->prepare(
-					'convert(%s using utf8) AS %s',
-					$zone->get_postmetakey( $meta_key ),
-					$meta_key . '_field_name'
-				);
-			}
-
-			$select = implode( ', ', $fields );
-
-			$query[] = $this->db()->prepare(
-				"(SELECT %s as zone_id, {$select}, (%s+0) AS exchange_rate )",
-				$zone->get_id(),
-				$zone->get_exchange_rate()
-			);
-		}
-
-		if ( count( $query ) ) {
-			$metaquery = implode( ' UNION ', $query );
-		}
-		return $metaquery;
+	protected function get_batch_size() {
+		return (int) apply_filters( 'wc_price_based_country_job_batch_size', 1000, $this );
 	}
 
 	/**
@@ -193,6 +204,7 @@ abstract class WCPBC_Product_Meta_Job {
 	 *
 	 * @param string $job Task name.
 	 * @param array  $args Task arguments.
+	 * @return WCPBC_Product_Meta_Job|bool
 	 */
 	public static function create( $job, $args = false ) {
 		$classname = 'WCPBC_Product_Meta_Job_' . $job;

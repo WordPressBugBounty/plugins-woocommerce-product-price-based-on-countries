@@ -230,6 +230,10 @@ body.wcpbc-setup-wizard #wcpbc-setup-wizard-content h2.wcpbc-content-title {
 	opacity: 88%;
 }
 
+#wcpbc-setup-wizard-content .wcpbc-input-container.-container-submit .wcpbc-button .dashicons {
+	line-height: 1.1 !important;
+}
+
 #wcpbc-setup-wizard-content .wcpbc-input-container.-container-true-false .wcpbc-input-toggle {
 	height: 16px;
 	width: 32px;

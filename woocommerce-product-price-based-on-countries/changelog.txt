@@ -1,3 +1,17 @@
+= 4.3.0 (2026-05-07) =
+* Added: Tested up WordPress 7.0+.
+* Added: Compatible with WooCommerce 10.7+.
+* Added: Compatibility with the "course" product type of the LearnDash plugin.
+* Added: Compatibility with the LearnDash Group Registration plugin.
+* Fixed: Double conversion issue with "Advanced Dynamic Pricing and Discount Rules for WooCommerce" by AlgolPlus.
+* Fixed: Conflict with "Variation Swatches for WooCommerce - Pro" plugin.
+* Fixed: Error on activating "Jetpack Boost" plugin when the "Jetpack 15.8-a.3 (Pressable managed hosting)" plugin is active.
+* Fixed: Update of EUR countries in the "Select Eurozone" button tool.
+* Fixed: The "scheduled sales" query causes a timeout error when run against large `postmeta` tables.
+* Tweak: Improve the performance of the database queries.
+* Tweak: Handle scheduled sales in a dedicated Action Scheduler hook.
+* Tweak: Send no cache headers when `wcpbc-manual-country` parameter is set.
+
 = 4.2.2 (2026-03-05) =
 * Fixed: WCPBC_Runtime_Meta could be stored along with product metadata.
 * Fixed: Checkout validation fails if the price zone has not been loaded using the `wc_price_based_country_stop_pricing` filter.

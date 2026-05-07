@@ -26,24 +26,22 @@ class WCPBC_Product_Meta_Job_Delete_Zone extends WCPBC_Product_Meta_Job {
 		'_sale_price_dates',
 		'_sale_price_dates_from',
 		'_sale_price_dates_to',
+		'coupon_amount',
 	];
 
 	/**
 	 * Delete a postmeta key for the zone.
 	 *
-	 * @param array $meta_keys_to_delete Meta keys to delete.
+	 * @param array $post_ids            Post IDs to process.
+	 * @param array $meta_keys_to_delete Meta keys to delete for these posts.
 	 * @return int
 	 */
-	protected function delete_postmeta_keys( $meta_keys_to_delete ) {
-
-		$where = $this->prepare_in( "AND `{$this->table->postmeta}`.meta_key IN (%s) ", $meta_keys_to_delete );
+	protected function delete_postmeta_for_posts( $post_ids, $meta_keys_to_delete ) {
+		$where_keys = $this->prepare_in( 'AND meta_key IN (%s) ', $meta_keys_to_delete );
+		$where_ids  = sprintf( 'AND post_id IN (%s)', implode( ',', $post_ids ) );
 
 		return $this->db()->query(
-			"DELETE FROM `{$this->table->postmeta}`
-			WHERE EXISTS (
-				SELECT 1 FROM `{$this->table->posts}` posts
-				WHERE posts.ID = `{$this->table->postmeta}`.post_id AND posts.post_type IN ('product', 'product_variation')
-			) {$where}"
+			"DELETE FROM `{$this->table->postmeta}` WHERE 1=1 {$where_keys} {$where_ids}"
 		);
 	}
 
@@ -52,46 +50,50 @@ class WCPBC_Product_Meta_Job_Delete_Zone extends WCPBC_Product_Meta_Job {
 	 */
 	public function run_job() {
 
+		$zone_id = isset( $this->args['zone_id'] ) ? $this->args['zone_id'] : false;
+
+		if ( ! $zone_id || WCPBC_Pricing_Zones::get_zone( $zone_id ) ) {
+			return;
+		}
+
 		$meta_keys_to_delete = [];
+		$zone                = new WCPBC_Pricing_Zone(
+			[
+				'id' => $zone_id,
+			]
+		);
 
-		foreach ( $this->args as $zone_id ) {
-			if ( WCPBC_Pricing_Zones::get_zone( $zone_id ) ) {
-				continue;
-			}
-
-			$zone = new WCPBC_Pricing_Zone(
-				[
-					'id' => $zone_id,
-				]
-			);
-
-			foreach ( self::META_KEYS as $meta_key ) {
-				$meta_keys_to_delete[] = $zone->get_postmetakey( $meta_key );
-			}
+		foreach ( self::META_KEYS as $meta_key ) {
+			$meta_keys_to_delete[] = $zone->get_postmetakey( $meta_key );
 		}
 
 		if ( $meta_keys_to_delete ) {
-			$post_ids = false;
 
-			if ( wp_using_ext_object_cache() ) {
-				$post_ids = get_posts(
-					[
-						'fields'         => 'ids',
-						'posts_per_page' => -1,
-						'post_type'      => [ 'product', 'product_variation' ],
-						'post_status'    => 'publish',
-						'meta_key'       => $meta_keys_to_delete, // phpcs:ignore WordPress.DB.SlowDBQuery
-						'meta_compare'   => 'EXISTS',
-					]
-				);
+			$where_keys = $this->prepare_in( '(%s) ', $meta_keys_to_delete );
+
+			$post_ids = $this->db()->get_col(
+				$this->db()->prepare(
+					"SELECT p.ID FROM `{$this->table->posts}` p
+					WHERE p.post_type IN ('product', 'product_variation', 'shop_coupon' )
+					AND p.post_status IN ('publish', 'draft', 'pending', 'private')
+					AND EXISTS (
+						SELECT 1 FROM `{$this->table->postmeta}` pm WHERE pm.post_id = p.ID AND pm.meta_key IN {$where_keys}
+					) LIMIT %d",
+					$this->get_batch_size()
+				)
+			);
+
+			if ( ! $post_ids ) {
+				return;
 			}
 
-			$rows_affected     = $this->delete_postmeta_keys( $meta_keys_to_delete );
-			$this->clear_cache = $rows_affected > 0;
+			$this->delete_postmeta_for_posts( $post_ids, $meta_keys_to_delete );
 
-			if ( $this->clear_cache && $post_ids && function_exists( 'wp_cache_delete_multiple' ) ) {
+			if ( wp_using_ext_object_cache() && function_exists( 'wp_cache_delete_multiple' ) ) {
 				wp_cache_delete_multiple( $post_ids, 'post_meta' );
 			}
+
+			$this->run_async();
 		}
 	}
 }

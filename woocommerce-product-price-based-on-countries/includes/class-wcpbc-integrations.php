@@ -54,6 +54,7 @@ class WCPBC_Integrations {
 			'DevOwl\RealCookieBanner\Core'         => dirname( __FILE__ ) . '/integrations/class-wcpbc-real-cookie-banner.php',
 			'woocommerce_gateway_stripe'           => dirname( __FILE__ ) . '/integrations/class-wcpbc-stripe-upe.php',
 			'PMWI_Plugin'                          => dirname( __FILE__ ) . '/integrations/class-wcpbc-wpallimport-ad.php',
+			'learndash_woocommerce'                => dirname( __FILE__ ) . '/integrations/class-wcpbc-learndash-course.php',
 		];
 	}
 
@@ -118,7 +119,7 @@ class WCPBC_Integrations {
 		 *
 		 * @since 3.4
 		 */
-		if ( class_exists( 'Automattic\Jetpack_Boost\Jetpack_Boost' ) ) {
+		if ( defined( 'JETPACK_BOOST_VERSION' ) ) {
 			add_filter( 'js_do_concat', [ __CLASS__, 'jetpack_boost_js_do_concat' ], 9999, 2 );
 		}
 

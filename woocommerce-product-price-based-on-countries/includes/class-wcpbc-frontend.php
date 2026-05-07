@@ -169,6 +169,7 @@ class WCPBC_Frontend {
 		} elseif ( ! empty( $_REQUEST['wcpbc-manual-country'] ) ) {
 			// Request param.
 			wcpbc_set_woocommerce_country( wc_clean( wp_unslash( $_REQUEST['wcpbc-manual-country'] ) ) );
+			wc_nocache_headers();
 			add_action( 'wp', array( __CLASS__, 'init_session' ), 100 );
 
 		} elseif ( defined( 'WC_DOING_AJAX' ) && WC_DOING_AJAX && isset( $_GET['wc-ajax'] ) && 'update_order_review' === $_GET['wc-ajax'] ) {

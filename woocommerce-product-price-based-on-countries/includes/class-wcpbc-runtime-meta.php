@@ -43,7 +43,7 @@ class WCPBC_Runtime_Meta {
 	 * @return array
 	 */
 	private static function read( $data ) {
-		$meta = $data->get_meta( __CLASS__, true, 'edit' );
+		$meta = is_callable( [ $data, 'get_meta' ] ) ? $data->get_meta( __CLASS__, true, 'edit' ) : [];
 		$meta = is_array( $meta ) ? $meta : [];
 
 		return $meta;

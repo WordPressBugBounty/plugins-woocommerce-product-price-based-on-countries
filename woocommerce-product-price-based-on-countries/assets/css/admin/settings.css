@@ -218,7 +218,8 @@ body:not(.rtl) .wcpbc-settings-section-card .wcpbc-input-container .wcpbc-input-
 
 .wcpbc-settings-section-card .wcpbc-input-container .wcpbc-input-wrap span.wcpbc-input-prepend,
 .wcpbc-settings-section-card .wcpbc-input-container .wcpbc-input-wrap span.wcpbc-input-append {
-	line-height: 2;
+	display: flex;
+	align-items: center;
 	font-size: 14px;
 	padding: 0 8px;
 	background-color: #f5f5f5;

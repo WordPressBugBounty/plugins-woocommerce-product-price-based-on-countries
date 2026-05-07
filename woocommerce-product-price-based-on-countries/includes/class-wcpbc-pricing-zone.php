@@ -77,6 +77,7 @@ class WCPBC_Pricing_Zone {
 	 */
 	public function set_props( $props ) {
 		$errors = false;
+		$setter = '';
 
 		foreach ( $props as $prop => $value ) {
 			try {
@@ -483,7 +484,7 @@ class WCPBC_Pricing_Zone {
 	/**
 	 * Product price by exchange rate?
 	 *
-	 * @param WC_Data $data Object instance or Post ID.
+	 * @param \WC_Data $data Object instance or Post ID.
 	 * @return bool
 	 */
 	public function is_exchange_rate_price( $data ) {
@@ -495,11 +496,8 @@ class WCPBC_Pricing_Zone {
 		}
 
 		$price_method     = $this->get_postmeta( $post_id, '_price_method' );
-		$is_exchange_rate = wcpbc_is_exchange_rate( $price_method ) && ! in_array(
-			( is_callable( [ $data, 'get_type' ] ) ? $data->get_type() : WC_Product_Factory::get_product_type( $post_id ) ),
-			wcpbc_wrapper_product_types(),
-			true
-		);
+		$product_type     = method_exists( $data, 'get_type' ) && is_callable( [ $data, 'get_type' ] ) ? $data->get_type() : WC_Product_Factory::get_product_type( $post_id );
+		$is_exchange_rate = wcpbc_is_exchange_rate( $price_method ) && ! in_array( $product_type, wcpbc_wrapper_product_types(), true );
 
 		$this->cache_set( $post_id, __FUNCTION__, ( $is_exchange_rate ? 'true' : 'false' ) );
 
@@ -540,11 +538,27 @@ class WCPBC_Pricing_Zone {
 				$value = $this->round( $value, '', $context, $data );
 			} else {
 				// Round to round precision.
-				$value = round( $value, wcpbc_get_rounding_precision() );
+				$value = round( $value, $this->get_rounding_precision() );
 			}
 		}
 
 		return $value;
+	}
+
+	/**
+	 * Get rounding precision.
+	 *
+	 * @since 4.3.0
+	 * @return int
+	 */
+	public function get_rounding_precision() {
+		$num_decimals = wc_get_price_decimals();
+
+		if ( method_exists( $this, 'get_price_num_decimals' ) && is_callable( [ $this, 'get_price_num_decimals' ] ) && '' !== $this->get_price_num_decimals() ) {
+			$num_decimals = $this->get_price_num_decimals();
+		}
+
+		return $num_decimals + 3;
 	}
 
 	/**
@@ -592,8 +606,18 @@ class WCPBC_Pricing_Zone {
 		if ( '_price' !== $meta_key ) {
 			return;
 		}
+
 		$compare = false === $compare ? $this->get_exchange_rate_price_by_post( $post_id, $meta_key ) : $compare;
-		if ( floatval( $compare ) !== floatval( $this->get_postmeta( $post_id, $meta_key ) ) ) {
+		$price   = $this->get_postmeta( $post_id, $meta_key );
+
+		if ( empty( $compare ) && ! is_numeric( $compare ) && ! empty( $price ) ) {
+			$this->set_postmeta( $post_id, $meta_key, '', true );
+			return;
+		}
+
+		$epsilon = pow( 10, -1 * $this->get_rounding_precision() );
+
+		if ( abs( floatval( $compare ) - floatval( $price ) ) > $epsilon ) {
 			$this->set_postmeta( $post_id, $meta_key, strval( $compare ), true );
 		}
 	}
@@ -643,6 +667,10 @@ class WCPBC_Pricing_Zone {
 	 */
 	public function get_price_prop( $data, $value, $meta_key, $context = 'product' ) {
 		if ( ! ( is_object( $data ) && is_callable( array( $data, 'get_id' ) ) ) ) {
+			return $value;
+		}
+
+		if ( WCPBC_Runtime_Meta::get( $data, $meta_key ) ) {
 			return $value;
 		}
 

@@ -99,8 +99,6 @@ function wcpbc_update_162() {
 	];
 
 	foreach ( WCPBC_Pricing_Zones::get_zones() as $zone ) {
-		$zone_id = $zone->get_id();
-
 		/**
 		 * Get variable products without price
 		 */
@@ -127,13 +125,14 @@ function wcpbc_update_162() {
 		);
 
 		if ( ! empty( $products ) ) {
-			$sync_queue['parent_id'] = array_unique( array_merge( $sync_queue['parent_id'], $products ) );
-			$sync_queue['zone_id']   = array_merge( $sync_queue['zone_id'], [ $zone_id ] );
+			WCPBC_Product_Meta_Job::create(
+				'Sync_Price_With_Children',
+				[
+					'zone_id'    => $zone->get_id(),
+					'product_id' => $products,
+				]
+			)->run();
 		}
-	}
-
-	if ( ! empty( $sync_queue['parent_id'] ) ) {
-		WCPBC_Product_Meta_Job::create( 'Sync_Price_With_Children', $sync_queue )->run();
 	}
 }
 

@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2.
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce Price Based on Country 4.2.2\n"
+"Project-Id-Version: WooCommerce Price Based on Country 4.3.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-product-price-based-on-countries\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-03-05T10:22:55+00:00\n"
+"POT-Creation-Date: 2026-05-07T07:20:16+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: woocommerce-product-price-based-on-countries\n"
@@ -310,7 +310,7 @@ msgstr ""
 
 #: includes/admin/class-wcpbc-admin.php:202
 msgctxt "WooCommerce tool name"
-msgid "Synchronize variable product price"
+msgid "Synchronize the price of variable products"
 msgstr ""
 
 #. Translators: 1: version. 2,3: HTML tag.
@@ -320,7 +320,15 @@ msgid "Update"
 msgstr ""
 
 #: includes/admin/class-wcpbc-admin.php:204
-msgid "This tool will update the price of the variable product with a minimum and maximum price of its variations. It solves sorting issues."
+msgid "This tool will update the price of the variable products with a minimum and maximum price of its variations. It solves sorting issues."
+msgstr ""
+
+#: includes/admin/class-wcpbc-admin.php:220
+msgid "The tool is running in the background. Please wait for it to finish before running it again."
+msgstr ""
+
+#: includes/admin/class-wcpbc-admin.php:225
+msgid "The tool is running in the background."
 msgstr ""
 
 #: includes/admin/class-wcpbc-setup-wizard.php:197
@@ -621,7 +629,7 @@ msgstr ""
 
 #. translators: 1, 2 HTML tags. 3 plugin version.
 #: includes/admin/settings/views/html-incompatible-pro-version.php:13
-#: includes/class-wc-product-price-based-country.php:386
+#: includes/class-wc-product-price-based-country.php:389
 #: includes/integrations/class-wcpbc-rightpress-product-price-shop.php:118
 msgid "Heads up!"
 msgstr ""
@@ -639,7 +647,7 @@ msgid "You need a valid license to receive %1$sPro updates%2$s."
 msgstr ""
 
 #: includes/admin/settings/views/html-incompatible-pro-version.php:26
-#: includes/class-wc-product-price-based-country.php:321
+#: includes/class-wc-product-price-based-country.php:322
 msgid "Check license status"
 msgstr ""
 
@@ -1262,54 +1270,54 @@ msgid "Display a country switcher using a dropdown."
 msgstr ""
 
 #: includes/block-types/class-wcpbc-country-switcher-block.php:37
-#: includes/class-wcpbc-frontend.php:495
+#: includes/class-wcpbc-frontend.php:496
 #: includes/class-wcpbc-widget-country-selector.php:41
 #: includes/class-wcpbc-widget-country-selector.php:104
 msgid "Other countries"
 msgstr ""
 
-#: includes/class-wc-product-price-based-country.php:231
+#: includes/class-wc-product-price-based-country.php:232
 msgid "View Price Based on Country settings"
 msgstr ""
 
-#: includes/class-wc-product-price-based-country.php:231
+#: includes/class-wc-product-price-based-country.php:232
 msgid "Settings"
 msgstr ""
 
-#: includes/class-wc-product-price-based-country.php:235
+#: includes/class-wc-product-price-based-country.php:236
 msgid "Get Pro"
 msgstr ""
 
-#: includes/class-wc-product-price-based-country.php:252
+#: includes/class-wc-product-price-based-country.php:253
 msgid "Docs"
 msgstr ""
 
 #. translators: HTML Tags.
-#: includes/class-wc-product-price-based-country.php:300
+#: includes/class-wc-product-price-based-country.php:301
 #, php-format
 msgid "%1$sPrice Based on Country%2$s requires WooCommerce to be activated to work. Learn how to install Price Based on Country in the %3$sGetting Started Guide%4$s."
 msgstr ""
 
 #. translators: HTML Tags.
-#: includes/class-wc-product-price-based-country.php:306
+#: includes/class-wc-product-price-based-country.php:307
 #, php-format
 msgid "The minimum WooCommerce version required for this plugin is %1$s. You are running %2$s."
 msgstr ""
 
 #. translators: HTML Tags.
-#: includes/class-wc-product-price-based-country.php:314
+#: includes/class-wc-product-price-based-country.php:315
 #, php-format
 msgid "%1$sYou use a deprecated version of %2$sPrice Based on Country PRO%3$s, which is incompatible with your current \"Price Based on Country (Basic or Free)\" version. The plugin features have been deactivated to prevent issues and fatal errors on your site.%6$sUpdate %2$sPrice Based on Country PRO%3$s to the latest version.%4$s%5$s"
 msgstr ""
 
 #. translators: 1: frontend_pricing_init 2: woocommerce_init
-#: includes/class-wc-product-price-based-country.php:431
+#: includes/class-wc-product-price-based-country.php:434
 #, php-format
 msgid "%1$s should not be called before the %2$s action."
 msgstr ""
 
 #. Translators: 1: Site URL 2: admin email.
-#: includes/class-wc-product-price-based-country.php:618
+#: includes/class-wc-product-price-based-country.php:621
 #, php-format
 msgid ""
 "Howdy!\n"
@@ -1328,46 +1336,46 @@ msgid ""
 msgstr ""
 
 #. Translators: %s: Site title.
-#: includes/class-wc-product-price-based-country.php:638
+#: includes/class-wc-product-price-based-country.php:641
 #, php-format
 msgid "[%s] \"Price Based on Country\" is inactive on your site."
 msgstr ""
 
 #. translators: HTML tags.
-#: includes/class-wcpbc-frontend.php:415
+#: includes/class-wcpbc-frontend.php:416
 #, php-format
 msgid "%1$sPrice Based Country%2$s test mode enabled for testing %3$s. You should do tests on private browsing mode. Browse in private with %4$sFirefox%7$s, %5$sChrome%7$s and %6$sSafari%7$s"
 msgstr ""
 
-#: includes/class-wcpbc-frontend.php:445
+#: includes/class-wcpbc-frontend.php:446
 msgid "We were unable to process your order, please try again."
 msgstr ""
 
-#: includes/class-wcpbc-frontend.php:450
+#: includes/class-wcpbc-frontend.php:451
 msgid "The loaded pricing zone does not match the pricing zone for the checkout billing/shipping country. This message is visible only to admins."
 msgstr ""
 
-#: includes/class-wcpbc-pricing-zone.php:193
+#: includes/class-wcpbc-pricing-zone.php:194
 msgid "Invalid value for the zone ID. Use a different value."
 msgstr ""
 
-#: includes/class-wcpbc-pricing-zone.php:242
+#: includes/class-wcpbc-pricing-zone.php:243
 msgid "Name is required."
 msgstr ""
 
-#: includes/class-wcpbc-pricing-zone.php:264
+#: includes/class-wcpbc-pricing-zone.php:265
 msgid "Add at least one country to the zone."
 msgstr ""
 
-#: includes/class-wcpbc-pricing-zone.php:286
+#: includes/class-wcpbc-pricing-zone.php:287
 msgid "A valid currency is required."
 msgstr ""
 
-#: includes/class-wcpbc-pricing-zone.php:318
+#: includes/class-wcpbc-pricing-zone.php:319
 msgid "The exchange rate must be nonzero."
 msgstr ""
 
-#: includes/class-wcpbc-pricing-zone.php:420
+#: includes/class-wcpbc-pricing-zone.php:421
 msgid "Adding metadata is not supported."
 msgstr ""
 
@@ -1463,7 +1471,7 @@ msgid "%1$sPrice Based on Country Pro & All Products For Subscriptions%2$s compa
 msgstr ""
 
 #: includes/integrations/class-wcpbc-wpallimport-ad.php:58
-#: includes/wcpbc-core-functions.php:535
+#: includes/wcpbc-core-functions.php:531
 msgid "Price for"
 msgstr ""
 
@@ -1502,11 +1510,11 @@ msgstr ""
 msgid "\"zone\" argument must be a WCPBC_Pricing_Zone instance."
 msgstr ""
 
-#: includes/wcpbc-core-functions.php:499
+#: includes/wcpbc-core-functions.php:495
 msgid "Calculate prices by the exchange rate"
 msgstr ""
 
-#: includes/wcpbc-core-functions.php:500
+#: includes/wcpbc-core-functions.php:496
 msgid "Set prices manually"
 msgstr ""
 

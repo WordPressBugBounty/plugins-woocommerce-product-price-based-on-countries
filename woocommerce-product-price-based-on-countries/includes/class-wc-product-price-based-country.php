@@ -17,7 +17,7 @@ class WC_Product_Price_Based_Country {
 	 *
 	 * @var string
 	 */
-	public $version = '4.2.2';
+	public $version = '4.3.0';
 
 	/**
 	 * The front-end pricing zone
@@ -152,28 +152,29 @@ class WC_Product_Price_Based_Country {
 		$path = false;
 
 		$class_map = [
-			'WCPBC_Helper_Options'       => 'class-wcpbc-helper-options.php',
-			'WCPBC_Pricing_Zone'         => 'class-wcpbc-pricing-zone.php',
-			'WCPBC_Pricing_Zones'        => 'class-wcpbc-pricing-zones.php',
-			'WCPBC_Integrations'         => 'class-wcpbc-integrations.php',
-			'WCPBC_Frontend'             => 'class-wcpbc-frontend.php',
-			'WCPBC_Frontend_Pricing'     => 'class-wcpbc-frontend-pricing.php',
-			'WCPBC_Ajax_Geolocation'     => 'class-wcpbc-ajax-geolocation.php',
-			'WCPBC_Update_GeoIP_DB'      => 'class-wcpbc-update-geoip-db.php',
-			'WCPBC_Product_Sync'         => 'class-wcpbc-product-sync.php',
-			'WCPBC_Debug_Logger'         => 'class-wcpbc-debug-logger.php',
-			'WCPBC_Store_API'            => 'class-wcpbc-store-api.php',
-			'WCPBC_Country_Flags'        => 'class-wcpbc-country-flags.php',
-			'WCPBC_Blocks_Controller'    => 'class-wcpbc-blocks-controller.php',
-			'WCPBC_Runtime_Meta'         => 'class-wcpbc-runtime-meta.php',
-			'WCPBC_Admin_Analytics'      => 'admin/class-wcpbc-admin-analytics.php',
-			'WCPBC_Admin_Notices'        => 'admin/class-wcpbc-admin-notices.php',
-			'WCPBC_Admin'                => 'admin/class-wcpbc-admin.php',
-			'WCPBC_Admin_Meta_Boxes'     => 'admin/class-wcpbc-admin-meta-boxes.php',
-			'WCPBC_Admin_Ads'            => 'admin/class-wcpbc-admin-ads.php',
-			'WCPBC_Setup_Wizard'         => 'admin/class-wcpbc-setup-wizard.php',
-			'WCPBC_Cache_Plugins_Helper' => 'admin/class-wcpbc-cache-plugins-helper.php',
-			'WCPBC_Admin_Legacy_Reports' => 'admin/class-wcpbc-admin-legacy-reports.php',
+			'WCPBC_Helper_Options'            => 'class-wcpbc-helper-options.php',
+			'WCPBC_Pricing_Zone'              => 'class-wcpbc-pricing-zone.php',
+			'WCPBC_Pricing_Zones'             => 'class-wcpbc-pricing-zones.php',
+			'WCPBC_Integrations'              => 'class-wcpbc-integrations.php',
+			'WCPBC_Frontend'                  => 'class-wcpbc-frontend.php',
+			'WCPBC_Frontend_Pricing'          => 'class-wcpbc-frontend-pricing.php',
+			'WCPBC_Ajax_Geolocation'          => 'class-wcpbc-ajax-geolocation.php',
+			'WCPBC_Update_GeoIP_DB'           => 'class-wcpbc-update-geoip-db.php',
+			'WCPBC_Product_Sync'              => 'class-wcpbc-product-sync.php',
+			'WCPBC_Debug_Logger'              => 'class-wcpbc-debug-logger.php',
+			'WCPBC_Store_API'                 => 'class-wcpbc-store-api.php',
+			'WCPBC_Country_Flags'             => 'class-wcpbc-country-flags.php',
+			'WCPBC_Blocks_Controller'         => 'class-wcpbc-blocks-controller.php',
+			'WCPBC_Runtime_Meta'              => 'class-wcpbc-runtime-meta.php',
+			'WCPBC_Schedule_Recurring_Action' => 'class-wcpbc-schedule-recurring-action.php',
+			'WCPBC_Admin_Analytics'           => 'admin/class-wcpbc-admin-analytics.php',
+			'WCPBC_Admin_Notices'             => 'admin/class-wcpbc-admin-notices.php',
+			'WCPBC_Admin'                     => 'admin/class-wcpbc-admin.php',
+			'WCPBC_Admin_Meta_Boxes'          => 'admin/class-wcpbc-admin-meta-boxes.php',
+			'WCPBC_Admin_Ads'                 => 'admin/class-wcpbc-admin-ads.php',
+			'WCPBC_Setup_Wizard'              => 'admin/class-wcpbc-setup-wizard.php',
+			'WCPBC_Cache_Plugins_Helper'      => 'admin/class-wcpbc-cache-plugins-helper.php',
+			'WCPBC_Admin_Legacy_Reports'      => 'admin/class-wcpbc-admin-legacy-reports.php',
 		];
 
 		if ( isset( $class_map[ $classname ] ) ) {
@@ -377,6 +378,8 @@ class WC_Product_Price_Based_Country {
 		add_action( 'widgets_init', array( $this, 'register_widgets' ) );
 		add_action( 'woocommerce_init', array( $this, 'frontend_init' ), 0 );
 		add_action( 'init', array( $this, 'ajax_frontend_init' ), 9999 );
+
+		WCPBC_Schedule_Recurring_Action::add( 'wc_price_based_country_scheduled_sales', 'tomorrow 00:00:01' );
 	}
 
 	/**

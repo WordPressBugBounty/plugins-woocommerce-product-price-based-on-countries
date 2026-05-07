@@ -163,12 +163,14 @@ class WCPBC_Ajax_Geolocation {
 
 			// Currency.
 			$data['currency_params'] = array(
-				'symbol'       => get_woocommerce_currency_symbol(),
-				'num_decimals' => esc_attr( wc_get_price_decimals() ),
-				'decimal_sep'  => esc_attr( wc_get_price_decimal_separator() ),
-				'thousand_sep' => esc_attr( wc_get_price_thousand_separator() ),
-				'format'       => esc_attr( str_replace( array( '%1$s', '%2$s' ), array( '%s', '%v' ), get_woocommerce_price_format() ) ),
-				'code'         => get_woocommerce_currency(),
+				'symbol'        => get_woocommerce_currency_symbol(),
+				'symbol_decode' => html_entity_decode( get_woocommerce_currency_symbol() ),
+				'num_decimals'  => esc_attr( wc_get_price_decimals() ),
+				'decimal_sep'   => esc_attr( wc_get_price_decimal_separator() ),
+				'thousand_sep'  => esc_attr( wc_get_price_thousand_separator() ),
+				'price_format'  => get_woocommerce_price_format(),
+				'format'        => esc_attr( str_replace( array( '%1$s', '%2$s' ), array( '%s', '%v' ), get_woocommerce_price_format() ) ),
+				'code'          => get_woocommerce_currency(),
 			);
 
 			// Pricing zone ID.

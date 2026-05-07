@@ -2,9 +2,9 @@
 Contributors: oscargare
 Tags:  woocommerce, country-based pricing, price by country, geolocation, multi currency
 Requires at least: 3.8
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.0
-Stable tag: 4.2.2
+Stable tag: 4.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -105,7 +105,7 @@ Yes! The plugin is designed to work with caching. It loads prices dynamically to
 Absolutely. You can let the plugin automatically calculate the exchange rate, or manually enter a fixed price for each product in each zone (e.g., Product A is $10 in the US and €12 in Spain).
 
 = What happens if I need to update 500 products? =
-The Free version requires manual editing. The [PRO Version](https://www.pricebasedcountry.com/pricing/?utm_medium=banner&utm_campaign=upgrade-pro&utm_source=wordpress) includes a Bulk Editor and CSV import/export support, saving you hours of data entry.
+The Free version requires manual editing. The [PRO Version](https://www.pricebasedcountry.com/pricing/?utm_medium=banner&utm_campaign=upgrade-pro&utm_source=wordpress) includes CSV import/export support, saving you hours of data entry.
 
 = Does it work with Stripe and PayPal? =
 Yes! The plugin requires a payment gateway that supports the currencies you want to work with. e.g., PayPal or Stripe.
@@ -131,18 +131,19 @@ Please review [How to test the pricing zones](https://www.pricebasedcountry.com/
 
 == Changelog ==
 
-= 4.2.2 (2026-03-05) =
-* Fixed: WCPBC_Runtime_Meta could be stored along with product metadata.
-* Fixed: Checkout validation fails if the price zone has not been loaded using the `wc_price_based_country_stop_pricing` filter.
-
-= 4.2.1 (2026-02-12) =
-* Fixed: WCPBC_Runtime_Meta" not found.
-
-= 4.2.0 (2026-02-12) =
-* Added: Compatible with WooCommerce 10.5+.
-* Fixed: The product default price fields could be updated with the pricing zone value if another process saves the products in the cart.
-* Fixed: Security - Checkout validation to prevent an order from being created with an incorrect pricing zone.
-* Tweak: Keep the value of the schedule sales "from" and "to" dates after setting the sale price on/off.
+= 4.3.0 (2026-05-07) =
+* Added: Tested up WordPress 7.0+.
+* Added: Compatible with WooCommerce 10.7+.
+* Added: Compatibility with the "course" product type of the LearnDash plugin.
+* Added: Compatibility with the LearnDash Group Registration plugin.
+* Fixed: Double conversion issue with "Advanced Dynamic Pricing and Discount Rules for WooCommerce" by AlgolPlus.
+* Fixed: Conflict with "Variation Swatches for WooCommerce - Pro" plugin.
+* Fixed: Error on activating "Jetpack Boost" plugin when the "Jetpack 15.8-a.3 (Pressable managed hosting)" plugin is active.
+* Fixed: Update of EUR countries in the "Select Eurozone" button tool.
+* Fixed: The "scheduled sales" query causes a timeout error when run against large `postmeta` tables.
+* Tweak: Improve the performance of the database queries.
+* Tweak: Handle scheduled sales in a dedicated Action Scheduler hook.
+* Tweak: Send no cache headers when `wcpbc-manual-country` parameter is set.
 
 [See changelog for all versions](https://plugins.svn.wordpress.org/woocommerce-product-price-based-on-countries/trunk/changelog.txt).
 

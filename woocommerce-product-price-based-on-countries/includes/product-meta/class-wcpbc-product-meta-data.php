@@ -40,8 +40,8 @@ class WCPBC_Product_Meta_Data {
 		add_action( 'wc_product_start_scheduled_sale', [ __CLASS__, 'after_products_starting_sales' ], 15 );
 		add_action( 'wc_after_products_ending_sales', [ __CLASS__, 'after_products_ending_sales' ] );
 		add_action( 'wc_product_end_scheduled_sale', [ __CLASS__, 'after_products_ending_sales' ], 15 );
-		add_action( 'woocommerce_scheduled_sales', [ __CLASS__, 'scheduled_sales' ], 11 );
-		add_action( 'wc_price_based_country_product_meta_job', [ __CLASS__, 'run_product_meta_job' ], 10, 2 );
+		add_action( 'wc_price_based_country_scheduled_sales', [ __CLASS__, 'scheduled_sales' ], 11 );
+		add_action( WCPBC_Product_Meta_Job::ACTION_HOOK, [ __CLASS__, 'run_product_meta_job' ], 10, 2 );
 	}
 
 	/**
@@ -56,20 +56,12 @@ class WCPBC_Product_Meta_Data {
 			return;
 		}
 
-		if ( ! isset( self::$children_sync_queue['parent_id'] ) ) {
-			self::$children_sync_queue['parent_id'] = [];
+		if ( ! ( isset( self::$children_sync_queue[ $zone_id ] ) && is_array( self::$children_sync_queue[ $zone_id ] ) ) ) {
+			self::$children_sync_queue[ $zone_id ] = [];
 		}
 
-		if ( ! in_array( absint( $parent_id ), self::$children_sync_queue['parent_id'], true ) ) {
-			self::$children_sync_queue['parent_id'][] = absint( $parent_id );
-		}
-
-		if ( ! isset( self::$children_sync_queue['zone_id'] ) ) {
-			self::$children_sync_queue['zone_id'] = [];
-		}
-
-		if ( ! in_array( $zone_id, self::$children_sync_queue['zone_id'], true ) ) {
-			self::$children_sync_queue['zone_id'][] = $zone_id;
+		if ( ! in_array( $parent_id, self::$children_sync_queue[ $zone_id ], true ) ) {
+			self::$children_sync_queue[ $zone_id ][] = $parent_id;
 		}
 	}
 
@@ -182,10 +174,16 @@ class WCPBC_Product_Meta_Data {
 	 * Syncs product prices with children if there are products in the queue.
 	 */
 	private static function maybe_sync_price_with_children() {
-		if ( isset( self::$children_sync_queue['parent_id'], self::$children_sync_queue['zone_id'] ) && count( self::$children_sync_queue['parent_id'] ) && count( self::$children_sync_queue['zone_id'] ) ) {
-
-			WCPBC_Product_Meta_Job::create( 'Sync_Price_With_Children', self::$children_sync_queue )->run();
+		foreach ( self::$children_sync_queue as $zone_id => $product_ids ) {
+			WCPBC_Product_Meta_Job::create(
+				'Sync_Price_With_Children',
+				[
+					'zone_id'     => $zone_id,
+					'product_ids' => $product_ids,
+				]
+			)->run();
 		}
+
 		self::$children_sync_queue = [];
 	}
 
@@ -219,44 +217,43 @@ class WCPBC_Product_Meta_Data {
 			return;
 		}
 
-		$ids = [];
-		foreach ( $old_value as $key => $data ) {
-			if ( ! isset( $value[ $key ] ) ) {
-				$ids[] = $key;
-			}
-		}
-
-		if ( count( $ids ) ) {
-			WCPBC_Product_Meta_Job::create( 'Delete_Zone', $ids )->run_async();
-		}
-
-		$ids = [];
+		// New zones.
 		foreach ( $value as $key => $data ) {
 			if ( ! isset( $old_value[ $key ] ) ) {
-				$ids[] = $key;
+				WCPBC_Product_Meta_Job::create( 'Add_Zone', [ 'zone_id' => $key ] )->run_async();
 			}
 		}
 
-		if ( count( $ids ) ) {
-			WCPBC_Product_Meta_Job::create( 'Add_Zone', $ids )->run_async();
-		}
-
-		$ids = [];
+		// Exchange rate updated.
 		foreach ( $value as $key => $data ) {
 			if ( ! isset( $old_value[ $key ] ) ) {
 				continue;
 			}
 
-			$old_exchange_rate = isset( $old_value[ $key ]['exchange_rate'] ) ? $old_value[ $key ]['exchange_rate'] : '';
-			$new_exchange_rate = isset( $value[ $key ]['exchange_rate'] ) ? $value[ $key ]['exchange_rate'] : '';
+			$old_zone = WCPBC_Pricing_Zones::get_zone( array_merge( [ 'id' => $key ], $old_value[ $key ] ) );
+			$new_zone = WCPBC_Pricing_Zones::get_zone( array_merge( [ 'id' => $key ], $value[ $key ] ) );
 
-			if ( $old_exchange_rate !== $new_exchange_rate ) {
-				$ids[] = $key;
+			$old_exchange_rate  = $old_zone->get_exchange_rate();
+			$new_exchange_rate  = $new_zone->get_exchange_rate();
+			$rounding_precision = $new_zone->get_rounding_precision();
+
+			$epsilon = pow( 10, $rounding_precision * -1 );
+
+			if ( $new_exchange_rate && abs( $new_exchange_rate - $old_exchange_rate ) > $epsilon ) {
+
+				WCPBC_Product_Meta_Job::create( 'Update_Exchange_Rate_Price', [ 'zone_id' => $key ] )->cancel()->run_async();
 			}
 		}
 
-		if ( count( $ids ) ) {
-			WCPBC_Product_Meta_Job::create( 'Update_Column_With_Exchange_Rate', $ids )->run_async();
+		// Deleted zones.
+		foreach ( $old_value as $key => $data ) {
+			if ( ! isset( $value[ $key ] ) ) {
+
+				WCPBC_Product_Meta_Job::create( 'Add_Zone', [ 'zone_id' => $key ] )->cancel();
+				WCPBC_Product_Meta_Job::create( 'Update_Exchange_Rate_Price', [ 'zone_id' => $key ] )->cancel();
+
+				WCPBC_Product_Meta_Job::create( 'Delete_Zone', [ 'zone_id' => $key ] )->run_async();
+			}
 		}
 	}
 
@@ -271,9 +268,9 @@ class WCPBC_Product_Meta_Data {
 		}
 
 		WCPBC_Product_Meta_Job::create(
-			'Starting_Sales',
+			'Handle_Scheduled_Sale_Default',
 			[
-				'method'      => 'default',
+				'mode'        => 'start',
 				'product_ids' => $product_ids,
 			]
 		)->run();
@@ -290,9 +287,9 @@ class WCPBC_Product_Meta_Data {
 		}
 
 		WCPBC_Product_Meta_Job::create(
-			'Ending_Sales',
+			'Handle_Scheduled_Sale_Default',
 			[
-				'method'      => 'default',
+				'mode'        => 'end',
 				'product_ids' => $product_ids,
 			]
 		)->run();
@@ -302,8 +299,7 @@ class WCPBC_Product_Meta_Data {
 	 * Handles the start and end of scheduled sales with manual dates.
 	 */
 	public static function scheduled_sales() {
-		WCPBC_Product_Meta_Job::create( 'Starting_Sales' )->run();
-		WCPBC_Product_Meta_Job::create( 'Ending_Sales' )->run();
+		WCPBC_Product_Meta_Job::create( 'Handle_Scheduled_Sale_Manual' )->run();
 	}
 
 	/**
