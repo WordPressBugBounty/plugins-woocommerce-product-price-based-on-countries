@@ -1,3 +1,6 @@
+= 4.3.1 (2026-05-07) =
+* Fixed: PHP Error when specific integrations are loaded.
+
 = 4.3.0 (2026-05-07) =
 * Added: Tested up WordPress 7.0+.
 * Added: Compatible with WooCommerce 10.7+.

@@ -484,7 +484,7 @@ class WCPBC_Pricing_Zone {
 	/**
 	 * Product price by exchange rate?
 	 *
-	 * @param \WC_Data $data Object instance or Post ID.
+	 * @param \WC_Data|int $data Object instance or Post ID.
 	 * @return bool
 	 */
 	public function is_exchange_rate_price( $data ) {
@@ -496,7 +496,7 @@ class WCPBC_Pricing_Zone {
 		}
 
 		$price_method     = $this->get_postmeta( $post_id, '_price_method' );
-		$product_type     = method_exists( $data, 'get_type' ) && is_callable( [ $data, 'get_type' ] ) ? $data->get_type() : WC_Product_Factory::get_product_type( $post_id );
+		$product_type     = is_callable( [ $data, 'get_type' ] ) ? $data->get_type() : WC_Product_Factory::get_product_type( $post_id );
 		$is_exchange_rate = wcpbc_is_exchange_rate( $price_method ) && ! in_array( $product_type, wcpbc_wrapper_product_types(), true );
 
 		$this->cache_set( $post_id, __FUNCTION__, ( $is_exchange_rate ? 'true' : 'false' ) );
@@ -554,7 +554,7 @@ class WCPBC_Pricing_Zone {
 	public function get_rounding_precision() {
 		$num_decimals = wc_get_price_decimals();
 
-		if ( method_exists( $this, 'get_price_num_decimals' ) && is_callable( [ $this, 'get_price_num_decimals' ] ) && '' !== $this->get_price_num_decimals() ) {
+		if ( is_callable( [ $this, 'get_price_num_decimals' ] ) && '' !== $this->get_price_num_decimals() ) {
 			$num_decimals = $this->get_price_num_decimals();
 		}
 
