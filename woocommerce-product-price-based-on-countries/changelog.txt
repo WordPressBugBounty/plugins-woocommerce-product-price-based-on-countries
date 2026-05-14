@@ -1,3 +1,6 @@
+= 4.3.2 (2026-05-14) =
+* Tweak: Improve the performance of the recurring actions schedule.
+
 = 4.3.1 (2026-05-07) =
 * Fixed: PHP Error when specific integrations are loaded.
 

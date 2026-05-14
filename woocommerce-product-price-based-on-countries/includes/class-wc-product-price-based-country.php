@@ -17,7 +17,7 @@ class WC_Product_Price_Based_Country {
 	 *
 	 * @var string
 	 */
-	public $version = '4.3.1';
+	public $version = '4.3.2';
 
 	/**
 	 * The front-end pricing zone
@@ -371,7 +371,7 @@ class WC_Product_Price_Based_Country {
 		WCPBC_Blocks_Controller::init();
 		WCPBC_Runtime_Meta::init();
 
-		if ( version_compare( WC_VERSION, '3.4', '>=' ) && version_compare( WC_VERSION, '3.9', '<' ) ) {
+		if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '3.4', '>=' ) && version_compare( WC_VERSION, '3.9', '<' ) ) {
 			WCPBC_Update_GeoIP_DB::init();
 		}
 

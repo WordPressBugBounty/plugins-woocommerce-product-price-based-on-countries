@@ -15,6 +15,13 @@ defined( 'ABSPATH' ) || exit;
 class WCPBC_Schedule_Recurring_Action {
 
 	/**
+	 * Option key used to throttle recurring action checks.
+	 *
+	 * @var string
+	 */
+	private const CHECK_TIME_OPTION_KEY = 'schedule_recurring_action_check_time';
+
+	/**
 	 * Recurring actions.
 	 *
 	 * @var array
@@ -34,6 +41,7 @@ class WCPBC_Schedule_Recurring_Action {
 
 		if ( ! has_action( 'admin_init', [ __CLASS__, 'install' ] ) ) {
 			add_action( 'admin_init', [ __CLASS__, 'install' ] );
+			add_action( 'action_scheduler_ensure_recurring_actions', [ __CLASS__, 'install' ] );
 		}
 	}
 
@@ -41,15 +49,25 @@ class WCPBC_Schedule_Recurring_Action {
 	 * Schedule the actions.
 	 */
 	public static function install() {
-		if ( wp_doing_ajax() || wp_cache_get( __METHOD__ ) ) {
+		if ( ( is_admin() && wp_doing_ajax() ) || time() < (int) WCPBC_Helper_Options::get( self::CHECK_TIME_OPTION_KEY, 0 ) ) {
 			return;
 		}
 
+		self::schedule_all_actions();
+	}
+
+	/**
+	 * Schedule all recurring actions.
+	 *
+	 * Use this when the current request needs to trigger every registered recurring
+	 * action immediately, without re-checking the throttle stored in options.
+	 */
+	public static function schedule_all_actions() {
 		foreach ( self::$data as $hook => $datetime ) {
 			self::schedule_action( $hook, $datetime );
 		}
 
-		wp_cache_set( __METHOD__, true, '', HOUR_IN_SECONDS );
+		WCPBC_Helper_Options::update( self::CHECK_TIME_OPTION_KEY, time() + HOUR_IN_SECONDS );
 	}
 
 	/**
