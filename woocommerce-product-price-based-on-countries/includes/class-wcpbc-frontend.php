@@ -339,7 +339,8 @@ class WCPBC_Frontend {
 
 		if ( isset( $_POST['redirect'] ) && '1' === $_POST['redirect'] ) { // phpcs:ignore WordPress.Security.NonceVerification
 			global $wp;
-			$current_url = trailingslashit( home_url( add_query_arg( [], $wp->request ) ) );
+			$args        = wc_clean( array_intersect_key( $_GET, array_flip( [ 'p', 'page_id', 'product', 'post_type' ] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification
+			$current_url = add_query_arg( $args, trailingslashit( home_url( $wp->request ) ) );
 			wp_safe_redirect( $current_url );
 			exit;
 		}

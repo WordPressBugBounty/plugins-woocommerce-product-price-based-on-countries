@@ -4,7 +4,7 @@ Tags:  woocommerce, country-based pricing, price by country, geolocation, multi 
 Requires at least: 3.8
 Tested up to: 7.0
 Requires PHP: 7.0
-Stable tag: 4.3.2
+Stable tag: 4.3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -130,6 +130,10 @@ Please review [How to test the pricing zones](https://www.pricebasedcountry.com/
 7. Includes a country selector widget.
 
 == Changelog ==
+
+= 4.3.3 (2026-07-14) =
+* Added: Compatible with WooCommerce 10.9+.
+* Fix: The p, page_id, and product query vars are removed after changing the country using the switcher.
 
 = 4.3.2 (2026-05-14) =
 * Tweak: Improve the performance of the recurring actions schedule.
