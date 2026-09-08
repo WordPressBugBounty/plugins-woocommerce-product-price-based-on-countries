@@ -41,8 +41,8 @@ class WCPBC_Google_Listing_And_Ads {
 		$min_version    = '2.3.1';
 
 		if ( 'unknown' === $plugin_version || version_compare( $plugin_version, $min_version, '<' ) ) {
-			// translators: 1: HTML tag, 2: HTML tag, 3: Google Listings and Ads.
-			self::$notice = sprintf( __( '%1$sPrice Based on Country Pro & Google Listings and Ads%2$s compatibility %1$srequires%2$s Google Listings and Ads %1$s+%4$s%2$s. You are running Google Listings and Ads %3$s.', 'woocommerce-product-price-based-on-countries' ), '<strong>', '</strong>', $plugin_version, $min_version );
+			// translators: 1: HTML tag, 2: HTML tag, 3: Google for WooCommerce.
+			self::$notice = sprintf( __( '%1$sPrice Based on Country Pro & Google for WooCommerce%2$s compatibility %1$srequires%2$s Google for WooCommerce %1$s+%4$s%2$s. You are running Google for WooCommerce %3$s.', 'woocommerce-product-price-based-on-countries' ), '<strong>', '</strong>', $plugin_version, $min_version );
 			add_action( 'admin_notices', array( __CLASS__, 'min_version_notice' ) );
 
 			$compatible = false;
@@ -81,12 +81,12 @@ class WCPBC_Google_Listing_And_Ads {
 			array(
 				'id'      => 'wc_price_based_country_gla_integration_mode',
 				'name'    => 'wc_price_based_country_gla_integration[mode]',
-				'label'   => __( 'Google Listings & Ads compatibility', 'woocommerce-product-price-based-on-countries' ),
-				'desc'    => __( 'Enable the "Google Listings & Ads" compatibility. The plugin will use the prices for the country you select when it syncs the products with your Google Merchant account.', 'woocommerce-product-price-based-on-countries' ),
+				'label'   => __( 'Google for WooCommerce compatibility', 'woocommerce-product-price-based-on-countries' ),
+				'desc'    => __( 'Enable the "Google for WooCommerce" compatibility. The plugin will use the prices for the country you select when it syncs the products with your Google Merchant account.', 'woocommerce-product-price-based-on-countries' ),
 				'type'    => 'select',
 				'options' => array(
 					// Translators: country ISO code.
-					'gla_country' => sprintf( __( '"Google Listings & Ads" main target country (%s)', 'woocommerce-product-price-based-on-countries' ), self::get_gla_target_country() ),
+					'gla_country' => sprintf( __( '"Google for WooCommerce" main target country (%s)', 'woocommerce-product-price-based-on-countries' ), self::get_gla_target_country() ),
 					'specific'    => __( 'Specific country', 'woocommerce-product-price-based-on-countries' ),
 					''            => __( 'Deactivate. Use the default WooCommerce prices, and do not add the country to the product URL.', 'woocommerce-product-price-based-on-countries' ),
 				),
@@ -95,7 +95,7 @@ class WCPBC_Google_Listing_And_Ads {
 			array(
 				'id'      => 'wc_price_based_country_gla_integration_country',
 				'name'    => 'wc_price_based_country_gla_integration[country]',
-				'label'   => __( 'Country for "Google Listings & Ads" compatibility', 'woocommerce-product-price-based-on-countries' ),
+				'label'   => __( 'Country for "Google for WooCommerce" compatibility', 'woocommerce-product-price-based-on-countries' ),
 				'type'    => 'country-select',
 				'options' => WC()->countries->countries,
 				'show-if' => array(
@@ -115,6 +115,10 @@ class WCPBC_Google_Listing_And_Ads {
 	public static function start_products_sync() {
 		try {
 
+			if ( ! function_exists( 'woogle_get_container' ) ) {
+				return;
+			}
+
 			$job_repository = woogle_get_container()->get( 'Automattic\WooCommerce\GoogleListingsAndAds\Jobs\JobRepository' );
 
 			$update = $job_repository->get( 'Automattic\WooCommerce\GoogleListingsAndAds\Jobs\UpdateAllProducts' );
@@ -132,6 +136,10 @@ class WCPBC_Google_Listing_And_Ads {
 		$target_country = false;
 
 		try {
+
+			if ( ! function_exists( 'woogle_get_container' ) ) {
+				return false;
+			}
 
 			$target_audience = woogle_get_container()->get( 'Automattic\WooCommerce\GoogleListingsAndAds\MerchantCenter\TargetAudience' );
 			$target_country  = $target_audience->get_main_target_country();
@@ -205,6 +213,30 @@ class WCPBC_Google_Listing_And_Ads {
 	}
 
 	/**
+	 * Get link from WCProductAdapter instance.
+	 *
+	 * @param Automattic\WooCommerce\GoogleListingsAndAds\Product\WCProductAdapter $product_adapter The Adapted Google product object.
+	 * @return string
+	 */
+	private static function get_link_from_product_adapter( $product_adapter ) {
+		$link = '';
+
+		if ( is_callable( [ $product_adapter, 'getLink' ] ) ) {
+
+			$link = $product_adapter->getLink();
+
+		} elseif ( is_callable( [ $product_adapter, 'get_product_input' ] ) ) {
+			// 3.9 support.
+
+			$product_input = $product_adapter->get_product_input();
+			$attributes    = is_callable( [ $product_input, 'get_attributes' ] ) ? $product_input->get_attributes() : [];
+			$link          = isset( $attributes['link'] ) ? $attributes['link'] : '';
+		}
+
+		return $link;
+	}
+
+	/**
 	 * Update the product link.
 	 *
 	 * @param array            $attributes An array of values for the product properties.
@@ -213,7 +245,10 @@ class WCPBC_Google_Listing_And_Ads {
 	 * @return array
 	 */
 	public static function product_attribute_values( $attributes, $wc_product, $product_adapter ) {
-		$attributes['link'] = add_query_arg( 'wcpbc-manual-country', self::$country, $product_adapter->getLink() );
+		$link = self::get_link_from_product_adapter( $product_adapter );
+		if ( $link ) {
+			$attributes['link'] = add_query_arg( 'wcpbc-manual-country', self::$country, $link );
+		}
 		return $attributes;
 	}
 }

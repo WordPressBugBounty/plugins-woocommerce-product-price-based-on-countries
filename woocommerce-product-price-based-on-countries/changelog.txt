@@ -1,3 +1,8 @@
+= 4.3.4 (2026-09-08) =
+* Added: Compatible with WooCommerce 11.1+.
+* Added: Tested up WordPress 7.1+.
+* Fixed: Error in the "Google for WooCommerce" product sync. Thanks @johnespindola
+
 = 4.3.3 (2026-07-14) =
 * Added: Compatible with WooCommerce 10.9+.
 * Fix: The p, page_id, and product query vars are removed after changing the country using the switcher.

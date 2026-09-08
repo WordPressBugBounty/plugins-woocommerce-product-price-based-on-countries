@@ -34,7 +34,7 @@ class WCPBC_Variation_Swatches_Emran_Ahmed {
 		$min_version    = '2.0.19';
 
 		if ( 'unknown' === $plugin_version || version_compare( $plugin_version, $min_version, '<' ) ) {
-			// translators: 1: HTML tag, 2: HTML tag, 3: Google Listings and Ads.
+			// translators: 1: HTML tag, 2: HTML tag, 3: Variation Swatches for WooCommerce version.
 			self::$notice = sprintf( __( '%1$sPrice Based on Country & Variation Swatches for WooCommerce Pro%2$s compatibility %1$srequires%2$s Variation Swatches for WooCommerce Pro %1$s+%4$s%2$s. You are running Variation Swatches for WooCommerce Pro %3$s.', 'woocommerce-product-price-based-on-countries' ), '<strong>', '</strong>', $plugin_version, $min_version );
 			add_action( 'admin_notices', array( __CLASS__, 'min_version_notice' ) );
 
