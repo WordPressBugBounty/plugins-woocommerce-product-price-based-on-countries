@@ -17,7 +17,7 @@ class WC_Product_Price_Based_Country {
 	 *
 	 * @var string
 	 */
-	public $version = '4.3.4';
+	public $version = '4.3.5';
 
 	/**
 	 * The front-end pricing zone

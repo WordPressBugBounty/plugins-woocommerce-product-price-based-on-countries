@@ -14,7 +14,7 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * WCPBC_CartFlows class.
+ * WCPBC_Real_Cookie_Banner class.
  */
 class WCPBC_Real_Cookie_Banner {
 

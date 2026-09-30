@@ -8,7 +8,7 @@
 			items: 'tr:not(.zone-worldwide)',
 			cursor: 'move',
 			axis: 'y',
-			handle: 'th.check-column',
+			handle: 'td.check-column,th.check-column',
 			scrollSensitivity: 40,
 			start: function ( event, ui ) {
 				ui.item.css( 'background-color', '#f6f6f6' );
@@ -67,6 +67,6 @@
 
 	// Add a help-tip to the reorder header.
 	 $('<span class="woocommerce-help-tip" data-tip="' + wcpbc_settings_zone_list_params.i18n.reorder_helptip + '"></span>')
-	 	.appendTo( $('table.pricingzones thead td#cb') );
+	 	.appendTo( $('table.pricingzones thead #cb') );
 
 })( jQuery );

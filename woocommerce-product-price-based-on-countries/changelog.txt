@@ -1,3 +1,6 @@
+= 4.3.5 (2026-09-30) =
+* Fixed: Reorder pricing zones.
+
 = 4.3.4 (2026-09-08) =
 * Added: Compatible with WooCommerce 11.1+.
 * Added: Tested up WordPress 7.1+.

@@ -72,8 +72,8 @@ class WCPBC_Admin_Zone_List_Table extends WP_List_Table {
 	/**
 	 * Default column handler.
 	 *
-	 * @param WCPBC_Zone $item        Item being shown.
-	 * @param string     $column_name Name of column being shown.
+	 * @param WCPBC_Pricing_Zone $item        Item being shown.
+	 * @param string             $column_name Name of column being shown.
 	 * @return string Default column output.
 	 */
 	public function column_default( $item, $column_name ) {
@@ -83,12 +83,15 @@ class WCPBC_Admin_Zone_List_Table extends WP_List_Table {
 	/**
 	 * Column cb.
 	 *
-	 * @param WCPBC_Zone $zone Pricing zone instance.
+	 * @param WCPBC_Pricing_Zone $zone Pricing zone instance.
 	 * @return string
 	 */
 	public function column_cb( $zone ) {
 		if ( $zone->get_id() ) {
-			return '<span class="dashicons dashicons-menu"></span><input type="hidden" name="pricing_zone_order[]" value="' . esc_attr( $zone->get_id() ) . '" />';
+			return sprintf(
+				'<span class="dashicons dashicons-menu" style="cursor:move;"></span><input type="hidden" name="pricing_zone_order[]" value="%s" />',
+				esc_attr( $zone->get_id() )
+			);
 		} else {
 			return '<span class="dashicons dashicons-admin-site"></span>';
 		}
@@ -97,7 +100,7 @@ class WCPBC_Admin_Zone_List_Table extends WP_List_Table {
 	/**
 	 * Return name column.
 	 *
-	 * @param WCPBC_Zone $zone Pricing zone instance.
+	 * @param WCPBC_Pricing_Zone $zone Pricing zone instance.
 	 * @return string
 	 */
 	public function column_name( $zone ) {
@@ -143,7 +146,7 @@ class WCPBC_Admin_Zone_List_Table extends WP_List_Table {
 	/**
 	 * Return name enabled.
 	 *
-	 * @param WCPBC_Zone $zone Pricing zone instance.
+	 * @param WCPBC_Pricing_Zone $zone Pricing zone instance.
 	 * @return string
 	 */
 	public function column_enabled( $zone ) {
@@ -159,7 +162,7 @@ class WCPBC_Admin_Zone_List_Table extends WP_List_Table {
 	/**
 	 * Return countries column.
 	 *
-	 * @param WCPBC_Zone $zone Pricing zone instance.
+	 * @param WCPBC_Pricing_Zone $zone Pricing zone instance.
 	 * @return string
 	 */
 	public function column_countries( $zone ) {
@@ -183,7 +186,7 @@ class WCPBC_Admin_Zone_List_Table extends WP_List_Table {
 	/**
 	 * Return currency column
 	 *
-	 * @param WCPBC_Zone $zone Pricing zone instance.
+	 * @param WCPBC_Pricing_Zone $zone Pricing zone instance.
 	 * @return string
 	 */
 	public function column_currency( $zone ) {
@@ -225,7 +228,7 @@ class WCPBC_Admin_Zone_List_Table extends WP_List_Table {
 	/**
 	 * Retruns data of the current zone to generate the data-export attribute.
 	 *
-	 * @param WCPBC_Zone $zone Pricing zone instance.
+	 * @param WCPBC_Pricing_Zone $zone Pricing zone instance.
 	 * @return array
 	 */
 	public function get_export_data( $zone ) {
@@ -264,7 +267,7 @@ class WCPBC_Admin_Zone_List_Table extends WP_List_Table {
 	/**
 	 * Generates content for a single row of the table.
 	 *
-	 * @param WCPBC_Zone $zone Pricing zone instance.
+	 * @param WCPBC_Pricing_Zone $zone Pricing zone instance.
 	 */
 	public function single_row( $zone ) {
 

@@ -11,7 +11,7 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * WCPBC_CartFlows class.
+ * WCPBC_Variation_Swatches_Emran_Ahmed class.
  */
 class WCPBC_Variation_Swatches_Emran_Ahmed {
 
