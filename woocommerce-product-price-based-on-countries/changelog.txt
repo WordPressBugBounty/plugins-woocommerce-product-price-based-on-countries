@@ -1,3 +1,7 @@
+= 4.3.6 (2026-10-14) =
+* Added: Compatible with WooCommerce 11.2+.
+* Fixed: coupon_invalid_minimum_amount error during currency conversion of coupon spend limits.
+
 = 4.3.5 (2026-09-30) =
 * Fixed: Reorder pricing zones.
 

@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2.
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce Price Based on Country 4.3.5\n"
+"Project-Id-Version: WooCommerce Price Based on Country 4.3.6\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-product-price-based-on-countries\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-30T07:04:48+00:00\n"
+"POT-Creation-Date: 2026-10-14T07:55:39+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: woocommerce-product-price-based-on-countries\n"
@@ -268,7 +268,6 @@ msgstr ""
 msgid "Are you sure? %1$sDelete%2$s %3$sCancel%2$s"
 msgstr ""
 
-#. translators: HTML tags.
 #: includes/admin/class-wcpbc-admin-zone-list-table.php:118
 #: includes/admin/settings/wcpbc-settings-zone.php:397
 msgid "Delete"
@@ -299,7 +298,6 @@ msgstr ""
 msgid "Your server does not include the customer IP in HTTP_X_FORWARDED_FOR. Fix it by adding %s to your config.php."
 msgstr ""
 
-#. Translators: PHP Code.
 #: includes/admin/class-wcpbc-admin.php:134
 msgid "The first IP not empty of your server variables does not match with your real IP."
 msgstr ""
@@ -313,7 +311,6 @@ msgctxt "WooCommerce tool name"
 msgid "Synchronize the price of variable products"
 msgstr ""
 
-#. Translators: 1: version. 2,3: HTML tag.
 #: includes/admin/class-wcpbc-admin.php:203
 #: includes/admin/settings/class-wc-settings-price-based-country.php:571
 msgid "Update"
@@ -416,7 +413,6 @@ msgstr ""
 msgid "%1$sActivate%2$s your license to enable the plugin updates and get support. If you do not have a license yet, you need to %1$spurchase%2$s one."
 msgstr ""
 
-#. Translators: 1,2: HTML tag.
 #: includes/admin/settings/class-wc-settings-price-based-country.php:508
 #: includes/admin/settings/class-wc-settings-price-based-country.php:519
 msgid "Purchase"
@@ -480,7 +476,6 @@ msgstr ""
 msgid "Your license will expire soon. %1$sRenew your license%2$s to continue receiving updates and support."
 msgstr ""
 
-#. Translators: 1: version. 2,3: HTML tag.
 #: includes/admin/settings/class-wc-settings-price-based-country.php:597
 msgid "Renew now"
 msgstr ""
@@ -578,7 +573,6 @@ msgstr ""
 msgid "Compatible with Subscriptions by WooCommerce"
 msgstr ""
 
-#. Translators: "Subscriptions" is a product name. Do not translate it.
 #: includes/admin/settings/views/html-free-pro.php:59
 msgid "Includes compatibility with the \"WooCommerce Subscriptions\" plugin developed by WooCommerce."
 msgstr ""
@@ -588,7 +582,6 @@ msgstr ""
 msgid "Compatible with Product Bundles by WooCommerce"
 msgstr ""
 
-#. Translators: "Product Bundles" is a product name. Do not translate it.
 #: includes/admin/settings/views/html-free-pro.php:65
 msgid "Includes compatibility with the \"Product Bundles\" plugin developed by WooCommerce."
 msgstr ""
@@ -598,7 +591,6 @@ msgstr ""
 msgid "Compatible with Bookings by WooCommerce"
 msgstr ""
 
-#. Translators: "Bookings" is a product name. Do not translate it.
 #: includes/admin/settings/views/html-free-pro.php:71
 msgid "Includes compatibility with the \"WooCommerce Bookings\" plugin developed by WooCommerce."
 msgstr ""
@@ -608,7 +600,6 @@ msgstr ""
 msgid "Compatible with Product Add-Ons by WooCommerce"
 msgstr ""
 
-#. Translators: "Product Add-Ons" is a product name. Do not translate it.
 #: includes/admin/settings/views/html-free-pro.php:77
 msgid "Includes compatibility with the \"Product Add-Ons\" plugin developed by WooCommerce."
 msgstr ""
@@ -627,7 +618,6 @@ msgstr ""
 msgid "Get Price Based on Country Pro now"
 msgstr ""
 
-#. translators: 1, 2 HTML tags. 3 plugin version.
 #: includes/admin/settings/views/html-incompatible-pro-version.php:13
 #: includes/class-wc-product-price-based-country.php:389
 #: includes/integrations/class-wcpbc-rightpress-product-price-shop.php:118
@@ -1439,7 +1429,6 @@ msgstr ""
 msgid "\"Google for WooCommerce\" main target country (%s)"
 msgstr ""
 
-#. Translators: country ISO code.
 #: includes/integrations/class-wcpbc-google-listing-and-ads.php:90
 msgid "Specific country"
 msgstr ""

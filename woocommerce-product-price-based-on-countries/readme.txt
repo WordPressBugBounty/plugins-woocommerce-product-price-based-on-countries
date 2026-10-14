@@ -1,10 +1,10 @@
 === Price Based on Country for WooCommerce ===
 Contributors: oscargare
 Tags:  woocommerce, country-based pricing, price by country, geolocation, multi currency
-Requires at least: 3.8
+Requires at least: 5.2
 Tested up to: 7.1
-Requires PHP: 7.0
-Stable tag: 4.3.5
+Requires PHP: 7.4
+Stable tag: 4.3.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -130,6 +130,10 @@ Please review [How to test the pricing zones](https://www.pricebasedcountry.com/
 7. Includes a country selector widget.
 
 == Changelog ==
+
+= 4.3.6 (2026-10-14) =
+* Added: Compatible with WooCommerce 11.2+.
+* Fixed: coupon_invalid_minimum_amount error during currency conversion of coupon spend limits.
 
 = 4.3.5 (2026-09-30) =
 * Fixed: Reorder pricing zones.

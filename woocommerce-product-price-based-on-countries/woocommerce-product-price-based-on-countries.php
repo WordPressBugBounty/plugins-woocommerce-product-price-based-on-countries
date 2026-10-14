@@ -4,13 +4,13 @@
  * Plugin URI: https://wordpress.org/plugins/woocommerce-product-price-based-on-countries/
  * Description: Product Pricing and Currency based on Shopper’s Country for WooCommerce.
  * Author: Oscar Gare
- * Version: 4.3.5
+ * Version: 4.3.6
  * Author URI: https://oscargare.com/
  * Text Domain: woocommerce-product-price-based-on-countries
  * Domain Path: /languages
  *
  * WC requires at least: 4.0
- * WC tested up to: 11.1
+ * WC tested up to: 11.2
  * License: GPLv2
  *
  * @package WCPBC
@@ -43,7 +43,7 @@ if ( ! defined( 'WCPBC_PLUGIN_FILE' ) ) {
 
 // Include the main Price Based on Country class.
 if ( ! class_exists( 'WC_Product_Price_Based_Country' ) ) {
-	include_once dirname( __FILE__ ) . '/includes/class-wc-product-price-based-country.php';
+	include_once __DIR__ . '/includes/class-wc-product-price-based-country.php';
 }
 
 /**
@@ -51,7 +51,7 @@ if ( ! class_exists( 'WC_Product_Price_Based_Country' ) ) {
  */
 add_action(
 	'before_woocommerce_init',
-	function() {
+	function () {
 		if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
 			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
 		}

@@ -84,18 +84,18 @@
 	$.fn.wcpbc_show_if = function() {
 		//Evaluate a condition.
 		function conditionEval(field, operator, value) {
-			var eval      = false;
-			var $field    = $('[name="' + field + '"]').length ? $('[name="' + field + '"]') : $('#' + field);
+			var result = false;
+			var $field = $('[name="' + field + '"]').length ? $('[name="' + field + '"]') : $('#' + field);
 			if ( $field.length ) {
 				var field_val = $field.val();
 				if ('=' == operator) {
-					eval = (field_val == value);
+					result = (field_val == value);
 				} else {
 					// operator !=
-					eval = (field_val != value);
+					result = (field_val != value);
 				}
 			}
-			return eval;
+			return result;
 		}
 
 		// On field change.

@@ -523,14 +523,20 @@ class WCPBC_Frontend_Pricing {
 			$coupon->set_amount( $amount );
 		}
 
-		if ( $coupon->get_minimum_amount() ) {
-			$amount = wcpbc_the_zone()->get_exchange_rate_price( $coupon->get_minimum_amount(), true, 'coupon', $coupon->get_id() );
-			$coupon->set_minimum_amount( $amount );
+		$props = [];
 
+		if ( $coupon->get_minimum_amount() ) {
+			$props['minimum_amount'] = wcpbc_the_zone()->get_exchange_rate_price( $coupon->get_minimum_amount(), true, 'coupon', $coupon->get_id() );
+			$coupon->set_minimum_amount( '' );
 		}
+
 		if ( $coupon->get_maximum_amount() ) {
-			$amount = wcpbc_the_zone()->get_exchange_rate_price( $coupon->get_maximum_amount(), true, 'coupon', $coupon->get_id() );
-			$coupon->set_maximum_amount( $amount );
+			$props['maximum_amount'] = wcpbc_the_zone()->get_exchange_rate_price( $coupon->get_maximum_amount(), true, 'coupon', $coupon->get_id() );
+			$coupon->set_maximum_amount( '' );
+		}
+
+		if ( ! empty( $props ) ) {
+			$coupon->set_props( $props );
 		}
 	}
 

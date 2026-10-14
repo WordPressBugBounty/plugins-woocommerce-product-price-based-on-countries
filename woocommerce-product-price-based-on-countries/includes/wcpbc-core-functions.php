@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 1.8.0
  *
- * @return WCPBC_Pricing_Zone
+ * @return WCPBC_Pricing_Zone|WCPBC_Pricing_Zone_Pro
  */
 function wcpbc_the_zone() {
 
@@ -182,7 +182,7 @@ function wcpbc_update_product_pricing( $post_id, $zone, $data = array() ) {
 		$data['_sale_price']    = wc_format_decimal( $data['_sale_price'] );
 
 		// Update price if on sale.
-		$current_time = current_time( 'timestamp', true );
+		$current_time = time();
 
 		if ( ! empty( $data['_sale_price_dates_to'] ) && empty( $data['_sale_price_dates_from'] ) ) {
 			$data['_sale_price_dates_from'] = $current_time;
@@ -320,16 +320,16 @@ function wcpbc_maybe_asort_locale( &$arr ) {
  * @since 2.0.21
  * @version 3.0 Added $display param.
  *
- * @param float $float Float value to format.
+ * @param float $value   Float value to format.
  * @param bool  $display Should format value for display?.
  * @return string
  */
-function wcpbc_float_to_string( $float, $display = false ) {
-	if ( ! is_float( $float ) ) {
-		return $float;
+function wcpbc_float_to_string( $value, $display = false ) {
+	if ( ! is_float( $value ) ) {
+		return $value;
 	}
 
-	$string = strtoupper( strval( $float ) );
+	$string = strtoupper( strval( $value ) );
 	$locale = localeconv();
 	$string = str_replace( array( $locale['decimal_point'], $locale['mon_decimal_point'] ), '.', $string );
 
@@ -341,7 +341,7 @@ function wcpbc_float_to_string( $float, $display = false ) {
 		if ( false !== $decimal_pos ) {
 			$dp -= strlen( substr( $string, $decimal_pos + 1, $e_pos - $decimal_pos - 1 ) );
 		}
-		$string = number_format( $float, $dp * ( -1 ), '.', '' );
+		$string = number_format( $value, $dp * ( -1 ), '.', '' );
 	}
 
 	if ( $display ) {
@@ -366,7 +366,7 @@ function wcpbc_string_to_timestamp( $value ) {
 	if ( version_compare( WC_VERSION, '3.0', '>=' ) ) {
 		$timestamp = wc_string_to_timestamp( get_gmt_from_date( gmdate( 'Y-m-d H:i:s', wc_string_to_timestamp( $value ) ) ) );
 	} else {
-		$timestamp = strotime( $value );
+		$timestamp = strtotime( $value );
 	}
 	return $timestamp;
 }
