@@ -363,7 +363,6 @@ class WCPBC_Output_Settings {
 		}
 
 		echo '</div>';
-
 	}
 
 	/**

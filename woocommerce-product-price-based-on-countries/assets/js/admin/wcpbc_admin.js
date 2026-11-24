@@ -22,6 +22,12 @@ jQuery( function( $ ) {
 
 			$(document).ready( this.product_type_not_supported_alert )
 			$(document.body).on( 'woocommerce-product-type-change', this.product_type_not_supported_alert );
+			
+			if ( $('#woosb_settings').length ) {
+				$('.notice.wc-pbc-show-if-not-supported.product-type-woosb').insertBefore(
+					$('#woosb_settings').children().first()
+				);
+			}
 		},
 
 		/**
@@ -105,13 +111,9 @@ jQuery( function( $ ) {
 		 */
 		product_type_not_supported_alert: function() {
 			var select_val = $( 'select#product-type' ).val();
-			$( '#general_product_data .wc-price-based-country-upgrade-notice.wc-pbc-show-if-not-supported').hide();
-			$( '#general_product_data .wc-price-based-country-upgrade-notice.wc-pbc-show-if-not-supported.product-type-' + select_val ).toggle(
+			$( '.woocommerce_options_panel .notice.wc-pbc-show-if-not-supported').hide();
+			$( '.woocommerce_options_panel .notice.wc-pbc-show-if-not-supported.product-type-' + select_val ).toggle(
 				0 > $.inArray( select_val, wcpbc_admin_params.product_type_supported )
-			);
-			$( '#general_product_data .wc-price-based-country-upgrade-notice.wc-pbc-show-if-third-party').hide();
-			$( '#general_product_data .wc-price-based-country-upgrade-notice.wc-pbc-show-if-third-party.product-type-' + select_val ).toggle(
-				0 <= $.inArray( select_val, wcpbc_admin_params.product_type_third_party )
 			);
 		}
 	};

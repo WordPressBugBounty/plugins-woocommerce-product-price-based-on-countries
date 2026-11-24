@@ -1,3 +1,13 @@
+= 4.4.0 (2026-11-24) =
+* Security: Prevented customers from placing orders using an incorrect pricing zone via the WooCommerce Store API. Thanks [@kta1kri](https://github.com/kta1kri)
+* Added: Compatibility with WooCommerce 11.3+.
+* Added: A new country selector in the WordPress admin bar to easily test pricing zones. Replacing the legacy test mode.
+* Added: Option to generate product Schema markup using the base price and currency to prevent search engine indexing mismatches.
+* Added: AJAX geolocation script support for the WooCommerce "Add to Cart + Options (Beta)" block.
+* Improved: Removed the jQuery dependency from the AJAX Geolocation script for better frontend performance.
+* Fixed: Prevented session overrides caused by initializing sessions during API requests.
+* Fixed: The loading animation (three dots) display issue when selecting a variation in Full Site Editing (FSE) themes.
+
 = 4.3.6 (2026-10-14) =
 * Added: Compatible with WooCommerce 11.2+.
 * Fixed: coupon_invalid_minimum_amount error during currency conversion of coupon spend limits.

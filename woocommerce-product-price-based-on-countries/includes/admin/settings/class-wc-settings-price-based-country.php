@@ -45,7 +45,7 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 
 			$this->backward_compatibility();
 
-			add_action( 'load-woocommerce_page_wc-settings', array( $this, 'init' ), 5 );
+			add_action( 'load-woocommerce_page_wc-settings', [ $this, 'init' ], 5 );
 		}
 
 		/**
@@ -54,8 +54,8 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 		public function init() {
 			self::handle_actions();
 
-			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-			add_filter( 'admin_body_class', array( $this, 'admin_body_class' ), 9999 );
+			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+			add_filter( 'admin_body_class', [ $this, 'admin_body_class' ], 9999 );
 		}
 
 		/**
@@ -64,10 +64,10 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 		 * @return array
 		 */
 		public function get_own_sections() {
-			$sections = array(
+			$sections = [
 				''        => __( 'Pricing zones', 'woocommerce-product-price-based-on-countries' ),
 				'options' => __( 'Options', 'woocommerce-product-price-based-on-countries' ),
-			);
+			];
 
 			if ( wcpbc_is_pro() ) {
 				$sections['license'] = __( 'License', 'woocommerce-product-price-based-on-countries' );
@@ -160,7 +160,7 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 
 			} elseif ( $this->is_section( 'zone-updated' ) ) {
 				// Display "zone updated" notice.
-				add_action( 'woocommerce_sections_' . $this->id, array( $this, 'update_zone_notice' ), 20 );
+				add_action( 'woocommerce_sections_' . $this->id, [ $this, 'update_zone_notice' ], 20 );
 			}
 		}
 
@@ -174,31 +174,31 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 
 			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-			wp_register_script( 'wcpbc-tooltip-confirm', WCPBC()->plugin_url() . 'assets/js/admin/tooltip-confirm' . $suffix . '.js', array( 'jquery' ), WCPBC()->version, true );
-			wp_register_style( 'wcpbc-tooltip-confirm-styles', WCPBC()->plugin_url() . 'assets/css/admin/tooltip-confirm' . $suffix . '.css', array(), WCPBC()->version );
+			wp_register_script( 'wcpbc-tooltip-confirm', WCPBC()->plugin_url() . 'assets/js/admin/tooltip-confirm' . $suffix . '.js', [ 'jquery' ], WCPBC()->version, true );
+			wp_register_style( 'wcpbc-tooltip-confirm-styles', WCPBC()->plugin_url() . 'assets/css/admin/tooltip-confirm' . $suffix . '.css', [], WCPBC()->version );
 
-			if ( $this->is_section( array( 'edit-zone', 'options' ) ) ) {
+			if ( $this->is_section( [ 'edit-zone', 'options' ] ) ) {
 
 				// Edit settings screens.
 				wp_enqueue_style( 'wcpbc-tooltip-confirm-styles' );
-				wp_enqueue_style( 'wcpbc-settings-styles', WCPBC()->plugin_url() . 'assets/css/admin/settings' . $suffix . '.css', array(), WCPBC()->version );
-				wp_enqueue_script( 'wcpbc-settings', WCPBC()->plugin_url() . 'assets/js/admin/settings' . $suffix . '.js', array( 'jquery', 'wcpbc-tooltip-confirm', 'woocommerce_admin' ), WCPBC()->version, true );
+				wp_enqueue_style( 'wcpbc-settings-styles', WCPBC()->plugin_url() . 'assets/css/admin/settings' . $suffix . '.css', [], WCPBC()->version );
+				wp_enqueue_script( 'wcpbc-settings', WCPBC()->plugin_url() . 'assets/js/admin/settings' . $suffix . '.js', [ 'jquery', 'wcpbc-tooltip-confirm', 'woocommerce_admin' ], WCPBC()->version, true );
 			}
 
 			if ( $this->is_section( 'edit-zone' ) ) {
 
 				// Edit zone settings screen.
-				wp_register_script( 'wcpbc-settings-edit-zone', WCPBC()->plugin_url() . 'assets/js/admin/settings-edit-zone' . $suffix . '.js', array_merge( array( 'wcpbc-settings' ), ( wcpbc_is_pro() ? array( 'wcpbc-price-preview' ) : array() ) ), WCPBC()->version, true );
+				wp_register_script( 'wcpbc-settings-edit-zone', WCPBC()->plugin_url() . 'assets/js/admin/settings-edit-zone' . $suffix . '.js', array_merge( [ 'wcpbc-settings' ], ( wcpbc_is_pro() ? [ 'wcpbc-price-preview' ] : [] ) ), WCPBC()->version, true );
 				wp_localize_script(
 					'wcpbc-settings-edit-zone',
 					'wcpbc_settings_edit_zone_params',
-					array(
+					[
 						'eur_countries'     => wcpbc_get_currencies_countries( 'EUR' ),
 						'allowed_countries' => 'all' !== get_option( 'woocommerce_allowed_countries', 'all' ) ? array_keys( WC()->countries->get_allowed_countries() ) : false,
-						'i18n'              => array(
+						'i18n'              => [
 							'and' => __( 'and', 'woocommerce-product-price-based-on-countries' ),
-						),
-					)
+						],
+					]
 				);
 				wp_enqueue_script( 'wcpbc-settings-edit-zone' );
 
@@ -208,31 +208,31 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 
 				// Zones table.
 				wp_enqueue_style( 'wcpbc-tooltip-confirm-styles' );
-				wp_enqueue_style( 'wcpbc-settings-zone-list-styles', WCPBC()->plugin_url() . 'assets/css/admin/settings-zone-list' . $suffix . '.css', array(), WCPBC()->version );
-				wp_enqueue_script( 'wcpbc-settings-zone-list', WCPBC()->plugin_url() . 'assets/js/admin/settings-zone-list' . $suffix . '.js', array( 'jquery', 'jquery-ui-sortable', 'utils', 'wcpbc-tooltip-confirm' ), WCPBC()->version, true );
+				wp_enqueue_style( 'wcpbc-settings-zone-list-styles', WCPBC()->plugin_url() . 'assets/css/admin/settings-zone-list' . $suffix . '.css', [], WCPBC()->version );
+				wp_enqueue_script( 'wcpbc-settings-zone-list', WCPBC()->plugin_url() . 'assets/js/admin/settings-zone-list' . $suffix . '.js', [ 'jquery', 'jquery-ui-sortable', 'utils', 'wcpbc-tooltip-confirm' ], WCPBC()->version, true );
 				wp_localize_script(
 					'wcpbc-settings-zone-list',
 					'wcpbc_settings_zone_list_params',
-					array(
-						'i18n' => array(
+					[
+						'i18n' => [
 							'reorder_helptip' => __( 'Drag and drop to re-order the pricing zones.', 'woocommerce-product-price-based-on-countries' ),
-						),
-					)
+						],
+					]
 				);
 
 			} elseif ( $this->is_section( 'free-pro' ) ) {
 
 				// Free vs Pro section.
-				wp_enqueue_style( 'wcpbc-free-pro-styles', WCPBC()->plugin_url() . 'assets/css/admin/free-vs-pro' . $suffix . '.css', array(), WCPBC()->version );
+				wp_enqueue_style( 'wcpbc-free-pro-styles', WCPBC()->plugin_url() . 'assets/css/admin/free-vs-pro' . $suffix . '.css', [], WCPBC()->version );
 
 			} elseif ( $this->is_section( 'license' ) ) {
 
 				// Free vs Pro section.
-				wp_enqueue_style( 'wcpbc-license', WCPBC()->plugin_url() . 'assets/css/admin/license' . $suffix . '.css', array(), WCPBC()->version );
+				wp_enqueue_style( 'wcpbc-license', WCPBC()->plugin_url() . 'assets/css/admin/license' . $suffix . '.css', [], WCPBC()->version );
 			}
 
-			if ( ! wcpbc()->is_pro_compatible() && $this->is_section( array( 'zone-list', 'edit-zone', 'options' ) ) ) {
-				add_action( 'admin_footer', array( $this, 'output_incompatible_pro_notice' ), 999 );
+			if ( ! wcpbc()->is_pro_compatible() && $this->is_section( [ 'zone-list', 'edit-zone', 'options' ] ) ) {
+				add_action( 'admin_footer', [ $this, 'output_incompatible_pro_notice' ], 999 );
 			}
 		}
 
@@ -246,7 +246,7 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 
 			$count = 0;
 			foreach ( [ 'singular', 'plural' ] as $class ) {
-				$count++;
+				++$count;
 				?>
 				<script type="text/html" id="tmpl-allowed-countries-warning-<?php echo esc_attr( $class ); ?>">
 				<div class="notice notice-warning inline">
@@ -339,12 +339,12 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 		 */
 		public function get_settings_for_default_section() {
 
-			$options  = array();
-			$settings = include dirname( __FILE__ ) . '/wcpbc-settings-options.php';
+			$options  = [];
+			$settings = include __DIR__ . '/wcpbc-settings-options.php';
 
 			foreach ( $settings as $section ) {
 
-				$fields = empty( $section['fields'] ) ? array() : $section['fields'];
+				$fields = empty( $section['fields'] ) ? [] : $section['fields'];
 
 				foreach ( $fields as $option ) {
 
@@ -395,7 +395,7 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 
 				$GLOBALS['hide_save_button'] = true; // @codingStandardsIgnoreLine
 
-				include dirname( __FILE__ ) . '/views/html-free-pro.php';
+				include __DIR__ . '/views/html-free-pro.php';
 			}
 		}
 
@@ -405,9 +405,9 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 		protected function output_zones_list_table() {
 			printf(
 				'<h2 class="wc-table-list-header">%s <a href="%s" class="page-title-action">%s</a></h2>',
-				esc_html( 'Pricing zones', 'woocommerce-product-price-based-on-countries' ),
+				esc_html__( 'Pricing zones', 'woocommerce-product-price-based-on-countries' ),
 				esc_url( admin_url( 'admin.php?page=wc-settings&tab=price-based-country&zone_id=new' ) ),
-				esc_html( 'Add pricing zone', 'woocommerce-product-price-based-on-countries' )
+				esc_html__( 'Add pricing zone', 'woocommerce-product-price-based-on-countries' )
 			);
 			?>
 			<div class="pricingzones-table-heading">
@@ -457,8 +457,8 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 				wp_die( esc_html__( 'Zone does not exist!', 'woocommerce-product-price-based-on-countries' ) );
 			}
 
-			require_once dirname( __FILE__ ) . '/class-wcpbc-output-settings.php';
-			$settings = include dirname( __FILE__ ) . '/wcpbc-settings-zone.php';
+			require_once __DIR__ . '/class-wcpbc-output-settings.php';
+			$settings = include __DIR__ . '/wcpbc-settings-zone.php';
 
 			new WCPBC_Output_Settings( $settings );
 		}
@@ -469,8 +469,8 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 		protected function output_options_screen() {
 			$GLOBALS['hide_save_button'] = true; // @codingStandardsIgnoreLine
 
-			require_once dirname( __FILE__ ) . '/class-wcpbc-output-settings.php';
-			$settings = include dirname( __FILE__ ) . '/wcpbc-settings-options.php';
+			require_once __DIR__ . '/class-wcpbc-output-settings.php';
+			$settings = include __DIR__ . '/wcpbc-settings-options.php';
 
 			new WCPBC_Output_Settings( $settings );
 		}
@@ -596,11 +596,11 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 						'message'      => sprintf( __( 'Your license will expire soon. %1$sRenew your license%2$s to continue receiving updates and support.', 'woocommerce-product-price-based-on-countries' ), '<strong>', '</strong>' ),
 						'button_label' => __( 'Renew now', 'woocommerce-product-price-based-on-countries' ),
 						'button_url'   => add_query_arg(
-							array(
+							[
 								'utm_medium'   => 'banner',
 								'utm_source'   => 'license-page',
 								'utm_campaign' => 'Activate license',
-							),
+							],
 							empty( $license['renewal_url'] ) ? 'https://www.pricebasedcountry.com/pricing/' : $license['renewal_url']
 						),
 					];
@@ -623,14 +623,14 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 				}
 			}
 
-			include dirname( __FILE__ ) . '/views/html-license.php';
+			include __DIR__ . '/views/html-license.php';
 		}
 
 		/**
 		 * Disable the settings to prevent user to save options if the Pro version is incompatible.
 		 */
 		public function output_incompatible_pro_notice() {
-			include dirname( __FILE__ ) . '/views/html-incompatible-pro-version.php';
+			include __DIR__ . '/views/html-incompatible-pro-version.php';
 		}
 
 		/**
@@ -746,14 +746,14 @@ if ( ! class_exists( 'WC_Settings_Price_Based_Country' ) ) :
 			if ( version_compare( WC_VERSION, '5.5', '<' ) ) {
 				add_filter(
 					'woocommerce_get_sections_' . $this->id,
-					function( $sections ) {
+					function ( $sections ) {
 						return $this->get_own_sections();
 					}
 				);
 
 				add_filter(
 					'woocommerce_get_settings_' . $this->id,
-					function( $settings ) {
+					function ( $settings ) {
 						if ( $this->is_section( 'options' ) ) {
 							return $this->get_settings_for_default_section();
 						}

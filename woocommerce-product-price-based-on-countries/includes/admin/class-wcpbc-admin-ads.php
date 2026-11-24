@@ -22,16 +22,16 @@ class WCPBC_Admin_Ads {
 		if ( wcpbc_is_pro() ) {
 			return;
 		}
-		add_action( 'woocommerce_order_item_add_action_buttons', array( __CLASS__, 'order_item_add_action_buttons' ) );
-		add_action( 'woocommerce_variable_product_bulk_edit_actions', array( __CLASS__, 'variable_product_bulk_edit_actions' ) );
+		add_action( 'woocommerce_order_item_add_action_buttons', [ __CLASS__, 'order_item_add_action_buttons' ] );
+		add_action( 'woocommerce_variable_product_bulk_edit_actions', [ __CLASS__, 'variable_product_bulk_edit_actions' ] );
 		// Pro product types.
-		add_action( 'woocommerce_product_options_general_product_data', array( __CLASS__, 'display_pro_product_type_supported' ), 11 );
-		add_action( 'woocommerce_product_options_general_product_data', array( __CLASS__, 'display_pro_integration_notices' ), 11 );
-		add_action( 'woocommerce_product_after_variable_attributes', array( __CLASS__, 'display_pro_product_type_supported' ), 11 );
-		add_action( 'woocommerce_product_after_variable_attributes', array( __CLASS__, 'display_pro_integration_notices' ), 11 );
-		add_action( 'woocommerce_bookings_after_bookings_pricing', array( __CLASS__, 'display_pro_product_type_supported' ) );
-		add_action( 'woocommerce_product_data_panels', array( __CLASS__, 'product_data_panel' ), 100 );
-		add_action( 'woocommerce_settings_price-based-country', array( __CLASS__, 'upgrade_pro_popup' ), 999 );
+		add_action( 'woocommerce_product_options_general_product_data', [ __CLASS__, 'display_pro_product_type_supported' ], 11 );
+		add_action( 'woocommerce_product_options_general_product_data', [ __CLASS__, 'display_pro_integration_notices' ], 11 );
+		add_action( 'woocommerce_product_after_variable_attributes', [ __CLASS__, 'display_pro_product_type_supported' ], 11 );
+		add_action( 'woocommerce_product_after_variable_attributes', [ __CLASS__, 'display_pro_integration_notices' ], 11 );
+		add_action( 'woocommerce_bookings_after_bookings_pricing', [ __CLASS__, 'display_pro_product_type_supported' ] );
+		add_action( 'woocommerce_product_data_panels', [ __CLASS__, 'product_data_panel' ], 100 );
+		add_action( 'woocommerce_settings_price-based-country', [ __CLASS__, 'upgrade_pro_popup' ], 999 );
 	}
 
 	/**
@@ -41,9 +41,9 @@ class WCPBC_Admin_Ads {
 	 * @param WC_Order $order Order instance.
 	 */
 	public static function order_item_add_action_buttons( $order ) {
-		if ( ! wcpbc_is_pro() && version_compare( WC_VERSION, '3.0', '>=' ) && $order->is_editable() ) {
+		if ( ! wcpbc_is_pro() && $order->is_editable() ) {
 			echo '<button type="button" class="button wcpbc-show-upgrade-pro-popup">' . esc_html__( 'Load country pricing', 'woocommerce-product-price-based-on-countries' ) . '</button>';
-			add_action( 'admin_footer', array( __CLASS__, 'upgrade_pro_popup' ) );
+			add_action( 'admin_footer', [ __CLASS__, 'upgrade_pro_popup' ] );
 		}
 	}
 
@@ -52,14 +52,14 @@ class WCPBC_Admin_Ads {
 	 */
 	public static function variable_product_bulk_edit_actions() {
 
-		$variable_actions = array(
+		$variable_actions = [
 			__( 'Set regular prices', 'woocommerce-product-price-based-on-countries' ),
 			__( 'Increase regular prices (fixed amount or percentage)', 'woocommerce-product-price-based-on-countries' ),
 			__( 'Decrease regular prices (fixed amount or percentage)', 'woocommerce-product-price-based-on-countries' ),
 			__( 'Set sale prices', 'woocommerce-product-price-based-on-countries' ),
 			__( 'Increase sale prices (fixed amount or percentage)', 'woocommerce-product-price-based-on-countries' ),
 			__( 'Decrease sale prices (fixed amount or percentage)', 'woocommerce-product-price-based-on-countries' ),
-		);
+		];
 
 		foreach ( WCPBC_Pricing_Zones::get_zones() as $zone ) {
 			// Translators: 1: pricing zone name; 2: Pricing zone currency.
@@ -71,7 +71,7 @@ class WCPBC_Admin_Ads {
 			echo '</optgroup>';
 		}
 
-		add_action( 'admin_footer', array( __CLASS__, 'upgrade_pro_popup' ) );
+		add_action( 'admin_footer', [ __CLASS__, 'upgrade_pro_popup' ] );
 	}
 
 	/**
@@ -80,7 +80,7 @@ class WCPBC_Admin_Ads {
 	public static function display_pro_product_type_supported() {
 		foreach ( wcpbc_product_types_supported( 'pro' ) as $type => $name ) {
 			$utm_source = 'product-' . $type;
-			include dirname( __FILE__ ) . '/views/html-notice-pro-product-type.php';
+			include __DIR__ . '/views/html-notice-pro-product-type.php';
 		}
 	}
 
@@ -103,15 +103,15 @@ class WCPBC_Admin_Ads {
 				$utm_source = 'germanized-integration';
 				$name       = 'Unit Prices of Germanized';
 
-				include dirname( __FILE__ ) . '/views/html-notice-pro-product-type.php';
+				include __DIR__ . '/views/html-notice-pro-product-type.php';
 			}
 
 			if ( class_exists( 'WC_Smart_Coupons' ) && '' === $is_variation ) {
-				$type       = array( 'simple', 'variable', 'subscription', 'variable-subscription', 'subscription_variation' );
+				$type       = [ 'simple', 'variable', 'subscription', 'variable-subscription', 'subscription_variation' ];
 				$utm_source = 'wc-smart-coupons-integration';
 				$name       = 'the Store credit/gift certificate of Smart Coupons';
 
-				include dirname( __FILE__ ) . '/views/html-notice-pro-product-type.php';
+				include __DIR__ . '/views/html-notice-pro-product-type.php';
 			}
 		}
 	}
@@ -144,7 +144,7 @@ class WCPBC_Admin_Ads {
 	public static function upgrade_pro_popup() {
 		$screen    = get_current_screen();
 		$screen_id = $screen ? $screen->id : '';
-		wp_enqueue_style( 'wcpbc-admin-upgrade-pro-popup', WCPBC()->plugin_url() . 'assets/css/admin/upgrade-pro-popup.css', array(), WCPBC()->version );
+		wp_enqueue_style( 'wcpbc-admin-upgrade-pro-popup', WCPBC()->plugin_url() . 'assets/css/admin/upgrade-pro-popup.css', [], WCPBC()->version );
 		?>
 		<div id="wcpbc-upgrade-pro-popup" class="wcpbc-locale-<?php echo esc_attr( substr( get_locale(), 0, 2 ) ); ?>" style="display:none;">
 			<div class="wcpbc-upgrade-pro-popup-close">
@@ -200,74 +200,47 @@ class WCPBC_Admin_Ads {
 	/**
 	 * Add admin notices
 	 *
-	 * @return array
+	 * @return WCPBC_Admin_Notice[]
 	 */
 	public static function admin_notices() {
-		$notices = array();
 		if ( wcpbc_is_pro() ) {
-			return $notices;
+			return [];
 		}
+		static $notices = false;
 
-		$notices['pro_csv_tool']        = array(
-			'hide'     => 'no',
-			'callback' => array( __CLASS__, 'display_pro_csv_tool_notice' ),
-			'screens'  => array( 'product_page_product_importer', 'product_page_product_exporter' ),
-		);
-		$notices['pro_german_market']   = array(
-			'hide'     => 'no',
-			'callback' => array( __CLASS__, 'display_pro_german_market_notice' ),
-			'screens'  => array( 'product' ),
-		);
-		$notices['pro_dynamic_pricing'] = array(
-			'hide'     => 'no',
-			'callback' => array( __CLASS__, 'display_pro_dynamic_pricing_notice' ),
-			'screens'  => array( 'woocommerce_page_wc_dynamic_pricing' ),
-		);
+		if ( false === $notices ) {
+
+			$notices = [
+				new WCPBC_Admin_Notice(
+					[
+						'id'          => 'pro_csv_tool',
+						'screens'     => [ 'product_page_product_importer', 'product_page_product_exporter' ],
+						'dismissible' => true,
+						'content'     => sprintf(
+							// Translators: HTML tags.
+							esc_html__(
+								'%1$sHi! Do you need to import or export the Pricing Zone fields? %2$sUpgrade to Price Based on Country Pro%3$s and get support to the WooCommerce import and export tool.%4$s',
+								'woocommerce-product-price-based-on-countries'
+							),
+							'<p style="font-size: 16px !important">',
+							'<a href="' . esc_url( wcpbc_home_url( 'import-export-tool' ) ) . '" target="_blank" rel="noopener noreferrer">',
+							'</a>',
+							'</p>'
+						),
+					]
+				),
+				new WCPBC_Admin_Notice(
+					[
+						'id'             => 'pro_german_market',
+						'screens'        => [ 'product' ],
+						'dismissible'    => true,
+						// Translators: HTML tags.
+						'content'        => wpautop( sprintf( esc_html( __( 'Hi! Are you using %1$sGerman Market%2$s plugin? That\'s great! %1$sPrice Based on Country Pro%2$s supports the German Market plugin. %3$sRead more%4$s.', 'woocommerce-product-price-based-on-countries' ) ), '<strong>', '</strong>', '<a href="' . esc_url( wcpbc_home_url( 'german-market', '2018/12/10/compatible-with-german-market-by-marketpress' ) ) . '" target="_blank" rel="noopener noreferrer">', '</a>' ) ),
+						'default_status' => class_exists( 'Woocommerce_German_Market' ) ? WCPBC_Admin_Notice::STATUS_VISIBLE : WCPBC_Admin_Notice::STATUS_DISMISSED,
+					]
+				),
+			];
+		}
 		return $notices;
-	}
-
-	/**
-	 * Upgrade to Pro to import/export tool.
-	 */
-	public static function display_pro_csv_tool_notice() {
-		$page          = isset( $_GET['page'] ) ? wc_clean( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-		$import_export = ( 'product_importer' === $page ? __( 'import', 'woocommerce-product-price-based-on-countries' ) : __( 'export', 'woocommerce-product-price-based-on-countries' ) );
-		include_once dirname( __FILE__ ) . '/views/html-notice-pro-csv-tool.php';
-	}
-
-	/**
-	 * Upgrade to Pro German Market integration.
-	 */
-	public static function display_pro_german_market_notice() {
-		if ( ! class_exists( 'Woocommerce_German_Market' ) ) {
-			return;
-		}
-
-		include_once dirname( __FILE__ ) . '/views/html-notice-pro-german-market.php';
-	}
-
-	/**
-	 * Upgrade to Pro - Dynamic Pricing integration.
-	 */
-	public static function display_pro_dynamic_pricing_notice() {
-
-		if ( isset( $_GET['tab'] ) && isset( $_GET['view'] ) && 'category' === $_GET['tab'] && '1' === $_GET['view'] ) { // phpcs:ignore WordPress.Security.NonceVerification
-			?>
-			<div class="notice notice-info notice-pbc pbc-is-dismissible">
-				<a class="notice-dismiss notice-pbc-close" href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'pbc-hide-notice', 'pro_dynamic_pricing' ), 'pbc_hide_notice_nonce' ) ); ?>"><?php esc_html_e( 'Dismiss', 'woocommerce-product-price-based-on-countries' ); ?></span></a>
-				<p>
-				<?php
-					// Translators: HTML tags.
-					printf( esc_html( __( 'Hi, with %1$sPrice Based on Country Pro%2$s you can set a manual amount per pricing zone for each Dynamic Pricing rule.', 'woocommerce-product-price-based-on-countries' ) ), '<strong>', '</strong>' );
-				?>
-				</p>
-				<p>
-					<a href="<?php echo esc_url( wcpbc_home_url( 'dynamic-pricing' ) ); ?>" class="button-primary" rel="noopener noreferrer" target="_blank">
-						<?php echo esc_html__( 'Upgrade to Pro version now!', 'woocommerce-product-price-based-on-countries' ); ?>
-					</a>
-				</p>
-			</div>
-			<?php
-		}
 	}
 }

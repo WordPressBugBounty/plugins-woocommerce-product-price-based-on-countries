@@ -1,10 +1,10 @@
 === Price Based on Country for WooCommerce ===
 Contributors: oscargare
 Tags:  woocommerce, country-based pricing, price by country, geolocation, multi currency
-Requires at least: 5.2
 Tested up to: 7.1
+Requires at least: 5.3
 Requires PHP: 7.4
-Stable tag: 4.3.6
+Stable tag: 4.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -131,41 +131,15 @@ Please review [How to test the pricing zones](https://www.pricebasedcountry.com/
 
 == Changelog ==
 
-= 4.3.6 (2026-10-14) =
-* Added: Compatible with WooCommerce 11.2+.
-* Fixed: coupon_invalid_minimum_amount error during currency conversion of coupon spend limits.
-
-= 4.3.5 (2026-09-30) =
-* Fixed: Reorder pricing zones.
-
-= 4.3.4 (2026-09-08) =
-* Added: Compatible with WooCommerce 11.1+.
-* Added: Tested up WordPress 7.1+.
-* Fixed: Error in the "Google for WooCommerce" product sync. Thanks @johnespindola
-
-= 4.3.3 (2026-07-14) =
-* Added: Compatible with WooCommerce 10.9+.
-* Fix: The p, page_id, and product query vars are removed after changing the country using the switcher.
-
-= 4.3.2 (2026-05-14) =
-* Tweak: Improve the performance of the recurring actions schedule.
-
-= 4.3.1 (2026-05-07) =
-* Fixed: PHP Error when specific integrations are loaded.
-
-= 4.3.0 (2026-05-07) =
-* Added: Tested up WordPress 7.0+.
-* Added: Compatible with WooCommerce 10.7+.
-* Added: Compatibility with the "course" product type of the LearnDash plugin.
-* Added: Compatibility with the LearnDash Group Registration plugin.
-* Fixed: Double conversion issue with "Advanced Dynamic Pricing and Discount Rules for WooCommerce" by AlgolPlus.
-* Fixed: Conflict with "Variation Swatches for WooCommerce - Pro" plugin.
-* Fixed: Error on activating "Jetpack Boost" plugin when the "Jetpack 15.8-a.3 (Pressable managed hosting)" plugin is active.
-* Fixed: Update of EUR countries in the "Select Eurozone" button tool.
-* Fixed: The "scheduled sales" query causes a timeout error when run against large `postmeta` tables.
-* Tweak: Improve the performance of the database queries.
-* Tweak: Handle scheduled sales in a dedicated Action Scheduler hook.
-* Tweak: Send no cache headers when `wcpbc-manual-country` parameter is set.
+= 4.4.0 (2026-11-24) =
+* Security: Prevented customers from placing orders using an incorrect pricing zone via the WooCommerce Store API. Thanks @kta1kri
+* Added: Compatibility with WooCommerce 11.3+.
+* Added: A new country selector in the WordPress admin bar to easily test pricing zones. Replacing the legacy test mode.
+* Added: Option to generate product Schema markup using the base price and currency to prevent search engine indexing mismatches.
+* Added: AJAX geolocation script support for the WooCommerce "Add to Cart + Options (Beta)" block.
+* Improved: Removed the jQuery dependency from the AJAX Geolocation script for better frontend performance.
+* Fixed: Prevented session overrides caused by initializing sessions during API requests.
+* Fixed: The loading animation (three dots) display issue when selecting a variation in Full Site Editing (FSE) themes.
 
 [See changelog for all versions](https://plugins.svn.wordpress.org/woocommerce-product-price-based-on-countries/trunk/changelog.txt).
 

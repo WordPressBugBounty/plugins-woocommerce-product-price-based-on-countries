@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2.
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce Price Based on Country 4.3.6\n"
+"Project-Id-Version: WooCommerce Price Based on Country 4.4.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-product-price-based-on-countries\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-14T07:55:39+00:00\n"
+"POT-Creation-Date: 2026-11-24T09:53:06+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: woocommerce-product-price-based-on-countries\n"
@@ -75,13 +75,11 @@ msgstr ""
 
 #. Translators: HTML tags.
 #: includes/admin/class-wcpbc-admin-ads.php:125
-#: includes/admin/class-wcpbc-admin-ads.php:261
 #, php-format
 msgid "Hi, with %1$sPrice Based on Country Pro%2$s you can set a manual amount per pricing zone for each Dynamic Pricing rule."
 msgstr ""
 
 #: includes/admin/class-wcpbc-admin-ads.php:127
-#: includes/admin/class-wcpbc-admin-ads.php:266
 msgid "Upgrade to Pro version now!"
 msgstr ""
 
@@ -105,21 +103,44 @@ msgstr ""
 msgid "Join our happy customers"
 msgstr ""
 
-#: includes/admin/class-wcpbc-admin-ads.php:234
-msgid "import"
+#. Translators: HTML tags.
+#: includes/admin/class-wcpbc-admin-ads.php:221
+#, php-format
+msgid "%1$sHi! Do you need to import or export the Pricing Zone fields? %2$sUpgrade to Price Based on Country Pro%3$s and get support to the WooCommerce import and export tool.%4$s"
 msgstr ""
 
-#: includes/admin/class-wcpbc-admin-ads.php:234
-msgid "export"
+#. Translators: HTML tags.
+#: includes/admin/class-wcpbc-admin-ads.php:238
+#, php-format
+msgid "Hi! Are you using %1$sGerman Market%2$s plugin? That's great! %1$sPrice Based on Country Pro%2$s supports the German Market plugin. %3$sRead more%4$s."
 msgstr ""
 
-#: includes/admin/class-wcpbc-admin-ads.php:257
-#: includes/admin/views/html-notice-geolocation.php:13
-#: includes/admin/views/html-notice-maxmind-geoip-database.php:14
-#: includes/admin/views/html-notice-pro-csv-tool.php:19
-#: includes/admin/views/html-notice-pro-german-market.php:13
-#: includes/admin/views/html-notice-updated.php:18
-msgid "Dismiss"
+#. translators: Pricing zone name.
+#: includes/admin/class-wcpbc-admin-bar.php:64
+#, php-format
+msgid "Pricing zone: %s"
+msgstr ""
+
+#. translators: 1: Currency code, 2: Currency symbol.
+#: includes/admin/class-wcpbc-admin-bar.php:80
+#, php-format
+msgid "Currency: %1$s (%2$s)"
+msgstr ""
+
+#. translators: 1: Base currency code, 2: Exchange rate, 3: Zone currency code.
+#: includes/admin/class-wcpbc-admin-bar.php:90
+#, php-format
+msgid "Exchange rate: 1 %1$s = %2$s %3$s"
+msgstr ""
+
+#: includes/admin/class-wcpbc-admin-bar.php:99
+msgid "No pricing zone is defined for the current country"
+msgstr ""
+
+#: includes/admin/class-wcpbc-admin-bar.php:120
+#: includes/class-wcpbc-widget-country-selector.php:29
+#: includes/class-wcpbc-widget-country-selector.php:139
+msgid "Country"
 msgstr ""
 
 #. Translators: currency symbol.
@@ -186,44 +207,10 @@ msgstr ""
 msgid "Check this box if, for the pricing zones, the coupon amount must be calculated using the exchange rate. %1$s(%2$sUpgrade to Price Based on Country Pro to set copupon amount by zone%3$s)"
 msgstr ""
 
-#: includes/admin/class-wcpbc-admin-notices.php:248
-msgid "Cheatin&#8217; huh?"
-msgstr ""
-
-#: includes/admin/class-wcpbc-admin-notices.php:271
-msgid "Action failed. Please refresh the page and retry."
-msgstr ""
-
-#: includes/admin/class-wcpbc-admin-notices.php:274
-msgid "You don&#8217;t have permission to do this."
-msgstr ""
-
-#. translators: 1,2: bold HTML tag, 3: Plugin name.
-#: includes/admin/class-wcpbc-admin-notices.php:366
+#. Translators: 1,2,3,4 HTML tags.
+#: includes/admin/class-wcpbc-admin-notices.php:102
 #, php-format
-msgid "It looks like another multicurrency plugin is active on your site. %1$sPrice Based on Country will not work properly%2$s. We recomended you disable %3$s."
-msgstr ""
-
-#: includes/admin/class-wcpbc-admin-notices.php:392
-msgid "WooCommerce Multilingual multiple currencies option"
-msgstr ""
-
-#. Translators: Shop base currency.
-#: includes/admin/class-wcpbc-admin-notices.php:439
-#, php-format
-msgid "Totals in different currency to %s has been calculate by following exchange rates:"
-msgstr ""
-
-#. translators: HTML Tags.
-#: includes/admin/class-wcpbc-admin-notices.php:452
-#, php-format
-msgid "%1$sWarning!%2$s You didn't set your %1$sWooCommerce Price Based Country Pro%2$s license key yet, which means you're missing out on updates and support! Enter your %3$slicense key%4$s."
-msgstr ""
-
-#. translators: HTML Tags.
-#: includes/admin/class-wcpbc-admin-notices.php:486
-#, php-format
-msgid "%1$sThe multi-currency option of WooCommerce Payments has been disabled%2$s to prevent issues with the pricing zones. You do not need to enable this option to receive payments in multiple currencies."
+msgid "%1$sHi, this product type is not supported by %2$sPrice Based on Country%3$s. Use it with caution.%4$s"
 msgstr ""
 
 #: includes/admin/class-wcpbc-admin-zone-list-table.php:38
@@ -233,6 +220,7 @@ msgstr ""
 #: includes/admin/class-wcpbc-admin-zone-list-table.php:39
 #: includes/admin/settings/class-wc-settings-price-based-country.php:40
 #: includes/admin/settings/class-wc-settings-price-based-country.php:68
+#: includes/admin/settings/class-wc-settings-price-based-country.php:408
 #: includes/admin/settings/wcpbc-settings-zone.php:24
 msgid "Pricing zones"
 msgstr ""
@@ -283,53 +271,106 @@ msgstr ""
 msgid "Countries not covered by your other zones"
 msgstr ""
 
-#: includes/admin/class-wcpbc-admin.php:113
+#: includes/admin/class-wcpbc-admin.php:94
 msgid "Are you sure you want to delete this zone? This action cannot be undone"
 msgstr ""
 
-#: includes/admin/class-wcpbc-admin.php:114
+#: includes/admin/class-wcpbc-admin.php:95
 #: includes/admin/settings/wcpbc-settings-zone.php:24
 msgid "Zone"
 msgstr ""
 
 #. Translators: PHP Code.
-#: includes/admin/class-wcpbc-admin.php:133
+#: includes/admin/class-wcpbc-admin.php:106
 #, php-format
 msgid "Your server does not include the customer IP in HTTP_X_FORWARDED_FOR. Fix it by adding %s to your config.php."
 msgstr ""
 
-#: includes/admin/class-wcpbc-admin.php:134
+#: includes/admin/class-wcpbc-admin.php:107
 msgid "The first IP not empty of your server variables does not match with your real IP."
 msgstr ""
 
-#: includes/admin/class-wcpbc-admin.php:135
+#: includes/admin/class-wcpbc-admin.php:108
 msgid "The MaxMind GeoIP database is required."
 msgstr ""
 
-#: includes/admin/class-wcpbc-admin.php:202
+#: includes/admin/class-wcpbc-admin.php:173
 msgctxt "WooCommerce tool name"
 msgid "Synchronize the price of variable products"
 msgstr ""
 
-#: includes/admin/class-wcpbc-admin.php:203
+#: includes/admin/class-wcpbc-admin.php:174
 #: includes/admin/settings/class-wc-settings-price-based-country.php:571
 msgid "Update"
 msgstr ""
 
-#: includes/admin/class-wcpbc-admin.php:204
+#: includes/admin/class-wcpbc-admin.php:175
 msgid "This tool will update the price of the variable products with a minimum and maximum price of its variations. It solves sorting issues."
 msgstr ""
 
-#: includes/admin/class-wcpbc-admin.php:220
+#: includes/admin/class-wcpbc-admin.php:191
 msgid "The tool is running in the background. Please wait for it to finish before running it again."
 msgstr ""
 
-#: includes/admin/class-wcpbc-admin.php:225
+#: includes/admin/class-wcpbc-admin.php:196
 msgid "The tool is running in the background."
 msgstr ""
 
 #: includes/admin/class-wcpbc-setup-wizard.php:197
 msgid "Please, enter the MaxMind license key."
+msgstr ""
+
+#. translators: 1,2: bold HTML tag, 3: Plugin name.
+#: includes/admin/notices/class-wcpbc-admin-notice-multicurrency-incompatible.php:42
+#, php-format
+msgid "It looks like another multicurrency plugin is active on your site. %1$sPrice Based on Country will not work properly%2$s. We recomended you disable %3$s."
+msgstr ""
+
+#: includes/admin/notices/class-wcpbc-admin-notice-multicurrency-incompatible.php:74
+msgid "WooCommerce Multilingual multiple currencies option"
+msgstr ""
+
+#. translators: HTML tags.
+#: includes/admin/notices/class-wcpbc-admin-notice-review-request.php:60
+#, php-format
+msgid "Hi! Do you like %1$sWooCommerce Price Based on Country%2$s? Would you mind taking a moment to rate it? It won't take more than a minute. Thanks for your support!"
+msgstr ""
+
+#: includes/admin/notices/class-wcpbc-admin-notice-review-request.php:65
+msgid "Yes, rate now!"
+msgstr ""
+
+#: includes/admin/notices/class-wcpbc-admin-notice-review-request.php:67
+msgid "No, thanks"
+msgstr ""
+
+#. translators: HTML Tags.
+#: includes/admin/notices/class-wcpbc-admin-notice-unconnected.php:24
+#, php-format
+msgid "%1$sWarning!%2$s You didn't set your %1$sWooCommerce Price Based Country Pro%2$s license key yet, which means you're missing out on updates and support! Enter your %3$slicense key%4$s."
+msgstr ""
+
+#: includes/admin/notices/class-wcpbc-admin-notice-update-welcome.php:35
+msgid "Thank you for updating to Price Based on Country 4.4!"
+msgstr ""
+
+#: includes/admin/notices/class-wcpbc-admin-notice-update-welcome.php:38
+msgid "The new version includes a country selector in the admin bar for easier pricing zone testing, alongside frontend performance and SEO improvements."
+msgstr ""
+
+#: includes/admin/notices/class-wcpbc-admin-notice-update-welcome.php:42
+msgid "Read release notes"
+msgstr ""
+
+#: includes/admin/notices/class-wcpbc-admin-notice-update-welcome.php:45
+#: includes/admin/notices/class-wcpbc-admin-notice.php:396
+msgid "Dismiss"
+msgstr ""
+
+#. translators: HTML Tags.
+#: includes/admin/notices/class-wcpbc-admin-notice-wc-payments-multicurrency-disabled.php:25
+#, php-format
+msgid "%1$sThe multi-currency option of WooCommerce Payments has been disabled%2$s to prevent issues with the pricing zones. You do not need to enable this option to receive payments in multiple currencies."
 msgstr ""
 
 #: includes/admin/settings/class-wc-settings-price-based-country.php:69
@@ -392,6 +433,10 @@ msgstr ""
 
 #: includes/admin/settings/class-wc-settings-price-based-country.php:328
 msgid "Add a new zone"
+msgstr ""
+
+#: includes/admin/settings/class-wc-settings-price-based-country.php:410
+msgid "Add pricing zone"
 msgstr ""
 
 #: includes/admin/settings/class-wc-settings-price-based-country.php:414
@@ -619,7 +664,7 @@ msgid "Get Price Based on Country Pro now"
 msgstr ""
 
 #: includes/admin/settings/views/html-incompatible-pro-version.php:13
-#: includes/class-wc-product-price-based-country.php:389
+#: includes/class-wc-product-price-based-country.php:400
 #: includes/integrations/class-wcpbc-rightpress-product-price-shop.php:118
 msgid "Heads up!"
 msgstr ""
@@ -637,7 +682,7 @@ msgid "You need a valid license to receive %1$sPro updates%2$s."
 msgstr ""
 
 #: includes/admin/settings/views/html-incompatible-pro-version.php:26
-#: includes/class-wc-product-price-based-country.php:322
+#: includes/class-wc-product-price-based-country.php:332
 msgid "Check license status"
 msgstr ""
 
@@ -750,48 +795,50 @@ msgid "Enable this option to refresh the prices via AJAX. It'll run an AJAX requ
 msgstr ""
 
 #: includes/admin/settings/wcpbc-settings-options.php:90
-#: includes/admin/views/html-admin-page-status-report.php:47
-msgid "Test mode"
+msgid "Testing"
 msgstr ""
 
 #. translators: HTML tags.
 #: includes/admin/settings/wcpbc-settings-options.php:93
 #, php-format
-msgid "%1$sHow to do a test%2$s"
+msgid "%1$sGuide: Testing pricing zones and geolocation%2$s"
 msgstr ""
 
 #: includes/admin/settings/wcpbc-settings-options.php:98
-msgid "Enable"
+msgid "Enable country switcher in admin bar"
 msgstr ""
 
 #. translators: HTML tags.
 #: includes/admin/settings/wcpbc-settings-options.php:100
-msgid "Enable test mode to show pricing for a specific country."
+msgid "Adds a dropdown to the WordPress bar to quickly switch between different countries and verify pricing zones."
 msgstr ""
 
-#: includes/admin/settings/wcpbc-settings-options.php:107
-#: includes/admin/views/html-admin-page-status-report.php:52
-msgid "Test country"
-msgstr ""
-
-#: includes/admin/settings/wcpbc-settings-options.php:132
+#: includes/admin/settings/wcpbc-settings-options.php:119
 #: includes/admin/settings/wcpbc-settings-zone.php:280
 msgid "Advanced"
 msgstr ""
 
-#: includes/admin/settings/wcpbc-settings-options.php:158
+#: includes/admin/settings/wcpbc-settings-options.php:145
+msgid "Use default prices in product schema markup"
+msgstr ""
+
+#: includes/admin/settings/wcpbc-settings-options.php:146
+msgid "Generate schema markup using the default price and currency to prevent search engines from reading the geolocation prices."
+msgstr ""
+
+#: includes/admin/settings/wcpbc-settings-options.php:156
 msgid "Apply the exchange rate to the shipping cost"
 msgstr ""
 
-#: includes/admin/settings/wcpbc-settings-options.php:159
+#: includes/admin/settings/wcpbc-settings-options.php:157
 msgid "Enable this option if you want to use the exchange rate of the pricing zones to convert shipping costs."
 msgstr ""
 
-#: includes/admin/settings/wcpbc-settings-options.php:169
+#: includes/admin/settings/wcpbc-settings-options.php:167
 msgid "Run the geolocation setup wizard"
 msgstr ""
 
-#: includes/admin/settings/wcpbc-settings-options.php:195
+#: includes/admin/settings/wcpbc-settings-options.php:193
 #: includes/admin/settings/wcpbc-settings-zone.php:388
 msgid "Save changes"
 msgstr ""
@@ -1004,77 +1051,81 @@ msgstr ""
 msgid "Shipping"
 msgstr ""
 
-#: includes/admin/views/html-admin-page-status-report.php:57
+#: includes/admin/views/html-admin-page-status-report.php:47
+msgid "Test mode"
+msgstr ""
+
+#: includes/admin/views/html-admin-page-status-report.php:52
 msgid "Load products price in background"
 msgstr ""
 
-#: includes/admin/views/html-admin-page-status-report.php:63
+#: includes/admin/views/html-admin-page-status-report.php:58
 msgid "Currency Format"
 msgstr ""
 
-#: includes/admin/views/html-admin-page-status-report.php:68
+#: includes/admin/views/html-admin-page-status-report.php:63
 msgid "Exchange rate API"
 msgstr ""
 
-#: includes/admin/views/html-admin-page-status-report.php:74
+#: includes/admin/views/html-admin-page-status-report.php:69
 msgid "Prices entered with tax"
 msgstr ""
 
-#: includes/admin/views/html-admin-page-status-report.php:79
+#: includes/admin/views/html-admin-page-status-report.php:74
 msgid "Calculate tax based on"
 msgstr ""
 
-#: includes/admin/views/html-admin-page-status-report.php:84
+#: includes/admin/views/html-admin-page-status-report.php:79
 msgid "Display prices in the shop"
 msgstr ""
 
-#: includes/admin/views/html-admin-page-status-report.php:93
+#: includes/admin/views/html-admin-page-status-report.php:88
 msgid "Geolocation debug info"
 msgstr ""
 
-#: includes/admin/views/html-admin-page-status-report.php:98
+#: includes/admin/views/html-admin-page-status-report.php:93
 msgid "Default customer location"
 msgstr ""
 
-#: includes/admin/views/html-admin-page-status-report.php:103
+#: includes/admin/views/html-admin-page-status-report.php:98
 msgid "MaxMind GeoIP database"
 msgstr ""
 
-#: includes/admin/views/html-admin-page-status-report.php:104
+#: includes/admin/views/html-admin-page-status-report.php:99
 msgid "The GeoIP database from MaxMind is used to geolocate customers."
 msgstr ""
 
-#: includes/admin/views/html-admin-page-status-report.php:110
+#: includes/admin/views/html-admin-page-status-report.php:105
 msgid "The MaxMind GeoIP Database does not exist - Geolocation will not function."
 msgstr ""
 
-#: includes/admin/views/html-admin-page-status-report.php:117
+#: includes/admin/views/html-admin-page-status-report.php:112
 msgid "MaxMind license"
 msgstr ""
 
-#: includes/admin/views/html-admin-page-status-report.php:118
+#: includes/admin/views/html-admin-page-status-report.php:113
 msgid "The key that will be used when dealing with MaxMind Geolocation services."
 msgstr ""
 
 #. translators: admin url.
-#: includes/admin/views/html-admin-page-status-report.php:124
+#: includes/admin/views/html-admin-page-status-report.php:119
 #, php-format
 msgid "Geolocation has not been configured. You must enter a valid license key on the %1$sMaxMind integration settings page%2$s."
 msgstr ""
 
-#: includes/admin/views/html-admin-page-status-report.php:143
+#: includes/admin/views/html-admin-page-status-report.php:138
 msgid "Real external IP"
 msgstr ""
 
-#: includes/admin/views/html-admin-page-status-report.php:153
+#: includes/admin/views/html-admin-page-status-report.php:148
 msgid "Geolocation Test"
 msgstr ""
 
-#: includes/admin/views/html-admin-page-status-report.php:155
+#: includes/admin/views/html-admin-page-status-report.php:150
 msgid "Runing"
 msgstr ""
 
-#: includes/admin/views/html-admin-page-status-report.php:184
+#: includes/admin/views/html-admin-page-status-report.php:179
 msgid "Zone Pricing"
 msgstr ""
 
@@ -1084,93 +1135,9 @@ msgid "Add-ons zone pricing"
 msgstr ""
 
 #. Translators: HTML tags.
-#: includes/admin/views/html-notice-geolocation-ajax.php:16
-#, php-format
-msgid "You enabled Caching Support option of Price Based on Country. Set %1$sDefault customer location%2$s to %3$sGeolocate%4$s."
-msgstr ""
-
-#. Translators: HTML tags.
-#: includes/admin/views/html-notice-geolocation.php:15
-#, php-format
-msgid "Geolocation is required. Set %1$sDefault customer location%2$s to %3$sGeolocate%4$s."
-msgstr ""
-
-#. Translators: HTML tags.
-#: includes/admin/views/html-notice-maxmind-geoip-database.php:17
-#, php-format
-msgid "The MaxMind GeoIP Database does not exist, geolocation will not work. %1$sClick here to install the MaxMind GeoIP Database now%2$s."
-msgstr ""
-
-#. translators: 1: Import|Export text; 2,3: HTML tags.
-#: includes/admin/views/html-notice-pro-csv-tool.php:16
-#, php-format
-msgid "Hi! Do you need to %1$s the Pricing Zone fields? %2$sUpgrade to Price Based on Country Pro%3$s and get support to the WooCommerce import and export tool."
-msgstr ""
-
-#. Translators: HTML tags.
-#: includes/admin/views/html-notice-pro-german-market.php:17
-#, php-format
-msgid "Hi! Are you using %1$sGerman Market%2$s plugin? That's great! %1$sPrice Based on Country Pro%2$s supports the German Market plugin. %3$sRead more%4$s."
-msgstr ""
-
-#. Translators: HTML tags.
 #: includes/admin/views/html-notice-pro-product-type.php:20
 #, php-format
 msgid "%1$sUpgrade to Price Based on Country Pro to enable compatibility with %2$s%3$s."
-msgstr ""
-
-#. translators: HTML tags.
-#: includes/admin/views/html-notice-product-type-not-supported.php:17
-#, php-format
-msgid "Hi, %1$sPrice Based on Country%2$s is compatible with this product type by a third party development. %3$sGreat!, hide this alert%4$s."
-msgstr ""
-
-#. translators: HTML tags.
-#: includes/admin/views/html-notice-product-type-not-supported.php:20
-#, php-format
-msgid "Hi, this product type is not supported by %1$sPrice Based on Country%2$s. Use it with caution."
-msgstr ""
-
-#. translators: HTML tags.
-#: includes/admin/views/html-notice-request-review.php:21
-#, php-format
-msgid "Hi! Do you like %1$sWooCommerce Price Based on Country%2$s? Would you mind taking a moment to rate it? It won't take more than a minute. Thanks for your support!"
-msgstr ""
-
-#: includes/admin/views/html-notice-request-review.php:25
-msgid "Yes, rate now!"
-msgstr ""
-
-#: includes/admin/views/html-notice-request-review.php:26
-msgid "Remind me later"
-msgstr ""
-
-#: includes/admin/views/html-notice-request-review.php:27
-msgid "No, thanks"
-msgstr ""
-
-#. Translators: HTML tags, database path.
-#: includes/admin/views/html-notice-unable-install-geoip.php:19
-#, php-format
-msgid "%1$sUnable to install the GeoIP database.%2$s You have to install it manually: %3$sHow to install the GeoIP database?%4$s"
-msgstr ""
-
-#. translators: HTML tags.
-#: includes/admin/views/html-notice-update-db.php:20
-#, php-format
-msgid "%1$sWooCommerce Price Based on Country Database Update Required%2$s We just need to update your install to the latest version"
-msgstr ""
-
-#: includes/admin/views/html-notice-update-db.php:23
-msgid "Run the updater"
-msgstr ""
-
-#: includes/admin/views/html-notice-update-db.php:27
-msgid "It is strongly recommended that you backup your database before proceeding. Are you sure you wish to run the updater now?"
-msgstr ""
-
-#: includes/admin/views/html-notice-updated.php:19
-msgid "Data update complete. Thank you for updating to the latest version!"
 msgstr ""
 
 #: includes/admin/views/html-setup-wizard.php:16
@@ -1260,54 +1227,55 @@ msgid "Display a country switcher using a dropdown."
 msgstr ""
 
 #: includes/block-types/class-wcpbc-country-switcher-block.php:37
-#: includes/class-wcpbc-frontend.php:497
+#: includes/class-wcpbc-frontend.php:355
 #: includes/class-wcpbc-widget-country-selector.php:41
 #: includes/class-wcpbc-widget-country-selector.php:104
 msgid "Other countries"
 msgstr ""
 
-#: includes/class-wc-product-price-based-country.php:232
+#: includes/class-wc-product-price-based-country.php:242
 msgid "View Price Based on Country settings"
 msgstr ""
 
-#: includes/class-wc-product-price-based-country.php:232
+#: includes/class-wc-product-price-based-country.php:242
 msgid "Settings"
 msgstr ""
 
-#: includes/class-wc-product-price-based-country.php:236
+#: includes/class-wc-product-price-based-country.php:246
 msgid "Get Pro"
 msgstr ""
 
-#: includes/class-wc-product-price-based-country.php:253
+#: includes/class-wc-product-price-based-country.php:263
 msgid "Docs"
 msgstr ""
 
 #. translators: HTML Tags.
-#: includes/class-wc-product-price-based-country.php:301
+#: includes/class-wc-product-price-based-country.php:311
 #, php-format
 msgid "%1$sPrice Based on Country%2$s requires WooCommerce to be activated to work. Learn how to install Price Based on Country in the %3$sGetting Started Guide%4$s."
 msgstr ""
 
 #. translators: HTML Tags.
-#: includes/class-wc-product-price-based-country.php:307
+#: includes/class-wc-product-price-based-country.php:317
 #, php-format
 msgid "The minimum WooCommerce version required for this plugin is %1$s. You are running %2$s."
 msgstr ""
 
 #. translators: HTML Tags.
-#: includes/class-wc-product-price-based-country.php:315
+#: includes/class-wc-product-price-based-country.php:325
 #, php-format
 msgid "%1$sYou use a deprecated version of %2$sPrice Based on Country PRO%3$s, which is incompatible with your current \"Price Based on Country (Basic or Free)\" version. The plugin features have been deactivated to prevent issues and fatal errors on your site.%6$sUpdate %2$sPrice Based on Country PRO%3$s to the latest version.%4$s%5$s"
 msgstr ""
 
 #. translators: 1: frontend_pricing_init 2: woocommerce_init
-#: includes/class-wc-product-price-based-country.php:434
+#: includes/class-wc-product-price-based-country.php:461
+#: includes/set-country-request/class-wcpbc-set-country-request-manual.php:41
 #, php-format
 msgid "%1$s should not be called before the %2$s action."
 msgstr ""
 
 #. Translators: 1: Site URL 2: admin email.
-#: includes/class-wc-product-price-based-country.php:621
+#: includes/class-wc-product-price-based-country.php:675
 #, php-format
 msgid ""
 "Howdy!\n"
@@ -1326,22 +1294,16 @@ msgid ""
 msgstr ""
 
 #. Translators: %s: Site title.
-#: includes/class-wc-product-price-based-country.php:641
+#: includes/class-wc-product-price-based-country.php:695
 #, php-format
 msgid "[%s] \"Price Based on Country\" is inactive on your site."
 msgstr ""
 
-#. translators: HTML tags.
-#: includes/class-wcpbc-frontend.php:417
-#, php-format
-msgid "%1$sPrice Based Country%2$s test mode enabled for testing %3$s. You should do tests on private browsing mode. Browse in private with %4$sFirefox%7$s, %5$sChrome%7$s and %6$sSafari%7$s"
-msgstr ""
-
-#: includes/class-wcpbc-frontend.php:447
+#: includes/class-wcpbc-frontend.php:279
 msgid "We were unable to process your order, please try again."
 msgstr ""
 
-#: includes/class-wcpbc-frontend.php:452
+#: includes/class-wcpbc-frontend.php:284
 msgid "The loaded pricing zone does not match the pricing zone for the checkout billing/shipping country. This message is visible only to admins."
 msgstr ""
 
@@ -1369,14 +1331,9 @@ msgstr ""
 msgid "Adding metadata is not supported."
 msgstr ""
 
-#: includes/class-wcpbc-store-api.php:169
+#: includes/class-wcpbc-store-api.php:223
 #: includes/traits/wcpbc-multilang-trait.php:58
 msgid "Unserializing instances of this class is forbidden."
-msgstr ""
-
-#: includes/class-wcpbc-widget-country-selector.php:29
-#: includes/class-wcpbc-widget-country-selector.php:139
-msgid "Country"
 msgstr ""
 
 #: includes/class-wcpbc-widget-country-selector.php:30
@@ -1460,7 +1417,7 @@ msgid "%1$sPrice Based on Country Pro & All Products For Subscriptions%2$s compa
 msgstr ""
 
 #: includes/integrations/class-wcpbc-wpallimport-ad.php:58
-#: includes/wcpbc-core-functions.php:531
+#: includes/wcpbc-core-functions.php:552
 msgid "Price for"
 msgstr ""
 
@@ -1499,11 +1456,11 @@ msgstr ""
 msgid "\"zone\" argument must be a WCPBC_Pricing_Zone instance."
 msgstr ""
 
-#: includes/wcpbc-core-functions.php:495
+#: includes/wcpbc-core-functions.php:516
 msgid "Calculate prices by the exchange rate"
 msgstr ""
 
-#: includes/wcpbc-core-functions.php:496
+#: includes/wcpbc-core-functions.php:517
 msgid "Set prices manually"
 msgstr ""
 

@@ -29,7 +29,7 @@ class WCPBC_Product_Meta_Query {
 
 		if ( ! is_a( $zone, 'WCPBC_Pricing_Zone' ) ) {
 			wc_doing_it_wrong( __FUNCTION__, __( '"zone" argument must be a WCPBC_Pricing_Zone instance.', 'woocommerce-product-price-based-on-countries' ), '4.0' );
-			return false;
+			return;
 		}
 
 		$this->zone = $zone;

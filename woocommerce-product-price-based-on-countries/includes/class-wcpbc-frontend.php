@@ -19,18 +19,22 @@ class WCPBC_Frontend {
 	 * Hook actions and filters
 	 */
 	public static function init() {
-		add_filter( 'woocommerce_customer_default_location', array( __CLASS__, 'allowed_countries_filter' ) );
-		add_filter( 'woocommerce_customer_default_location_array', array( __CLASS__, 'test_default_location' ) );
-		add_filter( 'woocommerce_geolocate_ip', array( __CLASS__, 'fix_real_ip' ), 5 );
-		add_filter( 'woocommerce_update_order_review_fragments', array( __CLASS__, 'update_order_review_fragments' ) );
-		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'load_scripts' ), 1 );
-		add_action( 'wc_price_based_country_before_frontend_init', array( __CLASS__, 'set_customer_country' ), 20 );
-		add_action( 'wc_price_based_country_frontend_init', array( __CLASS__, 'frontend_init' ) );
-		add_action( 'woocommerce_order_refunded', array( __CLASS__, 'order_refunded' ), 10, 2 );
-		add_action( 'wp_loaded', array( __CLASS__, 'maybe_calculate_totals' ), 11 );
-		add_action( 'wp_footer', array( __CLASS__, 'test_store_message' ) );
-		add_action( 'wcpbc_manual_country_selector', array( __CLASS__, 'output_country_selector' ) );
-		add_shortcode( 'wcpbc_country_selector', array( __CLASS__, 'shortcode_country_selector' ) );
+		add_filter( 'woocommerce_customer_default_location', [ __CLASS__, 'allowed_countries_filter' ] );
+		add_filter( 'woocommerce_customer_default_location_array', [ __CLASS__, 'remove_allowed_countries_filter' ] );
+		add_filter( 'woocommerce_geolocate_ip', [ __CLASS__, 'fix_real_ip' ], 5 );
+		add_filter( 'woocommerce_update_order_review_fragments', [ __CLASS__, 'update_order_review_fragments' ] );
+		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'load_scripts' ], 1 );
+		add_action( 'wp_footer', [ __CLASS__, 'print_add_to_cart_with_options_module' ], 1 );
+		add_action( 'wc_price_based_country_before_frontend_init', [ __CLASS__, 'set_customer_country' ], 20 );
+		add_action( 'woocommerce_checkout_create_order', [ __CLASS__, 'update_order_meta' ] );
+		add_action( 'woocommerce_store_api_checkout_update_order_meta', [ __CLASS__, 'update_order_meta' ] );
+		add_action( 'woocommerce_after_checkout_validation', [ __CLASS__, 'validate_checkout' ], 10, 2 );
+		add_action( 'woocommerce_order_refunded', [ __CLASS__, 'order_refunded' ], 10, 2 );
+		if ( 'yes' === get_option( 'wc_price_based_country_product_structured_data', 'no' ) ) {
+			add_action( 'wp', [ __CLASS__, 'product_structured_data' ] );
+		}
+		add_action( 'wcpbc_manual_country_selector', [ __CLASS__, 'output_country_selector' ] );
+		add_shortcode( 'wcpbc_country_selector', [ __CLASS__, 'shortcode_country_selector' ] );
 	}
 
 	/**
@@ -39,8 +43,19 @@ class WCPBC_Frontend {
 	 * @param mixed $value Value.
 	 */
 	public static function allowed_countries_filter( $value ) {
-		add_filter( 'pre_option_woocommerce_allowed_countries', array( __CLASS__, 'allowed_countries' ) );
+		add_filter( 'pre_option_woocommerce_allowed_countries', [ __CLASS__, 'allowed_countries' ] );
 		return $value;
+	}
+
+	/**
+	 * Removes the allowed countries filter.
+	 *
+	 * @param array $location Country and state default location.
+	 * @return array
+	 */
+	public static function remove_allowed_countries_filter( $location ) {
+		remove_filter( 'pre_option_woocommerce_allowed_countries', [ __CLASS__, 'allowed_countries' ] );
+		return $location;
 	}
 
 	/**
@@ -50,20 +65,6 @@ class WCPBC_Frontend {
 	 */
 	public static function allowed_countries( $value ) {
 		return 'all';
-	}
-
-	/**
-	 * Returns the test country as default location.
-	 *
-	 * @param array $location Country and state default location.
-	 * @return array
-	 */
-	public static function test_default_location( $location ) {
-		if ( get_option( 'wc_price_based_country_test_mode', 'no' ) === 'yes' && get_option( 'wc_price_based_country_test_country' ) ) {
-			$location = wc_format_country_state_string( get_option( 'wc_price_based_country_test_country' ) );
-		}
-		remove_filter( 'pre_option_woocommerce_allowed_countries', array( __CLASS__, 'allowed_countries' ) );
-		return $location;
 	}
 
 	/**
@@ -92,7 +93,7 @@ class WCPBC_Frontend {
 	 * @param array $fragments Order review fragments.
 	 */
 	public static function update_order_review_fragments( $fragments ) {
-		$cart_hash = isset( WC()->cart ) && is_callable( array( WC()->cart, 'get_cart_hash' ) ) ? WC()->cart->get_cart_hash() : '-1';
+		$cart_hash = isset( WC()->cart ) && is_callable( [ WC()->cart, 'get_cart_hash' ] ) ? WC()->cart->get_cart_hash() : '-1';
 
 		if ( ! empty( $_COOKIE['woocommerce_cart_hash'] ) && wc_clean( wp_unslash( $_COOKIE['woocommerce_cart_hash'] ) ) !== $cart_hash ) {
 			ob_start();
@@ -105,9 +106,9 @@ class WCPBC_Frontend {
 				$fragments,
 				apply_filters(
 					'woocommerce_add_to_cart_fragments',
-					array(
+					[
 						'div.widget_shopping_cart_content' => '<div class="widget_shopping_cart_content">' . $mini_cart . '</div>',
-					)
+					]
 				)
 			);
 		}
@@ -127,7 +128,7 @@ class WCPBC_Frontend {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		// Scripts.
-		$deps = array( 'jquery' );
+		$deps = [];
 		if ( wcpbc_is_pro() ) {
 			$deps[] = 'wc-price-based-country-pro-frontend';
 		}
@@ -136,15 +137,13 @@ class WCPBC_Frontend {
 		wp_localize_script(
 			'wc-price-based-country-ajax-geo',
 			'wc_price_based_country_ajax_geo_params',
-			array(
+			[
 				'wc_ajax_url' => WC_AJAX::get_endpoint( '%%endpoint%%' ),
-			)
+			]
 		);
 
-		// Styles.
-		wp_register_style( 'wc-price-based-country-frontend', WCPBC()->plugin_url() . 'assets/css/frontend' . $suffix . '.css', array(), WCPBC()->version );
+		wp_register_style( 'wc-price-based-country-frontend', WCPBC()->plugin_url() . 'assets/css/frontend' . $suffix . '.css', [], WCPBC()->version );
 
-		// Enqueue.
 		if ( WCPBC_Ajax_Geolocation::is_enabled() && ! ( is_cart() || is_account_page() || is_checkout() || is_customize_preview() || apply_filters( 'wc_price_based_country_dequeue_script', false ) ) ) {
 
 			do_action( 'wc_price_based_country_before_enqueue_script' );
@@ -156,205 +155,56 @@ class WCPBC_Frontend {
 	}
 
 	/**
+	 * Print the Add to Cart + Options interactivity module.
+	 *
+	 * Script modules registered while rendering a block are too late to be
+	 * printed by WordPress in the document head. The block itself has already
+	 * registered the Interactivity API import map, so this footer module can
+	 * resolve its static imports.
+	 *
+	 * @return void
+	 */
+	public static function print_add_to_cart_with_options_module() {
+		if ( ! ( function_exists( 'did_filter' ) && function_exists( 'wp_print_script_tag' ) && did_filter( 'render_block_woocommerce/add-to-cart-with-options-variation-selector' ) && wp_script_is( 'wc-price-based-country-ajax-geo', 'enqueued' ) ) ) {
+			return;
+		}
+
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		wp_print_script_tag(
+			[
+				'id'   => 'wc-price-based-country-ajax-geo-add-to-cart-with-options-js-module',
+				'src'  => add_query_arg( 'ver', WCPBC()->version, WCPBC()->plugin_url() . 'assets/js/ajax-geolocation-add-to-cart-with-options' . $suffix . '.js' ),
+				'type' => 'module',
+			]
+		);
+	}
+
+	/**
 	 * Set the customer country before the frontend pricing is loaded
 	 *
 	 * @since 1.7.8
 	 */
 	public static function set_customer_country() {
-		// phpcs:disable WordPress.Security.NonceVerification
-		if ( isset( $_GET['pay_for_order'] ) && ! empty( $_GET['key'] ) ) {
-			// Pay for order page.
-			self::pay_for_order_country( wc_clean( wp_unslash( $_GET['key'] ) ) );
-
-		} elseif ( ! empty( $_REQUEST['wcpbc-manual-country'] ) ) {
-			// Request param.
-			wcpbc_set_woocommerce_country( wc_clean( wp_unslash( $_REQUEST['wcpbc-manual-country'] ) ) );
-			wc_nocache_headers();
-			add_action( 'wp', array( __CLASS__, 'init_session' ), 100 );
-
-		} elseif ( defined( 'WC_DOING_AJAX' ) && WC_DOING_AJAX && isset( $_GET['wc-ajax'] ) && 'update_order_review' === $_GET['wc-ajax'] ) {
-			// Checkout page.
-			self::checkout_country();
-
-		} elseif ( ! empty( $_POST['calc_shipping_country'] ) && ! empty( $_POST['calc_shipping'] ) && self::verify_shipping_calculator_nonce() ) {
-			// Shipping calculator.
-			self::calculate_shipping_country();
-		}
-		// phpcs:enable
-	}
-
-	/**
-	 * Set customer country when customer arrives to the pay for order page
-	 *
-	 * @param string $order_key Key of the order.
-	 * @since 1.7.8
-	 */
-	private static function pay_for_order_country( $order_key ) {
-		$order    = false;
-		$order_id = wc_get_order_id_by_order_key( $order_key );
-
-		if ( ! $order_id ) {
+		static $done = false;
+		if ( $done ) {
+			// Do only once.
 			return;
 		}
 
-		$billing_country  = wcpbc_get_order_country( $order_id, 'billing' );
-		$shipping_country = wcpbc_get_order_country( $order_id, 'shipping' );
+		$done = true;
 
-		if ( $billing_country ) {
-			WC()->customer->set_billing_country( $billing_country );
-			WC()->customer->set_shipping_country( $billing_country );
-		}
-		if ( $shipping_country ) {
-			WC()->customer->set_shipping_country( $shipping_country );
-		}
-
-		add_action( 'wp_loaded', array( __CLASS__, 'init_session' ), 20 );
-	}
-
-	/**
-	 * Update WooCommerce Customer country on checkout
-	 */
-	private static function checkout_country() {
-		check_ajax_referer( 'update-order-review', 'security' );
-
-		$countries = WC()->countries->get_countries();
-		$postdata  = [
-			'country'   => false,
-			's_country' => false,
+		$requests = [
+			new WCPBC_Set_Country_Request_Update_Order_Review(),
+			new WCPBC_Set_Country_Request_Pay_For_Order(),
+			new WCPBC_Set_Country_Request_Shipping_Calculator(),
+			new WCPBC_Set_Country_Request_Manual(),
 		];
 
-		foreach ( array_keys( $postdata ) as $key ) {
-
-			$value = isset( $_POST[ $key ] ) ? wc_clean( wp_unslash( $_POST[ $key ] ) ) : false;
-
-			if ( $value && isset( $countries[ $value ] ) ) {
-
-				$postdata[ $key ] = $value;
-
-			} elseif ( false !== $value ) {
-
-				/**
-				 * Invalid country! Set to null to WooCommerce does not update the customer country with 'undefined'
-				 * In a beautiful world, this should not happen, but the WooCommerce Javascript developers are cool, so they change jQuery.ajax() with fetch because jQuery is not cool :P, and they have broken it!
-				 * https://github.com/woocommerce/woocommerce/pull/36275
-				 */
-				$_POST[ $key ] = null;
+		foreach ( $requests as $request ) {
+			if ( $request->set_country() ) {
+				break;
 			}
 		}
-
-		if ( $postdata['country'] ) {
-			WC()->customer->set_billing_country( $postdata['country'] );
-			WC()->customer->set_shipping_country( $postdata['country'] );
-		}
-
-		if ( ! wc_ship_to_billing_address_only() && $postdata['s_country'] ) {
-			WC()->customer->set_shipping_country( $postdata['s_country'] );
-		}
-	}
-
-	/**
-	 * Verify the shipping calculator nonce
-	 *
-	 * @since 1.7.6
-	 * @return boolan
-	 */
-	private static function verify_shipping_calculator_nonce() {
-
-		$nonce_value = ! empty( $_REQUEST['woocommerce-shipping-calculator-nonce'] ) ? $_REQUEST['woocommerce-shipping-calculator-nonce'] : ''; // @codingStandardsIgnoreLine.
-		if ( empty( $nonce_value ) && ! empty( $_REQUEST['_wpnonce'] ) ) {
-			$nonce_value = $_REQUEST['_wpnonce']; // @codingStandardsIgnoreLine.
-		}
-		return wp_verify_nonce( $nonce_value, 'woocommerce-shipping-calculator' ) || wp_verify_nonce( $nonce_value, 'woocommerce-cart' );
-	}
-
-	/**
-	 * Updates the customer country on calculate shipping.
-	 *
-	 * @see WC_Shortcode_Cart::calculate_shipping
-	 */
-	private static function calculate_shipping_country() {
-
-		$country  = ! empty( $_POST['calc_shipping_country'] ) ? wc_clean( wp_unslash( $_POST['calc_shipping_country'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-		$postcode = ! empty( $_POST['calc_shipping_postcode'] ) ? wc_format_postcode( wc_clean( wp_unslash( $_POST['calc_shipping_postcode'] ) ), $country ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-
-		if ( $postcode && $country && ! WC_Validation::is_postcode( $postcode, $country ) ) {
-			return;
-		}
-
-		if ( $country ) {
-
-			if ( ! WC()->customer->get_billing_first_name() || apply_filters( 'wc_price_based_country_calculate_shipping_billing_country_update', true ) ) {
-				WC()->customer->set_billing_country( $country );
-			}
-			WC()->customer->set_shipping_country( $country );
-		}
-	}
-
-	/**
-	 * Maybe Calculate totals.
-	 *
-	 * @since 3.4.2
-	 */
-	public static function maybe_calculate_totals() {
-		if ( ! did_action( 'woocommerce_cart_loaded_from_session' ) || did_action( 'woocommerce_after_calculate_totals' ) ) {
-			// Nothing to do.
-			return;
-		}
-
-		if ( WC()->cart->is_empty() ) {
-			// Cart is empty.
-			return;
-		}
-
-		$cart_hash = empty( $_COOKIE['woocommerce_cart_hash'] ) ? false : wc_clean( wp_unslash( $_COOKIE['woocommerce_cart_hash'] ) );
-
-		if ( WC()->cart->get_cart_hash() !== $cart_hash ) {
-			// Cart content changed. Calculate totals.
-			WC()->cart->calculate_totals();
-		}
-	}
-
-	/**
-	 * Init customer session and refresh cart totals
-	 *
-	 * @since 1.7.0
-	 * @version 3.4.0 Use the get_cart_hash to update the cart_hash cookie.
-	 * @access public
-	 */
-	public static function init_session() {
-		if ( headers_sent() ) {
-			return;
-		}
-
-		if ( isset( WC()->session ) && is_callable( [ WC()->session, 'has_session' ] ) && ! WC()->session->has_session() ) {
-			do_action( 'woocommerce_set_cart_cookies', true );
-		}
-
-		WC()->customer->save();
-
-		if ( WC()->cart->is_empty() ) {
-			// The cart is empty. Update the cart's hash to trigger get_refreshed_fragments.
-			wc_setcookie( 'woocommerce_cart_hash', WC()->cart->get_cart_hash() );
-		}
-
-		if ( isset( $_POST['redirect'] ) && '1' === $_POST['redirect'] ) { // phpcs:ignore WordPress.Security.NonceVerification
-			global $wp;
-			$args        = wc_clean( array_intersect_key( $_GET, array_flip( [ 'p', 'page_id', 'product', 'post_type' ] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification
-			$current_url = add_query_arg( $args, trailingslashit( home_url( $wp->request ) ) );
-			wp_safe_redirect( $current_url );
-			exit;
-		}
-	}
-
-	/**
-	 * Init frontend hooks.
-	 *
-	 * @since 2.1.0
-	 */
-	public static function frontend_init() {
-		add_action( 'woocommerce_checkout_create_order', array( __CLASS__, 'update_order_meta' ) );
-		add_action( 'woocommerce_store_api_checkout_update_order_meta', array( __CLASS__, 'update_order_meta' ) );
-		add_action( 'woocommerce_after_checkout_validation', array( __CLASS__, 'validate_checkout' ), 10, 2 );
 	}
 
 	/**
@@ -398,24 +248,6 @@ class WCPBC_Frontend {
 		$refund->update_meta_data( '_wcpbc_base_exchange_rate', $base_exchange_rate );
 		$refund->update_meta_data( '_wcpbc_pricing_zone', $pricing_zone_data );
 		$refund->save();
-	}
-
-	/**
-	 * Print test store message
-	 */
-	public static function test_store_message() {
-		if ( 'no' === get_option( 'wc_price_based_country_test_mode', 'no' ) ) {
-			return;
-		}
-
-		$test_country = get_option( 'wc_price_based_country_test_country' );
-		$countries    = WC()->countries->countries;
-
-		if ( is_string( $test_country ) && $test_country && ! empty( $countries[ $test_country ] ) ) {
-			$country = WC()->countries->countries[ $test_country ];
-			// translators: HTML tags.
-			echo wp_kses_post( '<p class="demo_store">' . sprintf( __( '%1$sPrice Based Country%2$s test mode enabled for testing %3$s. You should do tests on private browsing mode. Browse in private with %4$sFirefox%7$s, %5$sChrome%7$s and %6$sSafari%7$s', 'woocommerce-product-price-based-on-countries' ), '<strong>', '</strong>', $country, '<a style="display:inline;float:none;text-decoration:underline;" target="_blank" href="https://support.mozilla.org/en-US/kb/private-browsing-use-firefox-without-history">', '<a style="display:inline;float:none;text-decoration:underline;" target="_blank" href="https://support.google.com/chrome/answer/95464?hl=en">', '<a style="display:inline;float:none;text-decoration:underline;" target="_blank" href="https://support.apple.com/kb/ph19216?locale=en_US">', '</a>' ) . '</p>' );
-		}
 	}
 
 	/**
@@ -466,17 +298,43 @@ class WCPBC_Frontend {
 	}
 
 	/**
+	 * Display structure data for rich snippets in the default price and currency.
+	 * Avoid SEO issues related to bot crawling.
+	 */
+	public static function product_structured_data() {
+		if ( wcpbc_is_manual_country_endpoint() ) {
+			return;
+		}
+
+		if ( has_action( 'woocommerce_single_product_summary', [ WC()->structured_data, 'generate_product_data' ] ) ) {
+			remove_action( 'woocommerce_single_product_summary', [ WC()->structured_data, 'generate_product_data' ], 60 );
+			add_action(
+				'woocommerce_single_product_summary',
+				function () {
+					WCPBC_Frontend_Pricing::unset();
+					WC()->structured_data->generate_product_data();
+					WCPBC_Frontend_Pricing::init();
+				},
+				60
+			);
+		}
+
+		add_action( 'rank_math/head', [ 'WCPBC_Frontend_Pricing', 'unset' ], 0 );
+		add_action( 'rank_math/head', [ 'WCPBC_Frontend_Pricing', 'init' ], 9999 );
+	}
+
+	/**
 	 * Output manual country select form
 	 *
 	 * @param string $other_countries_text Other countries text.
 	 */
 	public static function output_country_selector( $other_countries_text = '' ) {
-		$atts = array();
+		$atts = [];
 
 		if ( ! empty( $other_countries_text ) ) {
-			$atts = array(
+			$atts = [
 				'other_countries_text' => $other_countries_text,
-			);
+			];
 		}
 
 		echo self::shortcode_country_selector( $atts ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -491,12 +349,12 @@ class WCPBC_Frontend {
 	public static function shortcode_country_selector( $atts ) {
 
 		$atts = shortcode_atts(
-			array(
+			[
 				'remove_other_countries' => false,
 				'flag'                   => 0,
 				'other_countries_text'   => apply_filters( 'wcpbc_other_countries_text', __( 'Other countries', 'woocommerce-product-price-based-on-countries' ) ),
 				'title'                  => '',
-			),
+			],
 			$atts,
 			'wcpbc_country_selector'
 		);
@@ -506,13 +364,12 @@ class WCPBC_Frontend {
 		the_widget(
 			'WCPBC_Widget_Country_Selector',
 			$atts,
-			array(
+			[
 				'before_widget' => '',
 				'after_widget'  => '',
-			)
+			]
 		);
 
 		return ob_get_clean();
 	}
-
 }

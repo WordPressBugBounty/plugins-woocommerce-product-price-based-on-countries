@@ -82,7 +82,9 @@ function wcpbc_get_woocommerce_country() {
  */
 function wcpbc_set_woocommerce_country( $country ) {
 
-	if ( ! wcpbc_is_woocommerce_frontend() || ! in_array( $country, array_keys( wc()->countries->countries ), true ) ) {
+	$country = strtoupper( $country );
+
+	if ( ! ( wcpbc_is_woocommerce_frontend() && in_array( $country, array_keys( WC()->countries->countries ), true ) ) ) {
 		return;
 	}
 
@@ -120,7 +122,7 @@ function wcpbc_get_zone_by_country( $country = '' ) {
  * @param WCPBC_Pricing_Zone $zone Pricig zone instance.
  * @param array              $data The product pricing.
  */
-function wcpbc_update_product_pricing( $post_id, $zone, $data = array() ) {
+function wcpbc_update_product_pricing( $post_id, $zone, $data = [] ) {
 
 	if ( empty( $data ) ) {
 		return;
@@ -241,6 +243,25 @@ function wcpbc_get_rounding_precision() {
 }
 
 /**
+ * Determines whether the current request is the set country endpoint.
+ *
+ * @since 4.4.0
+ * @return bool
+ */
+function wcpbc_is_manual_country_endpoint() {
+	static $is_manual = null;
+
+	if ( null !== $is_manual ) {
+		return $is_manual;
+	}
+
+	$request   = new WCPBC_Set_Country_Request_Manual();
+	$is_manual = false !== $request->get_country() && 'GET' === ( isset( $_SERVER['REQUEST_METHOD'] ) ? wc_clean( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) : false );
+
+	return $is_manual;
+}
+
+/**
  * Is Pro version
  *
  * @since 1.6.11
@@ -331,7 +352,7 @@ function wcpbc_float_to_string( $value, $display = false ) {
 
 	$string = strtoupper( strval( $value ) );
 	$locale = localeconv();
-	$string = str_replace( array( $locale['decimal_point'], $locale['mon_decimal_point'] ), '.', $string );
+	$string = str_replace( [ $locale['decimal_point'], $locale['mon_decimal_point'] ], '.', $string );
 
 	$e_pos = strpos( $string, 'E' );
 	if ( false !== $e_pos ) {
@@ -380,12 +401,12 @@ function wcpbc_string_to_timestamp( $value ) {
 function wcpbc_geoipdb_exists() {
 	$exists = ! empty( $_SERVER['HTTP_CF_IPCOUNTRY'] ) || ! empty( $_SERVER['GEOIP_COUNTRY_CODE'] ) || ! empty( $_SERVER['HTTP_X_COUNTRY_CODE'] );
 	if ( ! $exists ) {
-		if ( version_compare( WC_VERSION, '3.9', '<' ) && is_callable( array( 'WC_Geolocation', 'get_local_database_path' ) ) ) {
+		if ( version_compare( WC_VERSION, '3.9', '<' ) && is_callable( [ 'WC_Geolocation', 'get_local_database_path' ] ) ) {
 			$database = WC_Geolocation::get_local_database_path();
 			$exists   = file_exists( $database );
 		} else {
 			$maxmind_geolocation = WC()->integrations->get_integration( 'maxmind_geolocation' );
-			if ( $maxmind_geolocation && is_callable( array( $maxmind_geolocation, 'get_database_service' ) ) ) {
+			if ( $maxmind_geolocation && is_callable( [ $maxmind_geolocation, 'get_database_service' ] ) ) {
 				$database = $maxmind_geolocation->get_database_service()->get_database_path();
 				$exists   = file_exists( $database );
 			}
@@ -491,10 +512,10 @@ function wcpbc_get_order_country( $order_id, $type = 'billing' ) {
  * @return array
  */
 function wcpbc_price_method_options() {
-	return array(
+	return [
 		'exchange_rate' => __( 'Calculate prices by the exchange rate', 'woocommerce-product-price-based-on-countries' ),
 		'manual'        => __( 'Set prices manually', 'woocommerce-product-price-based-on-countries' ),
-	);
+	];
 }
 
 /**
@@ -526,10 +547,10 @@ function wcpbc_pricing_input( $field, $zone, $post_id = false ) {
 
 	$field['name']           = empty( $field['name'] ) ? '_price_method' : $field['name'];
 	$field['metakey']        = empty( $field['metakey'] ) ? $field['name'] : $field['metakey'];
-	$field['id']             = empty( $field['id'] ) ? str_replace( array( '[', ']' ), array( '_', '' ), $field['name'] ) : $field['id'];
+	$field['id']             = empty( $field['id'] ) ? str_replace( [ '[', ']' ], [ '_', '' ], $field['name'] ) : $field['id'];
 	$field['value']          = empty( $field['value'] ) ? $zone->get_postmeta( $post_id, $field['metakey'] ) : $field['value'];
 	$field['label']          = empty( $field['label'] ) ? __( 'Price for', 'woocommerce-product-price-based-on-countries' ) : $field['label'];
-	$field['fields']         = isset( $field['fields'] ) && is_array( $field['fields'] ) ? $field['fields'] : array();
+	$field['fields']         = isset( $field['fields'] ) && is_array( $field['fields'] ) ? $field['fields'] : [];
 	$field['wrapper']        = isset( $field['wrapper'] ) ? $field['wrapper'] : true;
 	$field['wrapper_class']  = empty( $field['wrapper_class'] ) ? '' : $field['wrapper_class'];
 	$field['wrapper_class'] .= ' wcpbc_pricing wcpbc_pricing_' . $zone->get_id();
@@ -539,7 +560,7 @@ function wcpbc_pricing_input( $field, $zone, $post_id = false ) {
 	}
 
 	woocommerce_wp_radio(
-		array(
+		[
 			'id'            => $zone->get_postmetakey( $field['id'] ),
 			'name'          => $zone->get_postmetakey( $field['name'] ),
 			'value'         => wcpbc_is_exchange_rate( $field['value'] ) ? 'exchange_rate' : 'manual',
@@ -547,18 +568,18 @@ function wcpbc_pricing_input( $field, $zone, $post_id = false ) {
 			'label'         => wcpbc_price_method_label( $field['label'], $zone ),
 			'wrapper_class' => '_price_method_wcpbc_field',
 			'options'       => wcpbc_price_method_options(),
-		)
+		]
 	);
 
 	foreach ( $field['fields'] as $child_field ) {
 		$child_field['name']              = empty( $child_field['name'] ) ? '' : $child_field['name'];
 		$child_field['metakey']           = empty( $child_field['metakey'] ) ? $child_field['name'] : $child_field['metakey'];
-		$child_field['id']                = empty( $child_field['id'] ) ? str_replace( array( '[', ']' ), array( '_', '' ), $child_field['name'] ) : $child_field['id'];
+		$child_field['id']                = empty( $child_field['id'] ) ? str_replace( [ '[', ']' ], [ '_', '' ], $child_field['name'] ) : $child_field['id'];
 		$child_field['label']             = empty( $child_field['label'] ) ? '' : sprintf( $child_field['label'], get_woocommerce_currency_symbol( $zone->get_currency() ) );
 		$child_field['value']             = isset( $child_field['value'] ) ? $child_field['value'] : $zone->get_postmeta( $post_id, $child_field['metakey'] );
 		$child_field['type']              = empty( $child_field['type'] ) ? 'text' : $child_field['type'];
 		$child_field['data_type']         = isset( $child_field['data_type'] ) ? $child_field['data_type'] : '';
-		$child_field['custom_attributes'] = isset( $child_field['custom_attributes'] ) && is_array( $child_field['custom_attributes'] ) ? $child_field['custom_attributes'] : array();
+		$child_field['custom_attributes'] = isset( $child_field['custom_attributes'] ) && is_array( $child_field['custom_attributes'] ) ? $child_field['custom_attributes'] : [];
 		$child_field['wrapper_class']     = empty( $child_field['wrapper_class'] ) ? ' ' : $child_field['wrapper_class'] . ' ';
 		$child_field['wrapper_class']    .= $child_field['id'] . '_wcpbc_field wcpbc_show_if_manual';
 
@@ -620,11 +641,11 @@ function wcpbc_get_screen_ids() {
  */
 function wcpbc_home_url( $utm_source, $path = 'pricing' ) {
 	return add_query_arg(
-		array(
+		[
 			'utm_source'   => $utm_source,
 			'utm_medium'   => 'banner',
 			'utm_campaign' => 'upgrade-pro',
-		),
+		],
 		"https://www.pricebasedcountry.com/{$path}/"
 	);
 }
@@ -635,25 +656,25 @@ function wcpbc_home_url( $utm_source, $path = 'pricing' ) {
  * @since 1.7.0
  * @param string $source basic|pro|third-party.
  * @param string $context Context to use the function.
- * @return boolean
+ * @return array
  */
 function wcpbc_product_types_supported( $source = '', $context = '' ) {
 
-	$types = array(
-		'basic' => array(
+	$types = [
+		'basic' => [
 			'simple'   => 'Simple product',
 			'grouped'  => 'Grouped product',
 			'external' => 'External/Affiliate product',
 			'variable' => 'Variable product',
-		),
-		'pro'   => array(
+		],
+		'pro'   => [
 			'bundle'                => 'WooCommerce Product Bundles',
 			'booking'               => 'WooCommerce Bookings',
 			'accommodation-booking' => 'WooCommerce Accommodation Bookings',
 			'nyp-wcpbc'             => 'WooCommerce Name Your Price',
 			'job_package'           => 'Listing Payments by Astoundify',
-		),
-	);
+		],
+	];
 
 	if ( 'product-data' !== $context || ! class_exists( 'WCPBC_Subscriptions' ) ) {
 		$types['pro']['subscription']          = 'WooCommerce Subscriptions';
@@ -668,7 +689,7 @@ function wcpbc_product_types_supported( $source = '', $context = '' ) {
 		$types['basic']['course'] = 'Course';
 	}
 
-	$types['third-party'] = apply_filters( 'wc_price_based_country_third_party_product_types', array() );
+	$types['third-party'] = apply_filters( 'wc_price_based_country_third_party_product_types', [] );
 
 	if ( empty( $source ) ) {
 		$types = array_merge( $types['basic'], $types['pro'], $types['third-party'] );

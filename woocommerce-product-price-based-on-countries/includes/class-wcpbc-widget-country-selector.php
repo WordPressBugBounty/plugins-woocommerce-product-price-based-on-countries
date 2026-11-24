@@ -89,10 +89,10 @@ class WCPBC_Widget_Country_Selector extends WC_Widget {
 	protected function parse_widget_args( $instance ) {
 		$selected_country = wcpbc_get_woocommerce_country();
 		$widget_data      = wp_json_encode(
-			array(
+			[
 				'instance' => $instance,
 				'id'       => $this->widget_id,
-			)
+			]
 		);
 
 		$cache_key  = WC_Cache_Helper::get_cache_prefix( __CLASS__ ) . __FUNCTION__ . $widget_data . $selected_country . wcpbc()->version;
@@ -122,7 +122,7 @@ class WCPBC_Widget_Country_Selector extends WC_Widget {
 		/**
 		 * Allow developers filter the list of countries
 		 */
-		do_action_ref_array( 'wc_price_based_country_widget_before_selected', array( &$rest_all_world_key, &$countries, $base_country, $instance ) );
+		do_action_ref_array( 'wc_price_based_country_widget_before_selected', [ &$rest_all_world_key, &$countries, $base_country, $instance ] );
 
 		if ( is_string( $selected_country ) && ! isset( $countries[ $selected_country ] ) ) {
 			$selected_country = $rest_all_world_key ? $rest_all_world_key : $base_country;
@@ -225,7 +225,8 @@ class WCPBC_Widget_Country_Selector extends WC_Widget {
 			];
 		}
 
-		array_multisort( array_column( $data, 'name' ), SORT_LOCALE_STRING, $data );
+		$names = array_column( $data, 'name' );
+		array_multisort( $names, SORT_LOCALE_STRING, $data );
 
 		return [
 			'data'               => $data,

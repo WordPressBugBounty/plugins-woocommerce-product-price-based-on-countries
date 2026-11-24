@@ -314,6 +314,4 @@ class WCPBC_Product_Meta_Data {
 			$job->run();
 		}
 	}
-
-
 }

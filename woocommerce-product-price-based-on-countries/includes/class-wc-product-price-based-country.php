@@ -17,7 +17,7 @@ class WC_Product_Price_Based_Country {
 	 *
 	 * @var string
 	 */
-	public $version = '4.3.6';
+	public $version = '4.4.0';
 
 	/**
 	 * The front-end pricing zone
@@ -115,15 +115,15 @@ class WC_Product_Price_Based_Country {
 	public function __construct() {
 		$this->includes();
 
-		spl_autoload_register( array( $this, 'autoload' ) );
+		spl_autoload_register( [ $this, 'autoload' ] );
 
-		register_activation_hook( WCPBC_PLUGIN_FILE, array( 'WCPBC_Install', 'plugin_activate' ) );
+		register_activation_hook( WCPBC_PLUGIN_FILE, [ 'WCPBC_Install', 'plugin_activate' ] );
 
-		add_action( 'init', array( $this, 'load_textdomain' ) );
-		add_filter( 'plugin_action_links_' . plugin_basename( WCPBC_PLUGIN_FILE ), array( $this, 'plugin_action_links' ) );
-		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
-		add_action( 'plugins_loaded', array( $this, 'init_plugin' ), 5 );
-		add_action( 'plugins_loaded', array( 'WCPBC_Integrations', 'add' ), 15 );
+		add_action( 'init', [ $this, 'load_textdomain' ] );
+		add_filter( 'plugin_action_links_' . plugin_basename( WCPBC_PLUGIN_FILE ), [ $this, 'plugin_action_links' ] );
+		add_filter( 'plugin_row_meta', [ $this, 'plugin_row_meta' ], 10, 2 );
+		add_action( 'plugins_loaded', [ $this, 'init_plugin' ], 5 );
+		add_action( 'plugins_loaded', [ 'WCPBC_Integrations', 'add' ], 15 );
 	}
 
 	/**
@@ -152,29 +152,36 @@ class WC_Product_Price_Based_Country {
 		$path = false;
 
 		$class_map = [
-			'WCPBC_Helper_Options'            => 'class-wcpbc-helper-options.php',
-			'WCPBC_Pricing_Zone'              => 'class-wcpbc-pricing-zone.php',
-			'WCPBC_Pricing_Zones'             => 'class-wcpbc-pricing-zones.php',
-			'WCPBC_Integrations'              => 'class-wcpbc-integrations.php',
-			'WCPBC_Frontend'                  => 'class-wcpbc-frontend.php',
-			'WCPBC_Frontend_Pricing'          => 'class-wcpbc-frontend-pricing.php',
-			'WCPBC_Ajax_Geolocation'          => 'class-wcpbc-ajax-geolocation.php',
-			'WCPBC_Update_GeoIP_DB'           => 'class-wcpbc-update-geoip-db.php',
-			'WCPBC_Product_Sync'              => 'class-wcpbc-product-sync.php',
-			'WCPBC_Debug_Logger'              => 'class-wcpbc-debug-logger.php',
-			'WCPBC_Store_API'                 => 'class-wcpbc-store-api.php',
-			'WCPBC_Country_Flags'             => 'class-wcpbc-country-flags.php',
-			'WCPBC_Blocks_Controller'         => 'class-wcpbc-blocks-controller.php',
-			'WCPBC_Runtime_Meta'              => 'class-wcpbc-runtime-meta.php',
-			'WCPBC_Schedule_Recurring_Action' => 'class-wcpbc-schedule-recurring-action.php',
-			'WCPBC_Admin_Analytics'           => 'admin/class-wcpbc-admin-analytics.php',
-			'WCPBC_Admin_Notices'             => 'admin/class-wcpbc-admin-notices.php',
-			'WCPBC_Admin'                     => 'admin/class-wcpbc-admin.php',
-			'WCPBC_Admin_Meta_Boxes'          => 'admin/class-wcpbc-admin-meta-boxes.php',
-			'WCPBC_Admin_Ads'                 => 'admin/class-wcpbc-admin-ads.php',
-			'WCPBC_Setup_Wizard'              => 'admin/class-wcpbc-setup-wizard.php',
-			'WCPBC_Cache_Plugins_Helper'      => 'admin/class-wcpbc-cache-plugins-helper.php',
-			'WCPBC_Admin_Legacy_Reports'      => 'admin/class-wcpbc-admin-legacy-reports.php',
+			'WCPBC_Helper_Options'                    => 'class-wcpbc-helper-options.php',
+			'WCPBC_Pricing_Zone'                      => 'class-wcpbc-pricing-zone.php',
+			'WCPBC_Pricing_Zones'                     => 'class-wcpbc-pricing-zones.php',
+			'WCPBC_Integrations'                      => 'class-wcpbc-integrations.php',
+			'WCPBC_Frontend'                          => 'class-wcpbc-frontend.php',
+			'WCPBC_Frontend_Pricing'                  => 'class-wcpbc-frontend-pricing.php',
+			'WCPBC_Set_Country_Request'               => 'set-country-request/class-wcpbc-set-country-request.php',
+			'WCPBC_Set_Country_Request_Pay_For_Order' => 'set-country-request/class-wcpbc-set-country-request-pay-for-order.php',
+			'WCPBC_Set_Country_Request_Manual'        => 'set-country-request/class-wcpbc-set-country-request-manual.php',
+			'WCPBC_Set_Country_Request_Update_Order_Review' => 'set-country-request/class-wcpbc-set-country-request-update-order-review.php',
+			'WCPBC_Set_Country_Request_Shipping_Calculator' => 'set-country-request/class-wcpbc-set-country-request-shipping-calculator.php',
+			'WCPBC_Ajax_Geolocation'                  => 'class-wcpbc-ajax-geolocation.php',
+			'WCPBC_Update_GeoIP_DB'                   => 'class-wcpbc-update-geoip-db.php',
+			'WCPBC_Product_Sync'                      => 'class-wcpbc-product-sync.php',
+			'WCPBC_Debug_Logger'                      => 'class-wcpbc-debug-logger.php',
+			'WCPBC_Store_API'                         => 'class-wcpbc-store-api.php',
+			'WCPBC_Country_Flags'                     => 'class-wcpbc-country-flags.php',
+			'WCPBC_Blocks_Controller'                 => 'class-wcpbc-blocks-controller.php',
+			'WCPBC_Runtime_Meta'                      => 'class-wcpbc-runtime-meta.php',
+			'WCPBC_Schedule_Recurring_Action'         => 'class-wcpbc-schedule-recurring-action.php',
+			'WCPBC_Admin_Analytics'                   => 'admin/class-wcpbc-admin-analytics.php',
+			'WCPBC_Admin_Notices'                     => 'admin/class-wcpbc-admin-notices.php',
+			'WCPBC_Admin'                             => 'admin/class-wcpbc-admin.php',
+			'WCPBC_Admin_Bar'                         => 'admin/class-wcpbc-admin-bar.php',
+			'WCPBC_Admin_Meta_Boxes'                  => 'admin/class-wcpbc-admin-meta-boxes.php',
+			'WCPBC_Admin_Ads'                         => 'admin/class-wcpbc-admin-ads.php',
+			'WCPBC_Setup_Wizard'                      => 'admin/class-wcpbc-setup-wizard.php',
+			'WCPBC_Cache_Plugins_Helper'              => 'admin/class-wcpbc-cache-plugins-helper.php',
+			'WCPBC_Admin_Legacy_Reports'              => 'admin/class-wcpbc-admin-legacy-reports.php',
+			'WCPBC_Admin_Notice'                      => 'admin/notices/class-wcpbc-admin-notice.php',
 		];
 
 		if ( isset( $class_map[ $classname ] ) ) {
@@ -191,6 +198,9 @@ class WC_Product_Price_Based_Country {
 
 		} elseif ( substr( $classname, -6 ) === '_Block' ) {
 			$path .= 'block-types/class-' . str_replace( '_', '-', strtolower( $classname ) ) . '.php';
+
+		} elseif ( substr( $classname, 0, 19 ) === 'WCPBC_Admin_Notice_' ) {
+			$path .= 'admin/notices/class-' . str_replace( '_', '-', strtolower( $classname ) ) . '.php';
 
 		} elseif ( substr( $classname, -9 ) === 'Interface' ) {
 			$path .= 'interfaces/' . str_replace( '_', '-', strtolower( $classname ) ) . '.php';
@@ -228,9 +238,9 @@ class WC_Product_Price_Based_Country {
 	 */
 	public function plugin_action_links( $links ) {
 
-		$action_links = array(
+		$action_links = [
 			'settings' => '<a href="' . admin_url( 'admin.php?page=wc-settings&tab=price-based-country' ) . '" aria-label="' . esc_attr__( 'View Price Based on Country settings', 'woocommerce-product-price-based-on-countries' ) . '">' . esc_html__( 'Settings', 'woocommerce-product-price-based-on-countries' ) . '</a>',
-		);
+		];
 
 		if ( ! wcpbc_is_pro() ) {
 			$action_links['get-pro'] = sprintf( '<a target="_blank" rel="noopener noreferrer" style="color:#46b450;" href="%s">%s</a>', wcpbc_home_url( 'plugins-cta-link' ), esc_html__( 'Get Pro', 'woocommerce-product-price-based-on-countries' ) );
@@ -249,9 +259,9 @@ class WC_Product_Price_Based_Country {
 	 */
 	public function plugin_row_meta( $links, $file ) {
 		if ( plugin_basename( WCPBC_PLUGIN_FILE ) === $file ) {
-			$row_meta = array(
+			$row_meta = [
 				'docs' => sprintf( '<a target="_blank" rel="noopener noreferrer" href="%s">%s</a>', esc_url( wcpbc_home_url( 'plugins-doc-link', 'docs' ) ), esc_html__( 'Docs', 'woocommerce-product-price-based-on-countries' ) ),
-			);
+			];
 
 			return array_merge( $links, $row_meta );
 		}
@@ -268,9 +278,9 @@ class WC_Product_Price_Based_Country {
 
 		$wp_list_table = _get_list_table(
 			'WP_Plugins_List_Table',
-			array(
+			[
 				'screen' => get_current_screen(),
-			)
+			]
 		);
 
 		printf(
@@ -332,7 +342,7 @@ class WC_Product_Price_Based_Country {
 				WCPBC_Admin::init();
 
 				// Displays warning message after plugin row.
-				add_action( 'after_plugin_row_woocommerce-product-price-based-on-countries/woocommerce-product-price-based-on-countries.php', array( $this, 'after_plugin_row' ), 20 );
+				add_action( 'after_plugin_row_woocommerce-product-price-based-on-countries/woocommerce-product-price-based-on-countries.php', [ $this, 'after_plugin_row' ], 20 );
 			}
 			return false;
 		}
@@ -347,7 +357,7 @@ class WC_Product_Price_Based_Country {
 	 */
 	public function init_plugin() {
 		if ( ! $this->check_environment() ) {
-			add_action( 'admin_notices', array( $this, 'environment_notice' ) );
+			add_action( 'admin_notices', [ $this, 'environment_notice' ] );
 			return;
 		}
 
@@ -362,6 +372,7 @@ class WC_Product_Price_Based_Country {
 			WCPBC_Cache_Plugins_Helper::init();
 		}
 
+		WCPBC_Admin_Bar::init();
 		WCPBC_Debug_Logger::init();
 		WCPBC_Frontend::init();
 		WCPBC_Ajax_Geolocation::init();
@@ -375,9 +386,9 @@ class WC_Product_Price_Based_Country {
 			WCPBC_Update_GeoIP_DB::init();
 		}
 
-		add_action( 'widgets_init', array( $this, 'register_widgets' ) );
-		add_action( 'woocommerce_init', array( $this, 'frontend_init' ), 0 );
-		add_action( 'init', array( $this, 'ajax_frontend_init' ), 9999 );
+		add_action( 'widgets_init', [ $this, 'register_widgets' ] );
+		add_action( 'woocommerce_init', [ $this, 'frontend_init' ], 0 );
+		add_action( 'init', [ $this, 'ajax_frontend_init' ], 9999 );
 
 		WCPBC_Schedule_Recurring_Action::add( 'wc_price_based_country_scheduled_sales', 'tomorrow 00:00:01' );
 	}
@@ -406,16 +417,36 @@ class WC_Product_Price_Based_Country {
 	 */
 	public function frontend_init() {
 
-		if ( $this->is_rest_api_frontend() ) {
-			WCPBC_Store_API::init();
+		if ( did_action( 'wc_price_based_country_before_frontend_init' ) || doing_action( 'wc_price_based_country_before_frontend_init' ) ) {
+			// do only once.
+			return;
 		}
 
-		if ( ! $this->is_frontend() || apply_filters( 'wc_price_based_country_stop_pricing', false ) ) {
+		if ( $this->is_rest_api_frontend() ) {
+			WCPBC_Store_API::init();
+			return;
+		}
+
+		if ( ! $this->is_frontend() ) {
 			// Do only on frontend requests.
 			return;
 		}
 
+		/**
+		 * Fires before frontend pricing init.
+		 *
+		 * @since 1.7.21
+		 */
+		do_action( 'wc_price_based_country_before_frontend_init' );
+
 		$this->frontend_pricing_init();
+
+		/**
+		 * Fires after frontend pricing init.
+		 *
+		 * @since 1.8.25
+		 */
+		do_action( 'wc_price_based_country_frontend_init' );
 	}
 
 	/**
@@ -424,10 +455,6 @@ class WC_Product_Price_Based_Country {
 	 * @since 3.0.0
 	 */
 	public function frontend_pricing_init() {
-		if ( did_action( 'wc_price_based_country_before_frontend_init' ) || doing_action( 'wc_price_based_country_before_frontend_init' ) ) {
-			// do only once.
-			return;
-		}
 
 		if ( ! did_action( 'before_woocommerce_init' ) || doing_action( 'before_woocommerce_init' ) ) {
 			/* translators: 1: frontend_pricing_init 2: woocommerce_init */
@@ -435,15 +462,22 @@ class WC_Product_Price_Based_Country {
 			return;
 		}
 
-		do_action( 'wc_price_based_country_before_frontend_init' );
+		/**
+		 * Filters whether frontend pricing should be disabled.
+		 *
+		 * @since 1.7.21
+		 *
+		 * @param bool $stop_pricing Whether to disable frontend pricing. Default false.
+		 */
+		if ( apply_filters( 'wc_price_based_country_stop_pricing', false ) ) {
+			return;
+		}
 
 		// Set the current zone.
 		$this->current_zone = wcpbc_get_zone_by_country();
 
 		// Init frontend pricing.
 		WCPBC_Frontend_Pricing::init();
-
-		do_action( 'wc_price_based_country_frontend_init' );
 	}
 
 	/**
@@ -474,13 +508,13 @@ class WC_Product_Price_Based_Country {
 	 * @param string $type admin or frontend.
 	 */
 	private function is_referer_type( $type ) {
-		$type         = is_array( $type ) ? $type : array( $type );
+		$type         = is_array( $type ) ? $type : [ $type ];
 		$referer      = false;
 		$http_referer = wp_get_referer();
 
 		if ( $http_referer ) {
-			$http_referer = str_replace( array( 'https://', 'http://', 'www.' ), '', trailingslashit( $http_referer ) );
-			$admin_url    = str_replace( array( 'https://', 'http://', 'www.' ), '', trailingslashit( admin_url( '/' ) ) );
+			$http_referer = str_replace( [ 'https://', 'http://', 'www.' ], '', trailingslashit( $http_referer ) );
+			$admin_url    = str_replace( [ 'https://', 'http://', 'www.' ], '', trailingslashit( admin_url( '/' ) ) );
 			$referer      = ( false !== strpos( $http_referer, $admin_url ) ) ? 'admin' : 'frontend';
 		}
 
@@ -496,7 +530,7 @@ class WC_Product_Price_Based_Country {
 			return false;
 		}
 
-		if ( in_array( $action, array( 'as_async_request_queue_runner', 'wc_facebook_background_product_sync', 'wc_facebook_sync_products' ), true ) ) {
+		if ( in_array( $action, [ 'as_async_request_queue_runner', 'wc_facebook_background_product_sync', 'wc_facebook_sync_products' ], true ) ) {
 			return false;
 		}
 
@@ -509,6 +543,14 @@ class WC_Product_Price_Based_Country {
 			$is_ajax_frontend = $this->is_referer_type( 'frontend' );
 		}
 
+		/**
+		 * Filters whether the request is frontend AJAX.
+		 *
+		 * @since 1.8.25
+		 *
+		 * @param bool $is_ajax_frontend Whether the request is fronted AJAX.
+		 * @param string $action The AJAX action.
+		 */
 		return apply_filters( 'wc_price_based_country_is_ajax_frontend', $is_ajax_frontend, $action );
 	}
 
@@ -520,12 +562,12 @@ class WC_Product_Price_Based_Country {
 	 */
 	private function is_rest_api_frontend() {
 
-		if ( $this->is_referer_type( 'admin' ) || empty( $_SERVER['REQUEST_URI'] ) || empty( $_SERVER['HTTP_HOST'] ) ) {
+		if ( $this->is_referer_type( 'admin' ) || empty( $_SERVER['REQUEST_URI'] ) ) {
 			return false;
 		}
 
-		$request  = trailingslashit( str_replace( [ 'https://', 'http://', 'www.' ], '', wc_clean( wp_unslash( $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] ) ) ) );
-		$rest_url = preg_quote( trailingslashit( str_replace( [ 'https://', 'http://', 'www.' ], '', get_rest_url() ) ), '/' );
+		$request  = trailingslashit( wc_clean( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
+		$rest_url = preg_quote( trailingslashit( wp_parse_url( get_rest_url(), PHP_URL_PATH ) ), '/' );
 		$pattern  = '/^' . $rest_url . '/';
 
 		if ( 1 !== preg_match( $pattern, $request ) ) {
@@ -533,6 +575,16 @@ class WC_Product_Price_Based_Country {
 		}
 
 		if ( 1 === preg_match( $pattern, $request ) && $this->is_referer_type( 'frontend' ) ) {
+			/**
+			 * Allow third-party admin API REST routes.
+			 *
+			 * @since 4.4.0
+			 */
+			$admin_rest_routes = array_filter( (array) apply_filters( 'wc_price_based_country_admin_rest_routes', [] ), 'is_string' );
+			if ( ! empty( $admin_rest_routes ) && is_array( $admin_rest_routes ) ) {
+				$pattern = '/^' . $rest_url . '(' . implode( '|', $admin_rest_routes ) . ')/';
+				return 1 !== @preg_match( $pattern, $request ); // phpcs:ignore WordPress.PHP.NoSilencedErrors
+			}
 			return true;
 		}
 
@@ -552,6 +604,8 @@ class WC_Product_Price_Based_Country {
 
 		/**
 		 * Allow third-party frontend API REST routes.
+		 *
+		 * @since 2.1.1
 		 */
 		$rest_api_routes = apply_filters( 'wc_price_based_country_frontend_rest_routes', [] );
 		$rest_api_routes = is_array( $rest_api_routes ) ? array_filter( $rest_api_routes, 'is_string' ) : [];

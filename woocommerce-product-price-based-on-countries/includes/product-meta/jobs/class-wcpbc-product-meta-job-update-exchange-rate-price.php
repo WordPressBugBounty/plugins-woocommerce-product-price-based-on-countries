@@ -105,7 +105,7 @@ class WCPBC_Product_Meta_Job_Update_Exchange_Rate_Price extends WCPBC_Product_Me
 				}
 			}
 
-			if ( $this->clear_cache && wp_using_ext_object_cache() ) {
+			if ( $this->clear_cache && wp_using_ext_object_cache() && function_exists( 'wp_cache_delete_multiple' ) ) {
 				wp_cache_delete_multiple( wc_list_pluck( $rows, 'product_id' ), 'post_meta' );
 			}
 

@@ -8,6 +8,8 @@
  * @package WCPBC\Integrations\PayPalCommerce
  */
 
+defined( 'ABSPATH' ) || exit;
+
 if ( ! class_exists( 'WCPBC_PayPalCommerce' ) ) :
 
 	/**

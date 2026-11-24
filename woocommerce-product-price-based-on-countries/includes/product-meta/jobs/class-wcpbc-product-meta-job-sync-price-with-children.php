@@ -69,8 +69,10 @@ class WCPBC_Product_Meta_Job_Sync_Price_With_Children extends WCPBC_Product_Meta
 
 		$this->db()->query(
 			$this->db()->prepare(
-				"DELETE FROM `{$this->table->postmeta}` WHERE post_id IN {$in_product_ids} AND meta_key = %s",
-				$zone->get_postmetakey( '_price' )
+				"DELETE FROM `{$this->table->postmeta}` WHERE post_id IN {$in_product_ids} AND meta_key IN (%s, %s, %s)",
+				$zone->get_postmetakey( '_price' ),
+				$zone->get_postmetakey( '_regular_price' ),
+				$zone->get_postmetakey( '_sale_price' )
 			)
 		);
 

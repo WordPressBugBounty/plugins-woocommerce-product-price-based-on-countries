@@ -1,6 +1,6 @@
 <?php
 /**
- * Clear the cache of all plugins when the "Load product price in the background" option change.
+ * Clear the cache of all plugins when a setting that affects cached prices changes.
  *
  * @since 2.3.0
  * @package WCPBC
@@ -18,6 +18,7 @@ class WCPBC_Cache_Plugins_Helper {
 	 */
 	public static function init() {
 		add_action( 'update_option_wc_price_based_country_caching_support', array( __CLASS__, 'flush_cache' ) );
+		add_action( 'update_option_wc_price_based_country_product_structured_data', array( __CLASS__, 'flush_cache' ) );
 	}
 
 	/**

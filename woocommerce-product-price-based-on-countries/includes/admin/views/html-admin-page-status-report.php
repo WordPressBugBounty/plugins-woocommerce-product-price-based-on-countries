@@ -49,11 +49,6 @@ global $wpdb;
 			<td><?php echo 'yes' === get_option( 'wc_price_based_country_test_mode', 'no' ) ? '<mark class="yes"><span class="dashicons dashicons-yes"></span></mark>' : '<mark class="no">&ndash;</mark>'; ?></td>
 		</tr>
 		<tr>
-			<td data-export-label="Test country"><?php esc_html_e( 'Test country', 'woocommerce-product-price-based-on-countries' ); ?>:</td>
-			<td class="help">&nbsp;</td>
-			<td><?php echo wp_kses_post( 'yes' === get_option( 'wc_price_based_country_test_mode', 'no' ) ? get_option( 'wc_price_based_country_test_country', '<mark class="no">&ndash;</mark>' ) : '<mark class="no">&ndash;</mark>' ); ?></td>
-		</tr>
-		<tr>
 			<td data-export-label="Load products price in background"><?php esc_html_e( 'Load products price in background', 'woocommerce-product-price-based-on-countries' ); ?>:</td>
 			<td class="help">&nbsp;</td>
 			<td><?php echo 'yes' === get_option( 'wc_price_based_country_caching_support', 'no' ) ? '<mark class="yes"><span class="dashicons dashicons-yes"></span></mark>' : '<mark class="no">&ndash;</mark>'; ?></td>
@@ -130,7 +125,7 @@ global $wpdb;
 		</tr>
 		<?php endif; ?>
 		<?php
-		foreach ( array( 'MM_COUNTRY_CODE', 'GEOIP_COUNTRY_CODE', 'HTTP_CF_IPCOUNTRY', 'HTTP_X_COUNTRY_CODE', 'HTTP_X_REAL_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR' ) as $server_var ) :
+		foreach ( [ 'MM_COUNTRY_CODE', 'GEOIP_COUNTRY_CODE', 'HTTP_CF_IPCOUNTRY', 'HTTP_X_COUNTRY_CODE', 'HTTP_X_REAL_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR' ] as $server_var ) :
 			$server_var_value = isset( $_SERVER[ $server_var ] ) ? sanitize_text_field( wp_unslash( $_SERVER[ $server_var ] ) ) : false;
 			?>
 		<tr id="wcpbc-<?php echo esc_html( str_replace( '_', '-', strtolower( $server_var ) ) ); ?>" data-value="<?php echo esc_html( false !== $server_var_value ? $server_var_value : '' ); ?>">
@@ -178,7 +173,7 @@ $zones     = WCPBC_Pricing_Zones::get_zones();
 		</tbody>
 		<?php break; ?>
 	<?php endif; ?>
-	<?php $cont++; ?>
+	<?php ++$cont; ?>
 	<thead>
 		<tr>
 			<th colspan="3" data-export-label="Zone Pricing <?php echo esc_html( $zone->get_name() ); ?>"><h2><?php echo esc_html( __( 'Zone Pricing', 'woocommerce-product-price-based-on-countries' ) . ': "' . $zone->get_name() . '"' ); ?></h2></th>

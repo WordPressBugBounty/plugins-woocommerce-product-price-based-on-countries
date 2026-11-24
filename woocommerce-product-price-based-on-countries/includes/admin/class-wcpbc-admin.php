@@ -17,37 +17,19 @@ class WCPBC_Admin {
 	 * Hook actions and filters
 	 */
 	public static function init() {
-		add_action( 'init', array( __CLASS__, 'update_geoip_database' ) );
-		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'admin_assets' ), 10 );
-		add_action( 'woocommerce_system_status_report', array( __CLASS__, 'system_status_report' ) );
-		add_action( 'wp_ajax_wc_price_based_country_remote_addr_check', array( __CLASS__, 'remote_addr_check' ) );
-		add_action( 'load-woocommerce_page_wc-reports', array( 'WCPBC_Admin_Legacy_Reports', 'init' ) );
-		add_filter( 'woocommerce_get_settings_pages', array( __CLASS__, 'settings_price_based_country' ) );
-		add_filter( 'woocommerce_paypal_supported_currencies', array( __CLASS__, 'paypal_supported_currencies' ) );
-		add_filter( 'woocommerce_gateway_payfast_available_currencies', array( __CLASS__, 'paypal_supported_currencies' ) );
-		add_filter( 'woocommerce_debug_tools', array( __CLASS__, 'debug_tools' ), 20 );
-		add_action( 'woocommerce_system_status_tool_executed', array( __CLASS__, 'system_status_tool_executed' ) );
+		add_action( 'admin_enqueue_scripts', [ __CLASS__, 'admin_assets' ], 10 );
+		add_action( 'woocommerce_system_status_report', [ __CLASS__, 'system_status_report' ] );
+		add_action( 'wp_ajax_wc_price_based_country_remote_addr_check', [ __CLASS__, 'remote_addr_check' ] );
+		add_action( 'load-woocommerce_page_wc-reports', [ 'WCPBC_Admin_Legacy_Reports', 'init' ] );
+		add_filter( 'woocommerce_get_settings_pages', [ __CLASS__, 'settings_price_based_country' ] );
+		add_filter( 'woocommerce_paypal_supported_currencies', [ __CLASS__, 'paypal_supported_currencies' ] );
+		add_filter( 'woocommerce_gateway_payfast_available_currencies', [ __CLASS__, 'paypal_supported_currencies' ] );
+		add_filter( 'woocommerce_debug_tools', [ __CLASS__, 'debug_tools' ], 20 );
+		add_action( 'woocommerce_system_status_tool_executed', [ __CLASS__, 'system_status_tool_executed' ] );
+
+		WCPBC_Admin_Bar::init();
 
 		do_action( 'wc_price_based_country_admin_init' );
-	}
-
-	/**
-	 * Update the GeoIP database
-	 *
-	 * @since 1.7.7
-	 * @version 1.7.12 Do a safe redirect to remove the get parameter.
-	 * @version 1.8.20 Deprecated since WC 3.9+.
-	 */
-	public static function update_geoip_database() {
-		if ( version_compare( WC_VERSION, '3.9', '>=' ) ) {
-			return;
-		}
-		if ( ! empty( $_GET['wcpbc_update_geoip_database'] ) && current_user_can( 'manage_woocommerce' ) && check_admin_referer( 'wcpbc-update-geoipdb', 'wcpbc_update_geoip_database' ) && is_callable( array( 'WC_Geolocation', 'update_database' ) ) ) {
-			WCPBC_Update_GeoIP_DB::update_database();
-			set_transient( 'wcpbc_updated_geoip', wcpbc_geoipdb_exists() ? 'yes' : 'no' );
-			wp_safe_redirect( wp_get_referer() ? remove_query_arg( array( 'wcpbc-update-geoipdb', 'trashed', 'untrashed', 'deleted', 'ids' ), wp_get_referer() ) : admin_url( 'admin.php?page=wc-settings&tab=price-based-country' ) );
-			exit;
-		}
 	}
 
 	/**
@@ -98,47 +80,36 @@ class WCPBC_Admin {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		// JS.
-		wp_register_script( 'wcpbc_admin', WCPBC()->plugin_url() . 'assets/js/admin/wcpbc_admin' . $suffix . '.js', array( 'jquery', 'woocommerce_admin', 'accounting' ), WCPBC()->version, true );
-		wp_register_script( 'wcpbc_notices', WCPBC()->plugin_url() . 'assets/js/admin/notices' . $suffix . '.js', array( 'jquery' ), WCPBC()->version, true );
-		wp_register_script( 'wcpbc_system_report', WCPBC()->plugin_url() . 'assets/js/admin/system-report' . $suffix . '.js', array( 'jquery' ), WCPBC()->version, false );
+		wp_register_script( 'wcpbc_admin', WCPBC()->plugin_url() . 'assets/js/admin/wcpbc_admin' . $suffix . '.js', [ 'jquery', 'woocommerce_admin', 'accounting' ], WCPBC()->version, true );
+		wp_register_script( 'wcpbc_system_report', WCPBC()->plugin_url() . 'assets/js/admin/system-report' . $suffix . '.js', [ 'jquery' ], WCPBC()->version, false );
 
 		wp_localize_script(
 			'wcpbc_admin',
 			'wcpbc_admin_params',
-			array(
+			[
 				'ajax_url'                 => admin_url( 'admin-ajax.php' ),
 				'product_type_supported'   => array_keys( wcpbc_product_types_supported() ),
 				'product_type_third_party' => array_keys( wcpbc_product_types_supported( 'third-party' ) ),
 				'is_pro'                   => wcpbc_is_pro() ? '1' : '',
 				'i18n_delete_zone_alert'   => __( 'Are you sure you want to delete this zone? This action cannot be undone', 'woocommerce-product-price-based-on-countries' ),
 				'i18n_default_zone_name'   => __( 'Zone', 'woocommerce-product-price-based-on-countries' ),
-			)
-		);
-
-		wp_localize_script(
-			'wcpbc_notices',
-			'wcpbc_notices_params',
-			array(
-				'ajax_url' => admin_url( 'admin-ajax.php' ),
-			)
+			]
 		);
 
 		wp_localize_script(
 			'wcpbc_system_report',
 			'wcpbc_system_report_params',
-			array(
+			[
 				'ajax_url'                => admin_url( 'admin-ajax.php' ),
 				'remote_addr_check_nonce' => wp_create_nonce( 'remote-addr-check' ),
 				// Translators: PHP Code.
 				'define_constant_alert'   => sprintf( esc_html__( 'Your server does not include the customer IP in HTTP_X_FORWARDED_FOR. Fix it by adding %s to your config.php.', 'woocommerce-product-price-based-on-countries' ), "<code>define( 'WCPBC_USE_REMOTE_ADDR', true );</code>" ),
 				'ip_no_match'             => esc_html__( 'The first IP not empty of your server variables does not match with your real IP.', 'woocommerce-product-price-based-on-countries' ),
 				'geoipdb_required'        => esc_html__( 'The MaxMind GeoIP database is required.', 'woocommerce-product-price-based-on-countries' ),
-			)
+			]
 		);
 
-		wp_enqueue_script( 'wcpbc_notices' );
-
-		if ( in_array( $screen_id, array( 'product', 'shop_coupon', 'shop_order', 'shop_subscription' ), true ) ) {
+		if ( in_array( $screen_id, [ 'product', 'shop_coupon', 'shop_order', 'shop_subscription' ], true ) ) {
 
 			wp_enqueue_script( 'wcpbc_admin' );
 
@@ -148,7 +119,7 @@ class WCPBC_Admin {
 		}
 
 		// Styles.
-		wp_enqueue_style( 'wcpbc_admin_styles', WCPBC()->plugin_url() . 'assets/css/admin/admin' . $suffix . '.css', array(), WCPBC()->version );
+		wp_enqueue_style( 'wcpbc_admin_styles', WCPBC()->plugin_url() . 'assets/css/admin/admin' . $suffix . '.css', [], WCPBC()->version );
 	}
 
 
@@ -183,10 +154,10 @@ class WCPBC_Admin {
 			$external_ip_country = WC_Geolocation::geolocate_ip( $external_ip, false, false );
 			$remote_addr_country = WC_Geolocation::geolocate_ip( $remote_addr, false, false );
 
-			wp_send_json( array( 'result' => ( $external_ip_country['country'] === $remote_addr_country['country'] ? '1' : '0' ) ) );
+			wp_send_json( [ 'result' => ( $external_ip_country['country'] === $remote_addr_country['country'] ? '1' : '0' ) ] );
 		}
 
-		wp_send_json( array( 'result' => '0' ) );
+		wp_send_json( [ 'result' => '0' ] );
 	}
 
 	/**
@@ -198,13 +169,13 @@ class WCPBC_Admin {
 	 * @return array
 	 */
 	public static function debug_tools( $debug_tools ) {
-		$debug_tools['wcpbc_sync_price_with_children'] = array(
+		$debug_tools['wcpbc_sync_price_with_children'] = [
 			'name'     => 'Price Based on Country: ' . _x( 'Synchronize the price of variable products', 'WooCommerce tool name', 'woocommerce-product-price-based-on-countries' ),
 			'button'   => __( 'Update', 'woocommerce-product-price-based-on-countries' ),
 			'desc'     => __( 'This tool will update the price of the variable products with a minimum and maximum price of its variations. It solves sorting issues.', 'woocommerce-product-price-based-on-countries' ),
 			'callback' => (
-				function() {
-					$job = 'Sync_Price_With_Children_Batch';
+				function () {
+					$job     = 'Sync_Price_With_Children_Batch';
 					$actions = as_get_scheduled_actions(
 						[
 							'hook'     => WCPBC_Product_Meta_Job::ACTION_HOOK,
@@ -225,7 +196,7 @@ class WCPBC_Admin {
 					return __( 'The tool is running in the background.', 'woocommerce-product-price-based-on-countries' );
 				}
 			),
-		);
+		];
 		return $debug_tools;
 	}
 
@@ -242,4 +213,3 @@ class WCPBC_Admin {
 		}
 	}
 }
-

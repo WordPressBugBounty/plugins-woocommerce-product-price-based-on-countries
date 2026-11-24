@@ -20,7 +20,7 @@ class WCPBC_Install {
 	 *
 	 * @var array
 	 */
-	private static $db_updates = array(
+	private static $db_updates = [
 		'1.3.2'  => 'wcpbc_update_132',
 		'1.6.0'  => 'wcpbc_update_160',
 		'1.6.2'  => 'wcpbc_update_162',
@@ -30,15 +30,15 @@ class WCPBC_Install {
 		'2.0.28' => 'wcpbc_update_228',
 		'4.0.12' => 'wcpbc_update_4012',
 		'4.2.2'  => 'wcpbc_update_422',
-	);
+	];
 
 	/**
 	 * Hooks.
 	 */
 	public static function init() {
-		add_action( 'wc_price_based_country_update_database', array( __CLASS__, 'update_database' ) );
-		add_action( 'admin_init', array( __CLASS__, 'check_version' ), 10 );
-		add_action( 'in_plugin_update_message-woocommerce-product-price-based-on-countries/woocommerce-product-price-based-on-countries.php', array( __CLASS__, 'in_plugin_update_message' ) );
+		add_action( 'wc_price_based_country_update_database', [ __CLASS__, 'update_database' ] );
+		add_action( 'admin_init', [ __CLASS__, 'check_version' ], 10 );
+		add_action( 'in_plugin_update_message-woocommerce-product-price-based-on-countries/woocommerce-product-price-based-on-countries.php', [ __CLASS__, 'in_plugin_update_message' ] );
 	}
 
 	/**
@@ -48,7 +48,7 @@ class WCPBC_Install {
 	 */
 	public static function update_database( $current_version ) {
 
-		include_once dirname( __FILE__ ) . '/wcpbc-update-functions.php';
+		include_once __DIR__ . '/wcpbc-update-functions.php';
 
 		foreach ( self::$db_updates as $version => $callback ) {
 			if ( version_compare( $current_version, $version, '<' ) ) {
@@ -146,6 +146,11 @@ class WCPBC_Install {
 		if ( version_compare( $current_version, '4.0.10', '<' ) ) {
 			delete_transient( 'wcpbc_products_onsale' );
 		}
+
+		if ( version_compare( $current_version, '4.4.0', '<' ) ) {
+			$notice = new WCPBC_Admin_Notice_Update_Welcome();
+			$notice->set_status( WCPBC_Admin_Notice::STATUS_VISIBLE );
+		}
 	}
 
 	/**
@@ -163,7 +168,7 @@ class WCPBC_Install {
 		$wp_list_table = function_exists( '_get_list_table' ) ? _get_list_table( 'WP_Plugins_List_Table' ) : false;
 
 		if ( false === self::get_install_version() &&
-			is_callable( array( $wp_list_table, 'current_action' ) ) && in_array( $wp_list_table->current_action(), [ 'activate', 'activate-plugin' ], true ) &&
+			is_callable( [ $wp_list_table, 'current_action' ] ) && in_array( $wp_list_table->current_action(), [ 'activate', 'activate-plugin' ], true ) &&
 			! is_network_admin() &&
 			function_exists( 'WC' )
 		) {
@@ -234,7 +239,7 @@ class WCPBC_Install {
 	private static function create_options() {
 		// Price based to tax based. Default shipping.
 		$price_based_on = 'shipping';
-		if ( wc_tax_enabled() && in_array( get_option( 'woocommerce_tax_based_on' ), array( 'billing', 'shipping' ), true ) ) {
+		if ( wc_tax_enabled() && in_array( get_option( 'woocommerce_tax_based_on' ), [ 'billing', 'shipping' ], true ) ) {
 			$price_based_on = get_option( 'woocommerce_tax_based_on' );
 		}
 		update_option( 'wc_price_based_country_based_on', $price_based_on );
@@ -242,11 +247,14 @@ class WCPBC_Install {
 		// Enable shipping currency conversion.
 		update_option( 'wc_price_based_country_shipping_exchange_rate', 'yes' );
 
+		// Use default prices and currency in product structured data.
+		update_option( 'wc_price_based_country_product_structured_data', 'yes' );
+
 		// Init pricing zones.
 		update_option( 'wc_price_based_country_regions', [] );
 
 		// Set installed at.
-		WCPBC_Helper_Options::update( 'install_timestamp', current_time( 'timestamp' ) );
+		WCPBC_Helper_Options::update( 'install_timestamp', time() );
 	}
 
 	/**
@@ -255,19 +263,19 @@ class WCPBC_Install {
 	 * @since 2.3.0
 	 */
 	private static function set_gla_integration_option() {
-		$value = array(
+		$value = [
 			'mode'    => 'gla_country',
 			'country' => '',
-		);
+		];
 
 		if ( class_exists( 'WCPBC_Google_Listing_And_Ads' ) ) {
 			$base_location = wc_get_base_location();
 
 			if ( WCPBC_Google_Listing_And_Ads::get_gla_target_country() !== $base_location['country'] ) {
-				$value = array(
+				$value = [
 					'mode'    => 'specific',
 					'country' => $base_location['country'],
-				);
+				];
 			}
 		}
 
@@ -282,7 +290,7 @@ class WCPBC_Install {
 	 */
 	private static function deactivate_wc_payments_multicurrency() {
 		if ( ! class_exists( 'class-wcpbc-wc-payments' ) ) {
-			include_once dirname( __FILE__ ) . '/integrations/class-wcpbc-wc-payments.php';
+			include_once __DIR__ . '/integrations/class-wcpbc-wc-payments.php';
 		}
 
 		WCPBC_WC_Payments::deactivate_multicurrency_feature();

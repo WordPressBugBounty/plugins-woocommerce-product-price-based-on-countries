@@ -22,17 +22,17 @@ if ( ! class_exists( 'WCPBC_WC_Payments' ) ) :
 		 * Hook actions and filters
 		 */
 		public static function init() {
-			add_action( 'add_option_wc_price_based_country_regions', array( __CLASS__, 'deferred_deactivate_multicurrency_feature' ), 0 );
-			add_action( 'update_option_wc_price_based_country_regions', array( __CLASS__, 'deferred_deactivate_multicurrency_feature' ), 0 );
-			add_action( 'update_option__wcpay_feature_customer_multi_currency', array( __CLASS__, 'deferred_deactivate_multicurrency_feature' ), 0 );
+			add_action( 'add_option_wc_price_based_country_regions', [ __CLASS__, 'deferred_deactivate_multicurrency_feature' ], 0 );
+			add_action( 'update_option_wc_price_based_country_regions', [ __CLASS__, 'deferred_deactivate_multicurrency_feature' ], 0 );
+			add_action( 'update_option__wcpay_feature_customer_multi_currency', [ __CLASS__, 'deferred_deactivate_multicurrency_feature' ], 0 );
 		}
 
 		/**
 		 * Queued the multicurency deactivate to do it on shutdown.
 		 */
 		public static function deferred_deactivate_multicurrency_feature() {
-			if ( ! has_action( 'shutdown', array( __CLASS__, 'deactivate_multicurrency_feature' ) ) ) {
-				add_action( 'shutdown', array( __CLASS__, 'deactivate_multicurrency_feature' ), 0 );
+			if ( ! has_action( 'shutdown', [ __CLASS__, 'deactivate_multicurrency_feature' ] ) ) {
+				add_action( 'shutdown', [ __CLASS__, 'deactivate_multicurrency_feature' ], 0 );
 			}
 		}
 
@@ -41,21 +41,12 @@ if ( ! class_exists( 'WCPBC_WC_Payments' ) ) :
 		 */
 		public static function deactivate_multicurrency_feature() {
 
-			remove_action( 'update_option_wc_price_based_country_regions', array( __CLASS__, 'deferred_deactivate_multicurrency_feature' ), 0 );
-			remove_action( 'update_option__wcpay_feature_customer_multi_currency', array( __CLASS__, 'deferred_deactivate_multicurrency_feature' ), 0 );
+			remove_action( 'update_option_wc_price_based_country_regions', [ __CLASS__, 'deferred_deactivate_multicurrency_feature' ], 0 );
+			remove_action( 'update_option__wcpay_feature_customer_multi_currency', [ __CLASS__, 'deferred_deactivate_multicurrency_feature' ], 0 );
 
 			$wcpay_feature_multi_currency = ( '1' === get_option( '_wcpay_feature_customer_multi_currency', '1' ) );
 
 			if ( ! $wcpay_feature_multi_currency ) {
-				return;
-			}
-
-			$wcpay_currencies       = get_option( 'wcpay_multi_currency_enabled_currencies', [] );
-			$wcpay_currencies_count = is_array( $wcpay_currencies ) ? count( $wcpay_currencies ) : 0;
-
-			if ( $wcpay_currencies_count < 2 ) {
-				// Only one currency. Deactivate.
-				update_option( '_wcpay_feature_customer_multi_currency', '0' );
 				return;
 			}
 
@@ -65,12 +56,12 @@ if ( ! class_exists( 'WCPBC_WC_Payments' ) ) :
 				// Pricing zones handles the multicurrency. Deactivate WC_Pay feature and display a notice.
 				update_option( '_wcpay_feature_customer_multi_currency', '0' );
 
-				if ( $wcpay_currencies_count > 1 ) {
-					WCPBC_Admin_Notices::add_notice( 'wc_payments_multi_currency_disabled' );
-				}
+				$notice = new WCPBC_Admin_Notice_WC_Payments_Multicurrency_Disabled();
+				$notice->set_status(
+					WCPBC_Admin_Notice::STATUS_VISIBLE
+				);
 			}
 		}
-
 	}
 
 	// Init integration.
